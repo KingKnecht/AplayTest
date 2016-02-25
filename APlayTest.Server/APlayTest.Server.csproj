@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8398CB5B-DDF5-4627-822D-21F4D4D85EB2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>APlayTest.Server</RootNamespace>
+    <AssemblyName>APlayTest.Server</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="APlayCommon">
+      <HintPath>lib\APlayCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="APlayLog4NetLogger">
+      <HintPath>lib\APlayLog4NetLogger.dll</HintPath>
+    </Reference>
+    <Reference Include="APlayPersistence">
+      <HintPath>lib\APlayPersistence.dll</HintPath>
+    </Reference>
+    <Reference Include="APlayServer">
+      <HintPath>lib\APlayServer.dll</HintPath>
+    </Reference>
+    <Reference Include="APlayTest_Server">
+      <HintPath>lib\APlayTest_Server.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>lib\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>lib\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>lib\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql.resources">
+      <HintPath>lib\Npgsql.resources.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Factories\ProjectManagerFactory.cs" />
+    <Compile Include="Impl\APlayServer.cs" />
+    <Compile Include="Impl\Client.cs" />
+    <Compile Include="Impl\Project.cs" />
+    <Compile Include="Impl\ProjectManager.cs" />
+    <Compile Include="Impl\Sheet.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="userCompiled\APlayUserCompiled.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\APlayTest.Services\APlayTest.Services.csproj">
+      <Project>{CAFE7692-24AB-4E1B-98C2-1F2E2C985C46}</Project>
+      <Name>APlayTest.Services</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="lib\APlayCommon.dll" />
+    <Content Include="lib\APlayCommon.pdb" />
+    <Content Include="lib\APlayLog4NetLogger.dll" />
+    <Content Include="lib\APlayLog4NetLogger.pdb" />
+    <Content Include="lib\APlayPersistence.dll" />
+    <Content Include="lib\APlayPersistence.pdb" />
+    <Content Include="lib\APlayServer.dll" />
+    <Content Include="lib\APlayServer.pdb" />
+    <Content Include="lib\APlayTest_Server.dll" />
+    <Content Include="lib\LICENSE.log4net.txt" />
+    <Content Include="lib\LICENSE.npgsql.txt" />
+    <Content Include="lib\log4net.dll" />
+    <Content Include="lib\Mono.Security.dll" />
+    <Content Include="lib\NOTICE.log4net.txt" />
+    <Content Include="lib\Npgsql.dll" />
+    <Content Include="lib\Npgsql.pdb" />
+    <Content Include="lib\Npgsql.resources.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

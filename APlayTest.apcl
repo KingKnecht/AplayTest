@@ -1,0 +1,73 @@
+<apcl:apcl version="2.1" xmlns:apcl="http://www.aplaypowered.com/apcl">
+  <role name="Server" roleType="Server"/>
+  <role name="Client" roleType="Client" remoteObject="Client"/>
+  <target role="Server" language="C# .Net" userCompiledPath="APlayTest.Server/userCompiled/" libPath="APlayTest.Server/lib/" stubPath="APlayTest.Server/stubs/" active="true" targetPath="" baseNamespace="APlayTest.Server"/>
+  <target role="Client" language="C# .Net" userCompiledPath="APlayTest.Client/userCompiled/" libPath="APlayTest.Client/lib/" stubPath="APlayTest.Client/stubs/" active="true" targetPath="" baseNamespace="APlayTest.Client"/>
+  <namespace>
+    <class name="Client">
+      <code><![CDATA[//TODO: Your class based communication here:
+[Server -> Client]
+Project CurrentProject;
+ProjectManager ProjectManager;
+
+
+  ]]></code>
+      <__designerPresentation>
+        <x>59</x>
+        <y>13</y>
+      </__designerPresentation>
+    </class>
+    <class name="Project">
+      <code><![CDATA[//TODO: Your class based communication here:
+[Server -> Server Client]
+
+loopback WString Name;
+
+Sheet CreateSheet(WString name);
+
+List<Sheet> GetSheets();
+
+void SetName(WString name);
+
+ProjectDetail ProjectDetail;
+
+]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </class>
+    <struct name="ProjectDetail">
+      <code><![CDATA[//TODO: Your Properties here:
+WString Name;
+WString CreatedBy;
+Date CreationDate;
+int32 ProjectId;]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </struct>
+    <class name="ProjectManager">
+      <code><![CDATA[//TODO: Your class based communication here:
+[ Client -> Server ]
+
+void JoinProject(int32 projectId);
+void CreateProject(WString name);
+
+void SearchProjects(WString searchString);
+
+[Server -> Client]
+boolean CanJoinProject;
+boolean CanCreateProject;
+List<ProjectDetail> ProjectDetails;
+
+[Server Client -> Client Server]
+ProjectDetail SelectedProject;]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </class>
+    <class name="Sheet">
+      <code><![CDATA[//TODO: Your class based communication here:
+[ Client -> Server ]
+
+  int32 Id;
+  WString Name;]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </class>
+    <__designerPresentation>null</__designerPresentation>
+  </namespace>
+</apcl:apcl>

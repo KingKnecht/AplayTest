@@ -1,0 +1,16 @@
+﻿<Window x:Class="APlayTest.Client.Wpf.Views.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow"
+        Width="1024"
+        Height="768">
+    <Grid>
+        
+        <Button Name="ChangeProjectTitle"
+                Height="30">Click to change title xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</Button>
+
+        <ContentControl Grid.Row="0"
+                        x:Name="ActiveItem" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+    </Grid>
+</Window>

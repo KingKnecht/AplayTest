@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{76B270A8-A6FC-4E42-9C8B-9A5DB1E44BE4}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>APlayTest.Server.Console</RootNamespace>
+    <AssemblyName>APlayTest.Server.Console</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="APlayCommon">
+      <HintPath>..\APlayTest.Server\lib\APlayCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="APlayLog4NetLogger">
+      <HintPath>..\APlayTest.Server\lib\APlayLog4NetLogger.dll</HintPath>
+    </Reference>
+    <Reference Include="APlayPersistence">
+      <HintPath>..\APlayTest.Server\lib\APlayPersistence.dll</HintPath>
+    </Reference>
+    <Reference Include="APlayServer">
+      <HintPath>..\APlayTest.Server\lib\APlayServer.dll</HintPath>
+    </Reference>
+    <Reference Include="APlayTest_Server">
+      <HintPath>..\APlayTest.Server\lib\APlayTest_Server.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\APlayTest.Server\lib\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>..\APlayTest.Server\lib\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>..\APlayTest.Server\lib\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql.resources">
+      <HintPath>..\APlayTest.Server\lib\Npgsql.resources.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\APlayTest.Server\APlayTest.Server.csproj">
+      <Project>{8398cb5b-ddf5-4627-822d-21f4d4d85eb2}</Project>
+      <Name>APlayTest.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\APlayTest.Services\APlayTest.Services.csproj">
+      <Project>{CAFE7692-24AB-4E1B-98C2-1F2E2C985C46}</Project>
+      <Name>APlayTest.Services</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
