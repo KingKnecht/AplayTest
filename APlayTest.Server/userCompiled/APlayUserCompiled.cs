@@ -131,6 +131,7 @@ namespace APlayTest.Server
     APlayTest.Server.ProjectDetail SelectedProject {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
+    void ProjectDetailsListChanged ();
     bool Release ();
     void addOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
@@ -155,6 +156,7 @@ namespace APlayTest.Server
     void onJoinProject (int projectId__);
     void onCreateProject (String name__);
     void onSearchProjects (String searchString__);
+    void onProjectDetailsListChanged ();
   };
 }
 namespace APlayTest.Server
@@ -309,7 +311,7 @@ namespace APlayTest.Server
       APlay.Common.Logging.Logger.LogDesigned(1,"onStaticCallField","Server.Designed");
       switch(roleId)
       {
-        case 1: // []
+        case 0: // []
         {
         break;
         }
@@ -1111,10 +1113,33 @@ namespace APlayTest.Server
         }
       }
     }
+    public abstract void onProjectDetailsListChanged();
+    public void onInternProjectDetailsListChanged()
+    {
+      if(ProjectDetailsListChangedEventHandler!=null)
+      {
+        ProjectDetailsListChangedEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Server.ProjectManagerSkeleton.StaticProjectDetailsListChangedEventHandler!=null)
+        {
+          APlayTest.Server.ProjectManagerSkeleton.StaticProjectDetailsListChangedEventHandler(((APlayTest.Server.ProjectManager) (this)));
+        }
+        else
+        {
+          this.onProjectDetailsListChanged();
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implProjectManager.RequiresInit();
       return (((bool) (retu)));
+    }
+    public void ProjectDetailsListChanged()
+    {
+      implProjectManager.ProjectDetailsListChanged();
     }
     public bool Release()
     {
@@ -1190,6 +1215,8 @@ namespace APlayTest.Server
     static public event APlayTest.Server.Delegates.void_WString_ProjectManager StaticCreateProjectEventHandler;
     public event APlayTest.Server.Delegates.void_WString SearchProjectsEventHandler;
     static public event APlayTest.Server.Delegates.void_WString_ProjectManager StaticSearchProjectsEventHandler;
+    public event APlayTest.Server.Delegates.void_ ProjectDetailsListChangedEventHandler;
+    static public event APlayTest.Server.Delegates.void_ProjectManager StaticProjectDetailsListChangedEventHandler;
     private APlay.Generated.Intern.Server.__IProjectManagerAPImpl implProjectManager;
   }
   
@@ -1902,11 +1929,12 @@ namespace APlayTest.Server
     public delegate void void_int32(int projectId__);
     public delegate void void_int32_ProjectManager(int projectId__, APlayTest.Server.ProjectManager this_);
     public delegate void void_WString_ProjectManager(String name__, APlayTest.Server.ProjectManager this_);
+    public delegate void void_();
+    public delegate void void_ProjectManager(APlayTest.Server.ProjectManager this_);
     public delegate void void_int32_Sheet(int NewId__, APlayTest.Server.Sheet this_);
     public delegate void void_WString_Sheet(String NewName__, APlayTest.Server.Sheet this_);
     public delegate void void_Client(APlayTest.Server.Client client);
     public delegate void void_Client_APlayServerSkeleton(APlayTest.Server.Client client, APlayTest.Server.APlayServerSkeleton this_);
-    public delegate void void_();
     public delegate void void_APlayServerSkeleton(APlayTest.Server.APlayServerSkeleton this_);
     public delegate void void_String(String reason);
     public delegate void void_String_APlayServerSkeleton(String reason, APlayTest.Server.APlayServerSkeleton this_);

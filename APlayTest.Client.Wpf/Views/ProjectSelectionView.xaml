@@ -34,7 +34,7 @@
         <ListBox SelectedItem="{Binding SelectedProject, Mode=TwoWay}"
                  Grid.Row="2"
                  Grid.Column="0"
-                 ItemsSource="{Binding ProjectDetails}"
+                 ItemsSource="{Binding ProjectDetailsRx}"
                  VerticalAlignment="Stretch"
                  MinWidth="300"/>
         
@@ -42,7 +42,7 @@
               Grid.Row="2">
 
             <Button Name="JoinProject" Margin="10,20,10,10" HorizontalAlignment="Stretch" >Join</Button>
-            <Button Name="NewProject"
+            <Button Name="CreateProject"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Stretch">New</Button>
            

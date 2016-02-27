@@ -6,17 +6,22 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reactive.Disposables;
 using System.Runtime.CompilerServices;
 using APlay.Common;
 using APlay.Common.Utils;
 using APlay.Common.DataTypes;
 using APlayTest.Client;
 using APlayTest.Client.Annotations;
+using DynamicData;
+using Reactive.Bindings;
 
 namespace APlayTest.Client
 {
-    public class ProjectManager : APlayTest.Client.ProjectManagerSkeleton, INotifyPropertyChanged
+    public sealed class ProjectManager : APlayTest.Client.ProjectManagerSkeleton, IDisposable
     {
+        private readonly SourceCache<ProjectDetail, int> _projectDetailsRx;
+        private readonly CompositeDisposable _cleanup = new CompositeDisposable();
         /// <summary>
         /// Use this constructor to create instances in your code.
         /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
@@ -25,46 +30,81 @@ namespace APlayTest.Client
 
         public ProjectManager()
         {
-            /// TODO: add your code here
+            CanJoinProjectRx = new ReactiveProperty<bool>(CanCreateProject,ReactivePropertyMode.RaiseLatestValueOnSubscribe);
+            CanCreateProjectRx = new ReactiveProperty<bool>(CanCreateProject,ReactivePropertyMode.RaiseLatestValueOnSubscribe);
+            SelectedProjectRx = new ReactiveProperty<ProjectDetail>(SelectedProject, ReactivePropertyMode.RaiseLatestValueOnSubscribe);
+            _projectDetailsRx =  new SourceCache<ProjectDetail, int>(pd => pd.ProjectId);
+
+            _projectDetailsRx.Edit(e =>
+            {
+                e.AddOrUpdate(ProjectDetails);
+            });
+
+            _cleanup.Add(_projectDetailsRx);
+        }
+
+        public ReactiveProperty<ProjectDetail> SelectedProjectRx { get; set; }
+        public ReactiveProperty<bool> CanJoinProjectRx { get; set; }
+        public ReactiveProperty<bool> CanCreateProjectRx { get; set; }
+
+        public IObservableCache<ProjectDetail, int> ProjectDetailsRx
+        {
+            get { return _projectDetailsRx.AsObservableCache(); }
         }
 
         public override void onCanJoinProjectChange(bool NewCanJoinProject__)
         {
             base.onCanJoinProjectChange(NewCanJoinProject__);
-            OnPropertyChanged("CanJoinProject");
+            CanJoinProjectRx.Value = NewCanJoinProject__;
         }
 
         public override void onCanCreateProjectChange(bool NewCanCreateProject__)
         {
             base.onCanCreateProjectChange(NewCanCreateProject__);
-            OnPropertyChanged("CanCreateProject");
+            CanCreateProjectRx.Value = NewCanCreateProject__;
         }
 
         public override void onProjectDetailsClear()
         {
             base.onProjectDetailsClear();
-            OnPropertyChanged("ProjectDetails");
+            _projectDetailsRx.Clear();
         }
 
         public override void onProjectDetailsAdd(ProjectDetail element)
         {
-            base.onProjectDetailsAdd(element);
-            OnPropertyChanged("ProjectDetails");
+            base.onProjectDetailsAdd(element);  
+           _projectDetailsRx.AddOrUpdate(element);
+        }
+
+        public override void onProjectDetailsRemove(ProjectDetail element)
+        {
+            base.onProjectDetailsRemove(element);
+           _projectDetailsRx.Remove(element);
+        }
+
+        public override void onProjectDetailsRemoveAt(int pos, ProjectDetail element)
+        {
+            base.onProjectDetailsRemoveAt(pos, element);
+            _projectDetailsRx.Remove(element);
+        }
+
+        public override void onProjectDetailsInsertAt(int pos, ProjectDetail element)
+        {
+            base.onProjectDetailsInsertAt(pos, element);
+            _projectDetailsRx.AddOrUpdate(element);
         }
 
         public override void onSelectedProjectChange(ProjectDetail NewSelectedProject__)
         {
             base.onSelectedProjectChange(NewSelectedProject__);
-            OnPropertyChanged("SelectedProject");
+        
+            SelectedProjectRx.Value = NewSelectedProject__;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public void Dispose()
         {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            _cleanup.Dispose();
         }
     }
 

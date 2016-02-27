@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Reactive.Bindings;
 
 namespace APlayTest.Client.Wpf
 {
@@ -13,5 +14,9 @@ namespace APlayTest.Client.Wpf
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            //UIDispatcherScheduler.Initialize();
+        }
     }
 }

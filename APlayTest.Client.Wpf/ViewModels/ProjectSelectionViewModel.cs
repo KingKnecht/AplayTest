@@ -1,48 +1,57 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Security.Permissions;
 using System.Timers;
 using System.Windows.Data;
 using APlay.Generated.Intern.Client;
 using Caliburn.Micro;
+using DynamicData;
+using DynamicData.Binding;
 using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 
 namespace APlayTest.Client.Wpf.ViewModels
 {
-    public class ProjectSelectionViewModel : Screen
+    public class ProjectSelectionViewModel : Screen, IDisposable
     {
         private readonly ProjectManager _projectManager;
 
         private string _searchString;
-        private IObservableCollection<ProjectDetail> _projectDetails;
-        private List<ProjectDetail> _internProjectDetailsList;
-        private bool _canNewProject;
+        private bool _canCreateProject;
         private ProjectDetail _selectedProject;
         private bool _canJoinProject;
+        private CompositeDisposable _cleanUp;
+        private readonly ReadOnlyObservableCollection<ProjectDetail> _projectDetailsRx;
 
         public ProjectSelectionViewModel(ProjectManager projectManager)
         {
             _projectManager = projectManager;
+        
+         
+            var detailsDisp = _projectManager.ProjectDetailsRx.Connect()
+             .ObserveOnUIDispatcher()
+                //.Do(Console.WriteLine)
+                .Bind(out _projectDetailsRx)
+                .Subscribe();
 
-            _projectDetails = new BindableCollection<ProjectDetail>();
-            ProjectDetails.AddRange(_projectManager.ProjectDetails);
 
-            _projectManager.PropertyChanged += _projectManager_PropertyChanged;
+            var joinDisp = _projectManager.CanJoinProjectRx.Subscribe(value => CanJoinProject = value);
+            var createDisp = _projectManager.CanCreateProjectRx.Subscribe(value => CanCreateProject = value);
+            var selectDisp = _projectManager.SelectedProjectRx.Subscribe(value => SelectedProject = value);
+
+            _cleanUp = new CompositeDisposable(joinDisp, createDisp, detailsDisp,selectDisp);
+
         }
 
-        void _projectManager_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public ReadOnlyObservableCollection<ProjectDetail> ProjectDetailsRx
         {
-            CanJoinProject = _projectManager.CanJoinProject;
-            CanNewProject = _projectManager.CanCreateProject;
-
-            ProjectDetails.Clear();
-            ProjectDetails.AddRange(_projectManager.ProjectDetails);
-
-            _selectedProject = _projectManager.SelectedProject;
-            NotifyOfPropertyChange(() => SelectedProject);
+            get { return _projectDetailsRx; }
         }
+
 
         public ProjectDetail SelectedProject
         {
@@ -55,7 +64,6 @@ namespace APlayTest.Client.Wpf.ViewModels
                 _projectManager.SelectedProject = value;
 
                 NotifyOfPropertyChange(() => SelectedProject);
-               
             }
         }
 
@@ -67,60 +75,23 @@ namespace APlayTest.Client.Wpf.ViewModels
                 if (value == _searchString) return;
                 _searchString = value;
 
-
                 _projectManager.SearchProjects(_searchString);
-
             }
         }
+        
 
-        private void UpdateCommandStates()
+        public bool CanCreateProject
         {
-            CanNewProject = !ProjectDetails.Any();
-            CanJoinProject = !CanNewProject;
-        }
-
-        private void OnGetProjectDetails(ProjectDetailList projectDetail)
-        {
-            ProjectDetails.Clear();
-            ProjectDetails.AddRange(projectDetail);
-        }
-
-        private IEnumerable<ProjectDetail> FilterBySearchString(IEnumerable<ProjectDetail> projectDetails)
-        {
-            return projectDetails.Where(d =>
-            {
-                if (!string.IsNullOrEmpty(SearchString))
-                {
-                    return d.Name.StartsWith(SearchString);
-                }
-
-                return true;
-            }).ToList();
-        }
-
-        public IObservableCollection<ProjectDetail> ProjectDetails
-        {
-            get { return _projectDetails; }
+            get { return _canCreateProject; }
             set
             {
-                if (Equals(value, _projectDetails)) return;
-                _projectDetails = value;
-                NotifyOfPropertyChange(() => ProjectDetails);
+                if (value == _canCreateProject) return;
+                _canCreateProject = value;
+                NotifyOfPropertyChange(() => CanCreateProject);
             }
         }
 
-        public bool CanNewProject
-        {
-            get { return _canNewProject; }
-            set
-            {
-                if (value == _canNewProject) return;
-                _canNewProject = value;
-                NotifyOfPropertyChange(() => CanNewProject);
-            }
-        }
-
-        public void NewProject()
+        public void CreateProject()
         {
             _projectManager.CreateProject(SearchString);
         }
@@ -141,6 +112,9 @@ namespace APlayTest.Client.Wpf.ViewModels
             _projectManager.JoinProject(SelectedProject.ProjectId);
         }
 
-      
+        public void Dispose()
+        {
+            _cleanUp.Dispose();
+        }
     }
 }

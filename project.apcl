@@ -1,10 +1,10 @@
 <apcl:apcl version="2.0" xmlns:apcl="http://www.aplaypowered.com/apcl">
   <namespace>
-    <role name="Server" roleType="Server" namespace="[Language=csharp]:APlayTest.Server" className="APlayServer"/>
     <role name="Client" roleType="Client" namespace="[Language=csharp]:APlayTest.Client" className="APlayClient" remoteObject="Client"/>
+    <role name="Server" roleType="Server" namespace="[Language=csharp]:APlayTest.Server" className="APlayServer"/>
     <permissionGroup name="ServerToClient">
-      <access role="Server" read="false" write="true"/>
       <access role="Client" read="true" write="false"/>
+      <access role="Server" read="false" write="true"/>
     </permissionGroup>
     <communicationObject name="Client" persistable="false">
       <permissionGroup baseType="ServerToClient">
@@ -13,12 +13,12 @@
       </permissionGroup>
     </communicationObject>
     <permissionGroup name="ServerToServer_AND_Client">
-      <access role="Server" read="true" write="true"/>
       <access role="Client" read="true" write="false"/>
+      <access role="Server" read="true" write="true"/>
     </permissionGroup>
     <permissionGroup name="ServerToServer_AND_Client_loopback">
-      <access role="Server" read="true" write="true" loopback="true"/>
       <access role="Client" read="true" write="false"/>
+      <access role="Server" read="true" write="true" loopback="true"/>
     </permissionGroup>
     <communicationObject name="Project" persistable="false">
       <permissionGroup baseType="ServerToServer_AND_Client_loopback">
@@ -42,12 +42,16 @@
       <data type="int32" name="ProjectId" persistable="false"/>
     </primitive>
     <permissionGroup name="ClientToServer">
-      <access role="Server" read="true" write="false"/>
       <access role="Client" read="false" write="true"/>
+      <access role="Server" read="true" write="false"/>
     </permissionGroup>
     <permissionGroup name="Server_AND_ClientToClient_AND_Server">
-      <access role="Server" read="true" write="true"/>
       <access role="Client" read="true" write="true"/>
+      <access role="Server" read="true" write="true"/>
+    </permissionGroup>
+    <permissionGroup name="ServerToServer">
+      <access role="Client" read="false" write="false"/>
+      <access role="Server" read="true" write="true"/>
     </permissionGroup>
     <communicationObject name="ProjectManager" persistable="false">
       <permissionGroup baseType="ClientToServer">
@@ -68,6 +72,9 @@
       </permissionGroup>
       <permissionGroup baseType="Server_AND_ClientToClient_AND_Server">
         <data type="ProjectDetail" name="SelectedProject" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="ServerToServer">
+        <event name="ProjectDetailsListChanged"/>
       </permissionGroup>
     </communicationObject>
     <communicationObject name="Sheet" persistable="false">
