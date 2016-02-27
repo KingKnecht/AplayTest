@@ -41,7 +41,7 @@ namespace APlayTest.Server
             _projectDetailsService = projectDetailsService;
 
             //Subscribe for newly added, deleted projects from the service.
-            var serviceUpdates = _projectDetailsService.ProjectDetailsRx.Connect()
+            var serviceUpdates = _projectDetailsService.ProjectDetailsDelta.Connect()
                  .Filter(pd => Filter(_searchString, pd))
                  .Transform(pd => new ProjectDetail(pd.Name, pd.CreatedBy, pd.CreationDate, pd.ProjectId))
                  .Subscribe(changeSet =>

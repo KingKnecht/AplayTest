@@ -29,9 +29,9 @@
                             Grid.Column="0"
                             LabelText="Search projects"
                             Height="30"
-                            Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                            Text="{Binding SearchStringRx.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <ListBox SelectedItem="{Binding SelectedProject, Mode=TwoWay}"
+        <ListBox SelectedItem="{Binding SelectedProjectRx.Value, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                  Grid.Row="2"
                  Grid.Column="0"
                  ItemsSource="{Binding ProjectDetailsRx}"
@@ -41,8 +41,8 @@
         <StackPanel Orientation="Vertical" Grid.Column="1"
               Grid.Row="2">
 
-            <Button Name="JoinProject" Margin="10,20,10,10" HorizontalAlignment="Stretch" >Join</Button>
-            <Button Name="CreateProject"
+            <Button Name="JoinProject" IsEnabled="{Binding CanJoinProjectRx.Value}" Margin="10,20,10,10" HorizontalAlignment="Stretch" >Join</Button>
+            <Button Name="CreateProject" IsEnabled="{Binding CanCreateProjectRx.Value}"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Stretch">New</Button>
            

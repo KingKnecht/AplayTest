@@ -21,7 +21,7 @@ namespace APlayTest.Client
     public sealed class ProjectManager : APlayTest.Client.ProjectManagerSkeleton, IDisposable
     {
         private readonly SourceCache<ProjectDetail, int> _projectDetailsRx;
-        private readonly CompositeDisposable _cleanup = new CompositeDisposable();
+        private readonly CompositeDisposable _cleanup;
         /// <summary>
         /// Use this constructor to create instances in your code.
         /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
@@ -32,7 +32,10 @@ namespace APlayTest.Client
         {
             CanJoinProjectRx = new ReactiveProperty<bool>(CanCreateProject,ReactivePropertyMode.RaiseLatestValueOnSubscribe);
             CanCreateProjectRx = new ReactiveProperty<bool>(CanCreateProject,ReactivePropertyMode.RaiseLatestValueOnSubscribe);
+            
             SelectedProjectRx = new ReactiveProperty<ProjectDetail>(SelectedProject, ReactivePropertyMode.RaiseLatestValueOnSubscribe);
+            var selectedProjectAction = SelectedProjectRx.Subscribe(selected => SelectedProject = selected);
+
             _projectDetailsRx =  new SourceCache<ProjectDetail, int>(pd => pd.ProjectId);
 
             _projectDetailsRx.Edit(e =>
@@ -40,12 +43,13 @@ namespace APlayTest.Client
                 e.AddOrUpdate(ProjectDetails);
             });
 
-            _cleanup.Add(_projectDetailsRx);
+            _cleanup = new CompositeDisposable(CanCreateProjectRx, CanJoinProjectRx, SelectedProjectRx,
+                _projectDetailsRx, selectedProjectAction);
         }
 
-        public ReactiveProperty<ProjectDetail> SelectedProjectRx { get; set; }
-        public ReactiveProperty<bool> CanJoinProjectRx { get; set; }
-        public ReactiveProperty<bool> CanCreateProjectRx { get; set; }
+        public ReactiveProperty<ProjectDetail> SelectedProjectRx { get;private set; }
+        public ReactiveProperty<bool> CanJoinProjectRx { get; private set; }
+        public ReactiveProperty<bool> CanCreateProjectRx { get; private set; }
 
         public IObservableCache<ProjectDetail, int> ProjectDetailsRx
         {
@@ -97,7 +101,7 @@ namespace APlayTest.Client
         public override void onSelectedProjectChange(ProjectDetail NewSelectedProject__)
         {
             base.onSelectedProjectChange(NewSelectedProject__);
-        
+            
             SelectedProjectRx.Value = NewSelectedProject__;
         }
 
