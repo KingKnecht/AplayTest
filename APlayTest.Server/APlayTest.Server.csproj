@@ -104,6 +104,7 @@
     <Compile Include="Impl\Project.cs" />
     <Compile Include="Impl\ProjectManager.cs" />
     <Compile Include="Impl\Sheet.cs" />
+    <Compile Include="Impl\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="userCompiled\APlayUserCompiled.cs" />
   </ItemGroup>

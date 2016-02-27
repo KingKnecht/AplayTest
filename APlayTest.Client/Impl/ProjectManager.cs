@@ -18,7 +18,7 @@ using Reactive.Bindings;
 
 namespace APlayTest.Client
 {
-    public sealed class ProjectManager : APlayTest.Client.ProjectManagerSkeleton, IDisposable
+    public  class ProjectManager : APlayTest.Client.ProjectManagerSkeleton, IDisposable
     {
         private readonly SourceCache<ProjectDetail, int> _projectDetailsRx;
         private readonly CompositeDisposable _cleanup;
@@ -30,43 +30,35 @@ namespace APlayTest.Client
 
         public ProjectManager()
         {
-            CanJoinProjectRx = new ReactiveProperty<bool>(CanCreateProject,ReactivePropertyMode.RaiseLatestValueOnSubscribe);
-            CanCreateProjectRx = new ReactiveProperty<bool>(CanCreateProject,ReactivePropertyMode.RaiseLatestValueOnSubscribe);
-            
-            SelectedProjectRx = new ReactiveProperty<ProjectDetail>(SelectedProject, ReactivePropertyMode.RaiseLatestValueOnSubscribe);
-            var selectedProjectAction = SelectedProjectRx.Subscribe(selected => SelectedProject = selected);
-
-            _projectDetailsRx =  new SourceCache<ProjectDetail, int>(pd => pd.ProjectId);
+            //Todo: Read that shit and think about it.
+            //Solange es keine Möglichkeit gibt die Änderungen der AplayList direkt 
+            //per Extension-Methode in einen SourceCache umzuwandeln findet die Umwandlung hier statt und nicht im VM.
+            _projectDetailsRx = new SourceCache<ProjectDetail, int>(pd => pd.ProjectId);
 
             _projectDetailsRx.Edit(e =>
             {
                 e.AddOrUpdate(ProjectDetails);
             });
 
-            _cleanup = new CompositeDisposable(CanCreateProjectRx, CanJoinProjectRx, SelectedProjectRx,
-                _projectDetailsRx, selectedProjectAction);
+            _cleanup = new CompositeDisposable(_projectDetailsRx);
         }
 
-        public ReactiveProperty<ProjectDetail> SelectedProjectRx { get;private set; }
-        public ReactiveProperty<bool> CanJoinProjectRx { get; private set; }
-        public ReactiveProperty<bool> CanCreateProjectRx { get; private set; }
+        public override void onJoinedProject(Project project)
+        {
+            IsJoinedToProject.Value = true;
+        }
 
+        public ReactiveProperty<bool> IsJoinedToProject { get; private set; }
+
+   
         public IObservableCache<ProjectDetail, int> ProjectDetailsRx
         {
             get { return _projectDetailsRx.AsObservableCache(); }
         }
 
-        public override void onCanJoinProjectChange(bool NewCanJoinProject__)
-        {
-            base.onCanJoinProjectChange(NewCanJoinProject__);
-            CanJoinProjectRx.Value = NewCanJoinProject__;
-        }
 
-        public override void onCanCreateProjectChange(bool NewCanCreateProject__)
-        {
-            base.onCanCreateProjectChange(NewCanCreateProject__);
-            CanCreateProjectRx.Value = NewCanCreateProject__;
-        }
+        #region List to SourceCache convertion. 
+        //TODO: Einen allgemeinen Konverter/ExtensionMethod für AplayList -> SourceCache schreiben.
 
         public override void onProjectDetailsClear()
         {
@@ -76,14 +68,14 @@ namespace APlayTest.Client
 
         public override void onProjectDetailsAdd(ProjectDetail element)
         {
-            base.onProjectDetailsAdd(element);  
-           _projectDetailsRx.AddOrUpdate(element);
+            base.onProjectDetailsAdd(element);
+            _projectDetailsRx.AddOrUpdate(element);
         }
 
         public override void onProjectDetailsRemove(ProjectDetail element)
         {
             base.onProjectDetailsRemove(element);
-           _projectDetailsRx.Remove(element);
+            _projectDetailsRx.Remove(element);
         }
 
         public override void onProjectDetailsRemoveAt(int pos, ProjectDetail element)
@@ -98,13 +90,10 @@ namespace APlayTest.Client
             _projectDetailsRx.AddOrUpdate(element);
         }
 
-        public override void onSelectedProjectChange(ProjectDetail NewSelectedProject__)
-        {
-            base.onSelectedProjectChange(NewSelectedProject__);
-            
-            SelectedProjectRx.Value = NewSelectedProject__;
-        }
+        
+        #endregion
 
+    
 
         public void Dispose()
         {

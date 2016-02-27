@@ -19,11 +19,11 @@ namespace APlayTest.Services
     public interface IProjectDetailsService
     {
         IEnumerable<ProjectDetail> GetProjectDetails(Func<ProjectDetail, bool> filter);
-        ProjectDetail CreateProject(string name);
+        ProjectDetail CreateProject(string projectName, string userName);
         bool IsValidName(string name);
 
         /// <summary>
-        /// Used to notify about changes i.e. project add, removed.
+        /// Used to notify about changes i.e. project add, removed. Deltas only.
         /// </summary>
         IObservableCache<ProjectDetail, int> ProjectDetailsDelta { get; }
 
@@ -42,7 +42,7 @@ namespace APlayTest.Services
 
             for (int i = 0; i < 5; i++)
             {
-                CreateProject("Dummy_" + i);
+                CreateProject("Dummy_" + i, Environment.UserName);
             }
 
             _cleanup.Add(_sourceCache);
@@ -54,19 +54,20 @@ namespace APlayTest.Services
             return _projects.Where(filter);
         }
 
-
-        public ProjectDetail CreateProject(string name)
+        //Todo: Username durchschleifen. CreationDate erzeugen
+        public ProjectDetail CreateProject(string projectName, string userName)
         {
-            if (!IsValidName(name))
+            //Todo: Lock für Writer, wäre schlecht wenn das 2 Clients gleichzeitg machen.
+            if (!IsValidName(projectName))
             {
                 return new ProjectDetail();
             }
 
             var newProjectDetails = new ProjectDetail()
             {
-                CreatedBy = "Not impl.",
+                CreatedBy = userName,
                 CreationDate = DateTime.Now,
-                Name = name,
+                Name = projectName,
                 ProjectId = ++_nextProjectId
             };
 

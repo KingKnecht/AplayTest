@@ -7,7 +7,7 @@
     <Grid>
         
         <Button Name="ChangeProjectTitle"
-                Height="30">Click to change title xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</Button>
+                Height="30">Click to change title Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test </Button>
 
         <ContentControl Grid.Row="0"
                         x:Name="ActiveItem" HorizontalAlignment="Center" VerticalAlignment="Center"/>

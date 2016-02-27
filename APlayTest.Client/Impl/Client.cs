@@ -10,17 +10,16 @@ using System.Runtime.CompilerServices;
 using APlay.Common;
 using APlay.Common.Utils;
 using APlay.Common.DataTypes;
+using APlay.Generated.Intern.Client;
 using APlayTest.Client;
 using APlayTest.Client.Annotations;
 
 namespace APlayTest.Client
 {
-    public class Client : APlayTest.Client.ClientSkeleton, INotifyPropertyChanged
+    public sealed class Client : APlayTest.Client.ClientSkeleton, INotifyPropertyChanged
     {
 
-        private List<Project> _projects = new List<Project>();
-
-
+    
         /// <summary>
         /// Use this constructor to create instances in your code.
         /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
@@ -29,9 +28,9 @@ namespace APlayTest.Client
 
         public Client()
         {
-            /// TODO: add your code here
+           
         }
-
+        
         public override void onCurrentProjectChange(Project NewCurrentProject__)
         {
             base.onCurrentProjectChange(NewCurrentProject__);
@@ -48,7 +47,7 @@ namespace APlayTest.Client
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));

@@ -30,7 +30,7 @@ namespace APlayTest.Client.Wpf.ViewModels
             _projectManager = projectManager;
 
             var detailsDisp = _projectManager.ProjectDetailsRx.Connect()
-             .ObserveOnUIDispatcher()
+                .ObserveOnUIDispatcher()
                 .Bind(out _projectDetailsRx)
                 .Subscribe();
 
@@ -38,45 +38,57 @@ namespace APlayTest.Client.Wpf.ViewModels
             CanCreateProjectRx = new ReactiveProperty<bool>();
             SelectedProjectRx = new ReactiveProperty<ProjectDetail>();
 
-            var selectedProjectAction =
-                SelectedProjectRx.Subscribe(selected => _projectManager.SelectedProjectRx.Value = selected);
-
             SearchStringRx = new ReactiveProperty<string>(string.Empty, ReactivePropertyMode.DistinctUntilChanged);
-             
-            var searchAction =  SearchStringRx
+
+            var searchAction = SearchStringRx
                 .Throttle(TimeSpan.FromMilliseconds(500))
                 .Subscribe(searchString => _projectManager.SearchProjects(searchString));
 
-            var joinDisp = _projectManager.CanJoinProjectRx.Subscribe(value => CanJoinProjectRx.Value = value);
-            var createDisp = _projectManager.CanCreateProjectRx.Subscribe(value => CanCreateProjectRx.Value = value);
-            var selectDisp = _projectManager.SelectedProjectRx.Subscribe(value => SelectedProjectRx.Value = value);
+            SelectedProjectRx = Observable.FromEvent<Delegates.void_ProjectDetail, ProjectDetail>(
+                ev => _projectManager.SelectedProjectDetailChangeEventHandler += ev,
+                ev => _projectManager.SelectedProjectDetailChangeEventHandler -= ev)
+                .ToReactiveProperty();
+           var selectProjectDetailAction = SelectedProjectRx.Subscribe(pd => _projectManager.SelectProject(pd.ProjectId)); //Rückkanal
 
-            _cleanUp = new CompositeDisposable(joinDisp, createDisp, detailsDisp, selectDisp, searchAction,
-                CanJoinProjectRx, SelectedProjectRx, selectedProjectAction);
+            CanJoinProjectRx = Observable.FromEvent<Delegates.void_boolean, bool>(
+                ev => _projectManager.CanJoinProjectChangeEventHandler += ev,
+                ev => _projectManager.CanJoinProjectChangeEventHandler -= ev)
+                .ToReactiveProperty();
+
+            CanCreateProjectRx = Observable.FromEvent<Delegates.void_boolean, bool>(
+                ev => _projectManager.CanCreateProjectChangeEventHandler += ev,
+                ev => _projectManager.CanCreateProjectChangeEventHandler -= ev)
+                .ToReactiveProperty();
+
+            _cleanUp = new CompositeDisposable(selectProjectDetailAction,CanCreateProjectRx, CanJoinProjectRx, detailsDisp, searchAction,
+                SelectedProjectRx);
 
         }
 
-    
+
         public ReadOnlyObservableCollection<ProjectDetail> ProjectDetailsRx
         {
             get { return _projectDetailsRx; }
         }
 
-        public ReactiveProperty<ProjectDetail> SelectedProjectRx { get;private set; }
-        
-        public ReactiveProperty<string> SearchStringRx { get;private set; }
+        public ReactiveProperty<ProjectDetail> SelectedProjectRx { get; private set; }
+
+        public ReactiveProperty<string> SearchStringRx { get; private set; }
         public ReactiveProperty<bool> CanJoinProjectRx { get; private set; }
         public ReactiveProperty<bool> CanCreateProjectRx { get; private set; }
 
 
         public void CreateProject()
         {
-            _projectManager.CreateProject(SearchStringRx.Value);
+            //Todo: Cleanup
+            //Muss das mit _projectManager.DataClient wirklich sein? Das ist ziemlich viel Wissen an der Stelle über PrjMgr.
+            //besser überladene Methode und ProjectManager stopft den Client dann selber rein...Problem: Die Methode ist trotzdem sichtbar. IFace?
+            _projectManager.CreateProject(_projectManager.DataClient, SearchStringRx.Value);
         }
 
         public void JoinProject()
         {
-            _projectManager.JoinProject(SelectedProjectRx.Value.ProjectId);
+            _projectManager.JoinProject(_projectManager.DataClient, SelectedProjectRx.Value.ProjectId);
         }
 
         public void Dispose()

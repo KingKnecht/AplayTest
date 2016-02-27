@@ -6,12 +6,13 @@
   <namespace>
     <class name="Client">
       <code><![CDATA[//TODO: Your class based communication here:
+[Client -> Server]
+User CurrentUser;
+
 [Server -> Client]
 Project CurrentProject;
 ProjectManager ProjectManager;
-
-
-  ]]></code>
+]]></code>
       <__designerPresentation>
         <x>59</x>
         <y>13</y>
@@ -44,22 +45,20 @@ int32 ProjectId;]]></code>
     <class name="ProjectManager">
       <code><![CDATA[[ Client -> Server ]
 
-void JoinProject(int32 projectId);
-void CreateProject(WString name);
-
+void JoinProject(Client sender, int32 projectId);
+void CreateProject(Client sender, WString name);
 void SearchProjects(WString searchString);
+void SelectProject(int32 projectId);
 
 [Server -> Client]
 boolean CanJoinProject;
 boolean CanCreateProject;
 List<ProjectDetail> ProjectDetails;
 
-[Server Client -> Client Server]
-ProjectDetail SelectedProject;
-
-
-[Server -> Server]
-void ProjectDetailsListChanged();]]></code>
+[Server -> Client]
+ProjectDetail SelectedProjectDetail;
+void JoinedProject(Project project);
+Client DataClient;]]></code>
     </class>
     <class name="Sheet">
       <code><![CDATA[//TODO: Your class based communication here:
@@ -67,6 +66,14 @@ void ProjectDetailsListChanged();]]></code>
 
   int32 Id;
   WString Name;]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </class>
+    <class name="User">
+      <code><![CDATA[//TODO: Your class based communication here:
+[ Client -> Server ]
+
+WString Name;
+]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
     <__designerPresentation>null</__designerPresentation>

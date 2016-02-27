@@ -31,6 +31,8 @@ namespace APlayTest.Client.Wpf.ViewModels
             APlayClient.DisconnectEventHandler += _aPlayClient_DisconnectEventHandler;
 
             APlayClient.Start("127.0.0.1:63422");
+
+            
         }
 
         void _aPlayClient_DisconnectEventHandler()
@@ -42,6 +44,11 @@ namespace APlayTest.Client.Wpf.ViewModels
         {
             APlayClient.DataClient = clientObject;
 
+            APlayClient.DataClient.CurrentUser = new User()
+            {
+                Name = Environment.UserName
+            };
+            
             WeakEventManager<Client, PropertyChangedEventArgs>.AddHandler(APlayClient.DataClient, "PropertyChanged", DataClientChangedHandler);
 
             if (APlayClient.DataClient.CurrentProject == null)

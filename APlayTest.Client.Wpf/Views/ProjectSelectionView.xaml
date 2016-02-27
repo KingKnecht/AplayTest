@@ -27,7 +27,7 @@
 
         <ctrl:SearchTextBox Grid.Row="1"
                             Grid.Column="0"
-                            LabelText="Search projects"
+                            LabelText="Search projects or create a new one"
                             Height="30"
                             Text="{Binding SearchStringRx.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 

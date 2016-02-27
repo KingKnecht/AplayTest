@@ -10,10 +10,11 @@ namespace APlayTest.Server.Factories
     public class ProjectManagerFactory : IProjectManagerFactory
     {
         private readonly IProjectDetailsService _projectDetailsService;
-
+   
         public ProjectManagerFactory(IProjectDetailsService projectDetailsService)
         {
             _projectDetailsService = projectDetailsService;
+            
         }
 
         public ProjectManager CreateProjectManager()
