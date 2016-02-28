@@ -21,23 +21,28 @@ namespace APlayTest.Client.Wpf.ViewModels
     public class ProjectSelectionViewModel : Screen, IDisposable
     {
         private readonly ProjectManager _projectManager;
-
-        private ProjectDetail _selectedProject;
         private readonly CompositeDisposable _cleanUp;
-        private readonly ReadOnlyObservableCollection<ProjectDetail> _projectDetailsRx;
+        private readonly ReadOnlyObservableCollection<ProjectDetailsVm> _projectDetailsRx;
 
         public ProjectSelectionViewModel(ProjectManager projectManager)
         {
             _projectManager = projectManager;
 
-            var detailsDisp = _projectManager.ProjectDetailsRx.Connect()
+            var detailsDisp = _projectManager.ProjectsRx.Connect()
+                .Transform(prj => new ProjectDetailsVm()
+                {
+                    Name = prj.ProjectDetail.Name,
+                    CreationDate = prj.ProjectDetail.CreationDate,
+                    CreatedBy = prj.ProjectDetail.CreatedBy,
+                    ProjectId = prj.Id
+                })
                 .ObserveOnUIDispatcher()
                 .Bind(out _projectDetailsRx)
                 .Subscribe();
 
             CanJoinProjectRx = new ReactiveProperty<bool>();
             CanCreateProjectRx = new ReactiveProperty<bool>();
-            SelectedProjectRx = new ReactiveProperty<ProjectDetail>();
+            SelectedProjectRx = new ReactiveProperty<ProjectDetailsVm>();
 
             SearchStringRx = new ReactiveProperty<string>(string.Empty, ReactivePropertyMode.DistinctUntilChanged);
 
@@ -45,11 +50,47 @@ namespace APlayTest.Client.Wpf.ViewModels
                 .Throttle(TimeSpan.FromMilliseconds(500))
                 .Subscribe(searchString => _projectManager.SearchProjects(searchString));
 
-            SelectedProjectRx = Observable.FromEvent<Delegates.void_ProjectDetail, ProjectDetail>(
-                ev => _projectManager.SelectedProjectDetailChangeEventHandler += ev,
-                ev => _projectManager.SelectedProjectDetailChangeEventHandler -= ev)
-                .ToReactiveProperty();
-            var selectProjectDetailAction = SelectedProjectRx.Subscribe(pd => _projectManager.SelectProject(pd.ProjectId)); //Rückkanal
+            SelectedProjectRx = Observable.FromEvent<Delegates.void_Project, Project>(
+                ev => _projectManager.SelectedProjectChangeEventHandler += ev,
+                ev => _projectManager.SelectedProjectChangeEventHandler -= ev)
+                .Where(project =>
+                {
+                    if (project == null)
+                        return false;
+
+                    if (SelectedProjectRx.Value != null && project.Id == SelectedProjectRx.Value.ProjectId)
+                    {
+                        return false;
+                    }
+
+                    return true;
+                })
+                .Select(
+                    prj =>
+                    {
+                        if (prj == null)
+                        {
+                            return null;
+                        }
+
+                        return new ProjectDetailsVm()
+                        {
+                            Name = prj.ProjectDetail.Name,
+                            CreationDate = prj.ProjectDetail.CreationDate,
+                            CreatedBy = prj.ProjectDetail.CreatedBy,
+                            ProjectId = prj.Id
+                        };
+
+                    })
+                .ToReactiveProperty(null, ReactivePropertyMode.DistinctUntilChanged);
+
+            var selectProjectAction = SelectedProjectRx
+                .Where(projectDetailsVm => projectDetailsVm != null)
+                .Subscribe(pd =>
+                {
+                    Console.WriteLine("ProjectID selected: " + pd.ProjectId);
+                    _projectManager.SelectProject(pd.ProjectId);
+                }); //Rückkanal Selektion in der GUI -> Server.
 
             CanJoinProjectRx = Observable.FromEvent<Delegates.void_boolean, bool>(
                 ev => _projectManager.CanJoinProjectChangeEventHandler += ev,
@@ -69,19 +110,19 @@ namespace APlayTest.Client.Wpf.ViewModels
                         Logger.LogDesigned(2,
                             "'Select-Project-Window' should be closed. Selected project: " + prj.ProjectDetail.Name,
                             "Client.Designed"));
-                        
-            _cleanUp = new CompositeDisposable(selectProjectDetailAction, CanCreateProjectRx, CanJoinProjectRx, detailsDisp, searchAction,
+
+            _cleanUp = new CompositeDisposable(selectProjectAction, CanCreateProjectRx, CanJoinProjectRx, detailsDisp, searchAction,
                 SelectedProjectRx, joinedProjectObservable);
 
         }
 
 
-        public ReadOnlyObservableCollection<ProjectDetail> ProjectDetailsRx
+        public ReadOnlyObservableCollection<ProjectDetailsVm> ProjectDetailsRx
         {
             get { return _projectDetailsRx; }
         }
 
-        public ReactiveProperty<ProjectDetail> SelectedProjectRx { get; private set; }
+        public ReactiveProperty<ProjectDetailsVm> SelectedProjectRx { get; private set; }
 
         public ReactiveProperty<string> SearchStringRx { get; private set; }
         public ReactiveProperty<bool> CanJoinProjectRx { get; private set; }
@@ -104,6 +145,20 @@ namespace APlayTest.Client.Wpf.ViewModels
         public void Dispose()
         {
             _cleanUp.Dispose();
+        }
+
+    }
+
+    public class ProjectDetailsVm
+    {
+        public string Name { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime CreationDate { get; set; }
+        public int ProjectId { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("[{0}][{1}][{2}][{3}]", Name, CreatedBy, CreationDate, ProjectId);
         }
     }
 }

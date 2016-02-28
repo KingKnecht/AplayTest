@@ -23,22 +23,9 @@
       <access role="Client" read="true" write="false"/>
       <access role="Server" read="true" write="true"/>
     </permissionGroup>
-    <permissionGroup name="ServerToServer_AND_Client_loopback">
-      <access role="Client" read="true" write="false"/>
-      <access role="Server" read="true" write="true" loopback="true"/>
-    </permissionGroup>
     <communicationObject name="Project" persistable="false">
-      <permissionGroup baseType="ServerToServer_AND_Client_loopback">
-        <data type="WString" name="Name" persistable="false"/>
-      </permissionGroup>
       <permissionGroup baseType="ServerToServer_AND_Client">
-        <event name="CreateSheet" returnType="Sheet">
-          <data type="WString" name="name" persistable="false"/>
-        </event>
-        <event name="GetSheets" returnType="List&lt;Sheet>"/>
-        <event name="SetName">
-          <data type="WString" name="name" persistable="false"/>
-        </event>
+        <data type="int32" name="Id" persistable="false"/>
         <data type="ProjectDetail" name="ProjectDetail" persistable="false"/>
       </permissionGroup>
     </communicationObject>
@@ -46,7 +33,6 @@
       <data type="WString" name="Name" persistable="false"/>
       <data type="WString" name="CreatedBy" persistable="false"/>
       <data type="Date" name="CreationDate" persistable="false"/>
-      <data type="int32" name="ProjectId" persistable="false"/>
     </primitive>
     <communicationObject name="ProjectManager" persistable="false">
       <permissionGroup baseType="ClientToServer">
@@ -68,10 +54,10 @@
       <permissionGroup baseType="ServerToClient">
         <data type="boolean" name="CanJoinProject" persistable="false"/>
         <data type="boolean" name="CanCreateProject" persistable="false"/>
-        <list type="ProjectDetail" name="ProjectDetails" persistable="false"/>
+        <list type="Project" name="Projects" persistable="false"/>
       </permissionGroup>
       <permissionGroup baseType="ServerToClient">
-        <data type="ProjectDetail" name="SelectedProjectDetail" persistable="false"/>
+        <data type="Project" name="SelectedProject" persistable="false"/>
         <event name="JoinedProject">
           <data type="Project" name="project" persistable="false"/>
         </event>

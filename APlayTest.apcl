@@ -20,14 +20,11 @@ ProjectManager ProjectManager;
     </class>
     <class name="Project">
       <code><![CDATA[//TODO: Your class based communication here:
-[Server -> Server Client]
-
-List<Sheet> GetSheets();
-
+[Server -> Client Server]
+int32 Id;
 ProjectDetail ProjectDetail;
 
-[Client -> Server]
-Sheet CreateSheet(WString name);
+
 
 ]]></code>
     </class>
@@ -36,7 +33,7 @@ Sheet CreateSheet(WString name);
 WString Name;
 WString CreatedBy;
 Date CreationDate;
-int32 ProjectId;]]></code>
+]]></code>
       <__designerPresentation>null</__designerPresentation>
     </struct>
     <class name="ProjectManager">
@@ -50,10 +47,10 @@ void SelectProject(int32 projectId);
 [Server -> Client]
 boolean CanJoinProject;
 boolean CanCreateProject;
-List<ProjectDetail> ProjectDetails;
+List<Project> Projects;
 
 [Server -> Client]
-ProjectDetail SelectedProjectDetail;
+Project SelectedProject;
 void JoinedProject(Project project);
 Client DataClient;]]></code>
     </class>

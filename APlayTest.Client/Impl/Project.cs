@@ -15,49 +15,18 @@ using APlayTest.Client.Annotations;
 
 namespace APlayTest.Client
 {
-  public class Project : APlayTest.Client.ProjectSkeleton, INotifyPropertyChanged
-  {
-    /// <summary>
-    /// Use this constructor to create instances in your code.
-    /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
-    ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
-    /// </summary>
-    
-    public Project()
+    public class Project : APlayTest.Client.ProjectSkeleton
     {
-      /// TODO: add your code here
+        /// <summary>
+        /// Use this constructor to create instances in your code.
+        /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
+        ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
+        /// </summary>
+
+        public Project()
+        {
+            /// TODO: add your code here
+        }
     }
 
-
-      public override Sheet onCreateSheet(string name__)
-      {
-          throw new NotImplementedException();
-      }
-
-      public override SheetList onGetSheets()
-      {
-          throw new NotImplementedException();
-      }
-
-      public override void onSetName(string name__)
-      {
-          throw new NotImplementedException();
-      }
-
-      public override void onNameChange(string NewName__)
-      {
-          base.onNameChange(NewName__);
-          OnPropertyChanged("Name");
-      }
-      
-      public event PropertyChangedEventHandler PropertyChanged;
-
-      [NotifyPropertyChangedInvocator]
-      protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-      {
-          var handler = PropertyChanged;
-          if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-      }
-  }
-  
 }

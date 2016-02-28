@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using Caliburn.Micro;
 using APlay.Client;
+using Reactive.Bindings;
+using Reactive.Bindings.Interactivity;
 
 namespace APlayTest.Client.Wpf.ViewModels
 {
@@ -17,71 +21,45 @@ namespace APlayTest.Client.Wpf.ViewModels
 
     }
 
-    public class ShellViewModel : Conductor<IScreen>.Collection.OneActive, IShellViewModel
+    public class ShellViewModel : Conductor<IScreen>.Collection.OneActive, IShellViewModel, IDisposable
     {
         private readonly IWindowManager _windowManager;
         public static APlayClient APlayClient;
-
+        private CompositeDisposable _cleanup;
         public ShellViewModel(IWindowManager windowManager)
         {
             _windowManager = windowManager;
             APlayClient = new APlayClient();
 
-            APlayClient.ConnectEventHandler += _aPlayClient_ConnectEventHandler;
-            APlayClient.DisconnectEventHandler += _aPlayClient_DisconnectEventHandler;
+             APlayClient.Start("127.0.0.1:63422");
 
-            APlayClient.Start("127.0.0.1:63422");
-
-            
-        }
-
-        void _aPlayClient_DisconnectEventHandler()
-        {
-
-        }
-
-        void _aPlayClient_ConnectEventHandler(Client clientObject)
-        {
-            APlayClient.DataClient = clientObject;
-
-            APlayClient.DataClient.CurrentUser = new User()
-            {
-                Name = Environment.UserName
-            };
-            
-            WeakEventManager<Client, PropertyChangedEventArgs>.AddHandler(APlayClient.DataClient, "PropertyChanged", DataClientChangedHandler);
-
-            if (APlayClient.DataClient.CurrentProject == null)
-            {
-                if (APlayClient.DataClient.ProjectManager != null)
+            var connectObservable = Observable.FromEvent<Delegates.void_Client, Client>(
+                ev => APlayClient.ConnectEventHandler += ev,
+                ev => APlayClient.ConnectEventHandler -= ev)
+                .Subscribe(client =>
                 {
-                    ActivateItem(new ProjectSelectionViewModel(APlayClient.DataClient.ProjectManager));
-                }
-            }
+                    APlayClient.DataClient = client;
+
+                    APlayClient.DataClient.CurrentUser = new User()
+                    {
+                        Name = Environment.UserName
+                    };
+
+                    if (APlayClient.DataClient.CurrentProject == null)
+                    {
+                        if (APlayClient.DataClient.ProjectManager != null)
+                        {
+                            ActivateItem(new ProjectSelectionViewModel(APlayClient.DataClient.ProjectManager));
+                        }
+                    }
+                });
+
+            _cleanup = new CompositeDisposable(connectObservable);
         }
 
-        private void DataClientChangedHandler(object sender, PropertyChangedEventArgs e)
+        public void Dispose()
         {
-            var client = sender as Client;
-
-            if (client != null)
-            {
-                if (client.CurrentProject != null)
-                {
-                    WeakEventManager<Project, PropertyChangedEventArgs>.AddHandler(client.CurrentProject, "PropertyChanged", ProjectChangedHandler);
-                    DisplayName = client.CurrentProject.Name;
-                }
-            }
+            _cleanup.Dispose();
         }
-
-        private void ProjectChangedHandler(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
-        {
-            var project = sender as Project;
-            if (project != null)
-            {
-                DisplayName = project.Name;
-            }
-        }
-
     }
 }

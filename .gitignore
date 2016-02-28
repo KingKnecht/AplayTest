@@ -154,4 +154,6 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
-/packages/DynamicData.4.4.0.1110-beta
+#NuGet stuff
+/packages/
+!repositories.config

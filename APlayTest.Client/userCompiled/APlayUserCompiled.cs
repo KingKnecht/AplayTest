@@ -60,7 +60,7 @@ namespace APlayTest.Client
 {
   public interface  IProjectImpl
   {
-    String Name {get; }
+    int Id {get; }
     APlayTest.Client.ProjectDetail ProjectDetail {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
@@ -70,11 +70,8 @@ namespace APlayTest.Client
 {
   public interface  IProjectEvents
   {
-    void onNameChange (String NewName__);
+    void onIdChange (int NewId__);
     void onProjectDetailChange (APlayTest.Client.ProjectDetail NewProjectDetail__);
-    APlayTest.Client.Sheet onCreateSheet (String name__);
-    APlayTest.Client.SheetList onGetSheets ();
-    void onSetName (String name__);
   };
 }
 namespace APlayTest.Client
@@ -96,8 +93,8 @@ namespace APlayTest.Client
   {
     bool CanJoinProject {get; }
     bool CanCreateProject {get; }
-    APlayTest.Client.ProjectDetailList ProjectDetails {get; }
-    APlayTest.Client.ProjectDetail SelectedProjectDetail {get; }
+    APlayTest.Client.ProjectList Projects {get; }
+    APlayTest.Client.Project SelectedProject {get; }
     APlayTest.Client.Client DataClient {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
@@ -113,14 +110,14 @@ namespace APlayTest.Client
   {
     void onCanJoinProjectChange (bool NewCanJoinProject__);
     void onCanCreateProjectChange (bool NewCanCreateProject__);
-    void onProjectDetailsReplace (APlayTest.Client.ProjectDetailList ProjectDetails__);
-    void onProjectDetailsAdd (APlayTest.Client.ProjectDetail element);
-    void onProjectDetailsRemove (APlayTest.Client.ProjectDetail element);
-    void onProjectDetailsClear ();
-    void onProjectDetailsInsertAt (int pos, APlayTest.Client.ProjectDetail element);
-    void onProjectDetailsSetAt (int pos, APlayTest.Client.ProjectDetail element);
-    void onProjectDetailsRemoveAt (int pos, APlayTest.Client.ProjectDetail element);
-    void onSelectedProjectDetailChange (APlayTest.Client.ProjectDetail NewSelectedProjectDetail__);
+    void onProjectsReplace (APlayTest.Client.ProjectList Projects__);
+    void onProjectsAdd (APlayTest.Client.Project element);
+    void onProjectsRemove (APlayTest.Client.Project element);
+    void onProjectsClear ();
+    void onProjectsInsertAt (int pos, APlayTest.Client.Project element);
+    void onProjectsSetAt (int pos, APlayTest.Client.Project element);
+    void onProjectsRemoveAt (int pos, APlayTest.Client.Project element);
+    void onSelectedProjectChange (APlayTest.Client.Project NewSelectedProject__);
     void onDataClientChange (APlayTest.Client.Client NewDataClient__);
     void onJoinedProject (APlayTest.Client.Project project__);
   };
@@ -437,12 +434,12 @@ namespace APlayTest.Client
       }
       ((APlay.Generated.Intern.Client.__Project) (this.getProjectObject())).ProjectHandler = ((APlay.Generated.Intern.Client.__IProjectAPEvents) (((APlayTest.Client.ProjectSkeleton) (this))));
     }
-    public virtual String Name
+    public virtual int Id
     {
       get
       {
         {
-          return (implProject.Name);
+          return (implProject.Id);
         }
       }
     }
@@ -451,7 +448,7 @@ namespace APlayTest.Client
       get
       {
         {
-          return (new APlayTest.Client.ProjectDetail(((String) (implProject.ProjectDetail.Name)), ((String) (implProject.ProjectDetail.CreatedBy)), ((DateTime) (implProject.ProjectDetail.CreationDate)), ((int) (implProject.ProjectDetail.ProjectId))));
+          return (new APlayTest.Client.ProjectDetail(((String) (implProject.ProjectDetail.Name)), ((String) (implProject.ProjectDetail.CreatedBy)), ((DateTime) (implProject.ProjectDetail.CreationDate))));
         }
       }
     }
@@ -464,25 +461,25 @@ namespace APlayTest.Client
         }
       }
     }
-    public virtual void onNameChange(String NewName__)
+    public virtual void onIdChange(int NewId__)
     {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onNameChange received","Client.Designed");
+      APlay.Common.Logging.Logger.LogDesigned(2,"onIdChange received","Client.Designed");
     }
-    public void onInternNameChange(String NewName__)
+    public void onInternIdChange(int NewId__)
     {
-      if(NameChangeEventHandler!=null)
+      if(IdChangeEventHandler!=null)
       {
-        NameChangeEventHandler(NewName__);
+        IdChangeEventHandler(NewId__);
       }
       else
       {
-        if(APlayTest.Client.ProjectSkeleton.StaticNameChangeEventHandler!=null)
+        if(APlayTest.Client.ProjectSkeleton.StaticIdChangeEventHandler!=null)
         {
-          APlayTest.Client.ProjectSkeleton.StaticNameChangeEventHandler(NewName__, ((APlayTest.Client.Project) (this)));
+          APlayTest.Client.ProjectSkeleton.StaticIdChangeEventHandler(NewId__, ((APlayTest.Client.Project) (this)));
         }
         else
         {
-          this.onNameChange(NewName__);
+          this.onIdChange(NewId__);
         }
       }
     }
@@ -494,80 +491,17 @@ namespace APlayTest.Client
     {
       if(ProjectDetailChangeEventHandler!=null)
       {
-        ProjectDetailChangeEventHandler(new APlayTest.Client.ProjectDetail(((String) (NewProjectDetail__.Name)), ((String) (NewProjectDetail__.CreatedBy)), ((DateTime) (NewProjectDetail__.CreationDate)), ((int) (NewProjectDetail__.ProjectId))));
+        ProjectDetailChangeEventHandler(new APlayTest.Client.ProjectDetail(((String) (NewProjectDetail__.Name)), ((String) (NewProjectDetail__.CreatedBy)), ((DateTime) (NewProjectDetail__.CreationDate))));
       }
       else
       {
         if(APlayTest.Client.ProjectSkeleton.StaticProjectDetailChangeEventHandler!=null)
         {
-          APlayTest.Client.ProjectSkeleton.StaticProjectDetailChangeEventHandler(new APlayTest.Client.ProjectDetail(((String) (NewProjectDetail__.Name)), ((String) (NewProjectDetail__.CreatedBy)), ((DateTime) (NewProjectDetail__.CreationDate)), ((int) (NewProjectDetail__.ProjectId))), ((APlayTest.Client.Project) (this)));
+          APlayTest.Client.ProjectSkeleton.StaticProjectDetailChangeEventHandler(new APlayTest.Client.ProjectDetail(((String) (NewProjectDetail__.Name)), ((String) (NewProjectDetail__.CreatedBy)), ((DateTime) (NewProjectDetail__.CreationDate))), ((APlayTest.Client.Project) (this)));
         }
         else
         {
-          this.onProjectDetailChange(new APlayTest.Client.ProjectDetail(((String) (NewProjectDetail__.Name)), ((String) (NewProjectDetail__.CreatedBy)), ((DateTime) (NewProjectDetail__.CreationDate)), ((int) (NewProjectDetail__.ProjectId))));
-        }
-      }
-    }
-    public abstract APlayTest.Client.Sheet onCreateSheet(String name__);
-    public APlay.Generated.Intern.Client.__ISheetAPEvents onInternCreateSheet(String name__)
-    {
-      if(CreateSheetEventHandler!=null)
-      {
-        APlayTest.Client.Sheet retu = CreateSheetEventHandler(name__);
-        return (((APlay.Generated.Intern.Client.__ISheetAPEvents) (retu)));
-      }
-      else
-      {
-        if(APlayTest.Client.ProjectSkeleton.StaticCreateSheetEventHandler!=null)
-        {
-          APlayTest.Client.Sheet retu = APlayTest.Client.ProjectSkeleton.StaticCreateSheetEventHandler(name__, ((APlayTest.Client.Project) (this)));
-          return (((APlay.Generated.Intern.Client.__ISheetAPEvents) (retu)));
-        }
-        else
-        {
-          APlayTest.Client.Sheet retu = this.onCreateSheet(name__);
-          return (((APlay.Generated.Intern.Client.__ISheetAPEvents) (retu)));
-        }
-      }
-    }
-    public abstract APlayTest.Client.SheetList onGetSheets();
-    public APlay.Generated.Intern.Client.ISheetListEvents onInternGetSheets()
-    {
-      if(GetSheetsEventHandler!=null)
-      {
-        APlayTest.Client.SheetList retu = GetSheetsEventHandler();
-        return (((APlay.Generated.Intern.Client.ISheetListEvents) (retu)));
-      }
-      else
-      {
-        if(APlayTest.Client.ProjectSkeleton.StaticGetSheetsEventHandler!=null)
-        {
-          APlayTest.Client.SheetList retu = APlayTest.Client.ProjectSkeleton.StaticGetSheetsEventHandler(((APlayTest.Client.Project) (this)));
-          return (((APlay.Generated.Intern.Client.ISheetListEvents) (retu)));
-        }
-        else
-        {
-          APlayTest.Client.SheetList retu = this.onGetSheets();
-          return (((APlay.Generated.Intern.Client.ISheetListEvents) (retu)));
-        }
-      }
-    }
-    public abstract void onSetName(String name__);
-    public void onInternSetName(String name__)
-    {
-      if(SetNameEventHandler!=null)
-      {
-        SetNameEventHandler(name__);
-      }
-      else
-      {
-        if(APlayTest.Client.ProjectSkeleton.StaticSetNameEventHandler!=null)
-        {
-          APlayTest.Client.ProjectSkeleton.StaticSetNameEventHandler(name__, ((APlayTest.Client.Project) (this)));
-        }
-        else
-        {
-          this.onSetName(name__);
+          this.onProjectDetailChange(new APlayTest.Client.ProjectDetail(((String) (NewProjectDetail__.Name)), ((String) (NewProjectDetail__.CreatedBy)), ((DateTime) (NewProjectDetail__.CreationDate))));
         }
       }
     }
@@ -584,16 +518,10 @@ namespace APlayTest.Client
     {
       implProject = impl;
     }
-    public event APlayTest.Client.Delegates.void_WString NameChangeEventHandler;
-    static public event APlayTest.Client.Delegates.void_WString_Project StaticNameChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_int32 IdChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Project StaticIdChangeEventHandler;
     public event APlayTest.Client.Delegates.void_ProjectDetail ProjectDetailChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_ProjectDetail_Project StaticProjectDetailChangeEventHandler;
-    public event APlayTest.Client.Delegates.Sheet_WString CreateSheetEventHandler;
-    static public event APlayTest.Client.Delegates.Sheet_WString_Project StaticCreateSheetEventHandler;
-    public event APlayTest.Client.Delegates.SheetList_ GetSheetsEventHandler;
-    static public event APlayTest.Client.Delegates.SheetList_Project StaticGetSheetsEventHandler;
-    public event APlayTest.Client.Delegates.void_WString SetNameEventHandler;
-    static public event APlayTest.Client.Delegates.void_WString_Project StaticSetNameEventHandler;
     private APlay.Generated.Intern.Client.__IProjectAPImpl implProject;
   }
   
@@ -632,21 +560,21 @@ namespace APlayTest.Client
         }
       }
     }
-    public virtual APlayTest.Client.ProjectDetailList ProjectDetails
+    public virtual APlayTest.Client.ProjectList Projects
     {
       get
       {
         {
-          return (((APlayTest.Client.ProjectDetailList) (implProjectManager.ProjectDetails)));
+          return (((APlayTest.Client.ProjectList) (implProjectManager.Projects)));
         }
       }
     }
-    public virtual APlayTest.Client.ProjectDetail SelectedProjectDetail
+    public virtual APlayTest.Client.Project SelectedProject
     {
       get
       {
         {
-          return (new APlayTest.Client.ProjectDetail(((String) (implProjectManager.SelectedProjectDetail.Name)), ((String) (implProjectManager.SelectedProjectDetail.CreatedBy)), ((DateTime) (implProjectManager.SelectedProjectDetail.CreationDate)), ((int) (implProjectManager.SelectedProjectDetail.ProjectId))));
+          return (((APlayTest.Client.Project) (implProjectManager.SelectedProject)));
         }
       }
     }
@@ -712,179 +640,179 @@ namespace APlayTest.Client
         }
       }
     }
-    public virtual void onProjectDetailsReplace(APlayTest.Client.ProjectDetailList ProjectDetails__)
+    public virtual void onProjectsReplace(APlayTest.Client.ProjectList Projects__)
     {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectDetailsReplace received","Client.Designed");
+      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectsReplace received","Client.Designed");
     }
-    public void onInternProjectDetailsReplace(APlay.Generated.Intern.Client.IProjectDetailListEvents ProjectDetails__)
+    public void onInternProjectsReplace(APlay.Generated.Intern.Client.IProjectListEvents Projects__)
     {
-      if(ProjectDetailsReplaceEventHandler!=null)
+      if(ProjectsReplaceEventHandler!=null)
       {
-        ProjectDetailsReplaceEventHandler(((APlayTest.Client.ProjectDetailList) (ProjectDetails__)));
+        ProjectsReplaceEventHandler(((APlayTest.Client.ProjectList) (Projects__)));
       }
       else
       {
-        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsReplaceEventHandler!=null)
+        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectsReplaceEventHandler!=null)
         {
-          APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsReplaceEventHandler(((APlayTest.Client.ProjectDetailList) (ProjectDetails__)), ((APlayTest.Client.ProjectManager) (this)));
+          APlayTest.Client.ProjectManagerSkeleton.StaticProjectsReplaceEventHandler(((APlayTest.Client.ProjectList) (Projects__)), ((APlayTest.Client.ProjectManager) (this)));
         }
         else
         {
-          this.onProjectDetailsReplace(((APlayTest.Client.ProjectDetailList) (ProjectDetails__)));
+          this.onProjectsReplace(((APlayTest.Client.ProjectList) (Projects__)));
         }
       }
     }
-    public virtual void onProjectDetailsAdd(APlayTest.Client.ProjectDetail element)
+    public virtual void onProjectsAdd(APlayTest.Client.Project element)
     {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectDetailsAdd received","Client.Designed");
+      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectsAdd received","Client.Designed");
     }
-    public void onInternProjectDetailsAdd(APlay.Generated.Intern.Client.__ProjectDetail element)
+    public void onInternProjectsAdd(APlay.Generated.Intern.Client.__IProjectAPEvents element)
     {
-      if(ProjectDetailsAddEventHandler!=null)
+      if(ProjectsAddEventHandler!=null)
       {
-        ProjectDetailsAddEventHandler(new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))));
+        ProjectsAddEventHandler(((APlayTest.Client.Project) (element)));
       }
       else
       {
-        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsAddEventHandler!=null)
+        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectsAddEventHandler!=null)
         {
-          APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsAddEventHandler(new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))), ((APlayTest.Client.ProjectManager) (this)));
+          APlayTest.Client.ProjectManagerSkeleton.StaticProjectsAddEventHandler(((APlayTest.Client.Project) (element)), ((APlayTest.Client.ProjectManager) (this)));
         }
         else
         {
-          this.onProjectDetailsAdd(new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))));
+          this.onProjectsAdd(((APlayTest.Client.Project) (element)));
         }
       }
     }
-    public virtual void onProjectDetailsRemove(APlayTest.Client.ProjectDetail element)
+    public virtual void onProjectsRemove(APlayTest.Client.Project element)
     {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectDetailsRemove received","Client.Designed");
+      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectsRemove received","Client.Designed");
     }
-    public void onInternProjectDetailsRemove(APlay.Generated.Intern.Client.__ProjectDetail element)
+    public void onInternProjectsRemove(APlay.Generated.Intern.Client.__IProjectAPEvents element)
     {
-      if(ProjectDetailsRemoveEventHandler!=null)
+      if(ProjectsRemoveEventHandler!=null)
       {
-        ProjectDetailsRemoveEventHandler(new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))));
+        ProjectsRemoveEventHandler(((APlayTest.Client.Project) (element)));
       }
       else
       {
-        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsRemoveEventHandler!=null)
+        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectsRemoveEventHandler!=null)
         {
-          APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsRemoveEventHandler(new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))), ((APlayTest.Client.ProjectManager) (this)));
+          APlayTest.Client.ProjectManagerSkeleton.StaticProjectsRemoveEventHandler(((APlayTest.Client.Project) (element)), ((APlayTest.Client.ProjectManager) (this)));
         }
         else
         {
-          this.onProjectDetailsRemove(new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))));
+          this.onProjectsRemove(((APlayTest.Client.Project) (element)));
         }
       }
     }
-    public virtual void onProjectDetailsClear()
+    public virtual void onProjectsClear()
     {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectDetailsClear received","Client.Designed");
+      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectsClear received","Client.Designed");
     }
-    public void onInternProjectDetailsClear()
+    public void onInternProjectsClear()
     {
-      if(ProjectDetailsClearEventHandler!=null)
+      if(ProjectsClearEventHandler!=null)
       {
-        ProjectDetailsClearEventHandler();
+        ProjectsClearEventHandler();
       }
       else
       {
-        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsClearEventHandler!=null)
+        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectsClearEventHandler!=null)
         {
-          APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsClearEventHandler(((APlayTest.Client.ProjectManager) (this)));
+          APlayTest.Client.ProjectManagerSkeleton.StaticProjectsClearEventHandler(((APlayTest.Client.ProjectManager) (this)));
         }
         else
         {
-          this.onProjectDetailsClear();
+          this.onProjectsClear();
         }
       }
     }
-    public virtual void onProjectDetailsInsertAt(int pos, APlayTest.Client.ProjectDetail element)
+    public virtual void onProjectsInsertAt(int pos, APlayTest.Client.Project element)
     {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectDetailsInsertAt received","Client.Designed");
+      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectsInsertAt received","Client.Designed");
     }
-    public void onInternProjectDetailsInsertAt(int pos, APlay.Generated.Intern.Client.__ProjectDetail element)
+    public void onInternProjectsInsertAt(int pos, APlay.Generated.Intern.Client.__IProjectAPEvents element)
     {
-      if(ProjectDetailsInsertAtEventHandler!=null)
+      if(ProjectsInsertAtEventHandler!=null)
       {
-        ProjectDetailsInsertAtEventHandler(pos, new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))));
+        ProjectsInsertAtEventHandler(pos, ((APlayTest.Client.Project) (element)));
       }
       else
       {
-        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsInsertAtEventHandler!=null)
+        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectsInsertAtEventHandler!=null)
         {
-          APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsInsertAtEventHandler(pos, new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))), ((APlayTest.Client.ProjectManager) (this)));
+          APlayTest.Client.ProjectManagerSkeleton.StaticProjectsInsertAtEventHandler(pos, ((APlayTest.Client.Project) (element)), ((APlayTest.Client.ProjectManager) (this)));
         }
         else
         {
-          this.onProjectDetailsInsertAt(pos, new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))));
+          this.onProjectsInsertAt(pos, ((APlayTest.Client.Project) (element)));
         }
       }
     }
-    public virtual void onProjectDetailsSetAt(int pos, APlayTest.Client.ProjectDetail element)
+    public virtual void onProjectsSetAt(int pos, APlayTest.Client.Project element)
     {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectDetailsSetAt received","Client.Designed");
+      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectsSetAt received","Client.Designed");
     }
-    public void onInternProjectDetailsSetAt(int pos, APlay.Generated.Intern.Client.__ProjectDetail element)
+    public void onInternProjectsSetAt(int pos, APlay.Generated.Intern.Client.__IProjectAPEvents element)
     {
-      if(ProjectDetailsSetAtEventHandler!=null)
+      if(ProjectsSetAtEventHandler!=null)
       {
-        ProjectDetailsSetAtEventHandler(pos, new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))));
+        ProjectsSetAtEventHandler(pos, ((APlayTest.Client.Project) (element)));
       }
       else
       {
-        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsSetAtEventHandler!=null)
+        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectsSetAtEventHandler!=null)
         {
-          APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsSetAtEventHandler(pos, new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))), ((APlayTest.Client.ProjectManager) (this)));
+          APlayTest.Client.ProjectManagerSkeleton.StaticProjectsSetAtEventHandler(pos, ((APlayTest.Client.Project) (element)), ((APlayTest.Client.ProjectManager) (this)));
         }
         else
         {
-          this.onProjectDetailsSetAt(pos, new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))));
+          this.onProjectsSetAt(pos, ((APlayTest.Client.Project) (element)));
         }
       }
     }
-    public virtual void onProjectDetailsRemoveAt(int pos, APlayTest.Client.ProjectDetail element)
+    public virtual void onProjectsRemoveAt(int pos, APlayTest.Client.Project element)
     {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectDetailsRemoveAt received","Client.Designed");
+      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectsRemoveAt received","Client.Designed");
     }
-    public void onInternProjectDetailsRemoveAt(int pos, APlay.Generated.Intern.Client.__ProjectDetail element)
+    public void onInternProjectsRemoveAt(int pos, APlay.Generated.Intern.Client.__IProjectAPEvents element)
     {
-      if(ProjectDetailsRemoveAtEventHandler!=null)
+      if(ProjectsRemoveAtEventHandler!=null)
       {
-        ProjectDetailsRemoveAtEventHandler(pos, new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))));
+        ProjectsRemoveAtEventHandler(pos, ((APlayTest.Client.Project) (element)));
       }
       else
       {
-        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsRemoveAtEventHandler!=null)
+        if(APlayTest.Client.ProjectManagerSkeleton.StaticProjectsRemoveAtEventHandler!=null)
         {
-          APlayTest.Client.ProjectManagerSkeleton.StaticProjectDetailsRemoveAtEventHandler(pos, new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))), ((APlayTest.Client.ProjectManager) (this)));
+          APlayTest.Client.ProjectManagerSkeleton.StaticProjectsRemoveAtEventHandler(pos, ((APlayTest.Client.Project) (element)), ((APlayTest.Client.ProjectManager) (this)));
         }
         else
         {
-          this.onProjectDetailsRemoveAt(pos, new APlayTest.Client.ProjectDetail(((String) (element.Name)), ((String) (element.CreatedBy)), ((DateTime) (element.CreationDate)), ((int) (element.ProjectId))));
+          this.onProjectsRemoveAt(pos, ((APlayTest.Client.Project) (element)));
         }
       }
     }
-    public virtual void onSelectedProjectDetailChange(APlayTest.Client.ProjectDetail NewSelectedProjectDetail__)
+    public virtual void onSelectedProjectChange(APlayTest.Client.Project NewSelectedProject__)
     {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onSelectedProjectDetailChange received","Client.Designed");
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSelectedProjectChange received","Client.Designed");
     }
-    public void onInternSelectedProjectDetailChange(APlay.Generated.Intern.Client.__ProjectDetail NewSelectedProjectDetail__)
+    public void onInternSelectedProjectChange(APlay.Generated.Intern.Client.__IProjectAPEvents NewSelectedProject__)
     {
-      if(SelectedProjectDetailChangeEventHandler!=null)
+      if(SelectedProjectChangeEventHandler!=null)
       {
-        SelectedProjectDetailChangeEventHandler(new APlayTest.Client.ProjectDetail(((String) (NewSelectedProjectDetail__.Name)), ((String) (NewSelectedProjectDetail__.CreatedBy)), ((DateTime) (NewSelectedProjectDetail__.CreationDate)), ((int) (NewSelectedProjectDetail__.ProjectId))));
+        SelectedProjectChangeEventHandler(((APlayTest.Client.Project) (NewSelectedProject__)));
       }
       else
       {
-        if(APlayTest.Client.ProjectManagerSkeleton.StaticSelectedProjectDetailChangeEventHandler!=null)
+        if(APlayTest.Client.ProjectManagerSkeleton.StaticSelectedProjectChangeEventHandler!=null)
         {
-          APlayTest.Client.ProjectManagerSkeleton.StaticSelectedProjectDetailChangeEventHandler(new APlayTest.Client.ProjectDetail(((String) (NewSelectedProjectDetail__.Name)), ((String) (NewSelectedProjectDetail__.CreatedBy)), ((DateTime) (NewSelectedProjectDetail__.CreationDate)), ((int) (NewSelectedProjectDetail__.ProjectId))), ((APlayTest.Client.ProjectManager) (this)));
+          APlayTest.Client.ProjectManagerSkeleton.StaticSelectedProjectChangeEventHandler(((APlayTest.Client.Project) (NewSelectedProject__)), ((APlayTest.Client.ProjectManager) (this)));
         }
         else
         {
-          this.onSelectedProjectDetailChange(new APlayTest.Client.ProjectDetail(((String) (NewSelectedProjectDetail__.Name)), ((String) (NewSelectedProjectDetail__.CreatedBy)), ((DateTime) (NewSelectedProjectDetail__.CreationDate)), ((int) (NewSelectedProjectDetail__.ProjectId))));
+          this.onSelectedProjectChange(((APlayTest.Client.Project) (NewSelectedProject__)));
         }
       }
     }
@@ -962,22 +890,22 @@ namespace APlayTest.Client
     static public event APlayTest.Client.Delegates.void_boolean_ProjectManager StaticCanJoinProjectChangeEventHandler;
     public event APlayTest.Client.Delegates.void_boolean CanCreateProjectChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_boolean_ProjectManager StaticCanCreateProjectChangeEventHandler;
-    public event APlayTest.Client.Delegates.void_ProjectDetailList ProjectDetailsReplaceEventHandler;
-    static public event APlayTest.Client.Delegates.void_ProjectDetailList_ProjectManager StaticProjectDetailsReplaceEventHandler;
-    public event APlayTest.Client.Delegates.void_ProjectDetail ProjectDetailsAddEventHandler;
-    static public event APlayTest.Client.Delegates.void_ProjectDetail_ProjectManager StaticProjectDetailsAddEventHandler;
-    public event APlayTest.Client.Delegates.void_ProjectDetail ProjectDetailsRemoveEventHandler;
-    static public event APlayTest.Client.Delegates.void_ProjectDetail_ProjectManager StaticProjectDetailsRemoveEventHandler;
-    public event APlayTest.Client.Delegates.void_ ProjectDetailsClearEventHandler;
-    static public event APlayTest.Client.Delegates.void_ProjectManager StaticProjectDetailsClearEventHandler;
-    public event APlayTest.Client.Delegates.void_int32_ProjectDetail ProjectDetailsInsertAtEventHandler;
-    static public event APlayTest.Client.Delegates.void_int32_ProjectDetail_ProjectManager StaticProjectDetailsInsertAtEventHandler;
-    public event APlayTest.Client.Delegates.void_int32_ProjectDetail ProjectDetailsSetAtEventHandler;
-    static public event APlayTest.Client.Delegates.void_int32_ProjectDetail_ProjectManager StaticProjectDetailsSetAtEventHandler;
-    public event APlayTest.Client.Delegates.void_int32_ProjectDetail ProjectDetailsRemoveAtEventHandler;
-    static public event APlayTest.Client.Delegates.void_int32_ProjectDetail_ProjectManager StaticProjectDetailsRemoveAtEventHandler;
-    public event APlayTest.Client.Delegates.void_ProjectDetail SelectedProjectDetailChangeEventHandler;
-    static public event APlayTest.Client.Delegates.void_ProjectDetail_ProjectManager StaticSelectedProjectDetailChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_ProjectList ProjectsReplaceEventHandler;
+    static public event APlayTest.Client.Delegates.void_ProjectList_ProjectManager StaticProjectsReplaceEventHandler;
+    public event APlayTest.Client.Delegates.void_Project ProjectsAddEventHandler;
+    static public event APlayTest.Client.Delegates.void_Project_ProjectManager StaticProjectsAddEventHandler;
+    public event APlayTest.Client.Delegates.void_Project ProjectsRemoveEventHandler;
+    static public event APlayTest.Client.Delegates.void_Project_ProjectManager StaticProjectsRemoveEventHandler;
+    public event APlayTest.Client.Delegates.void_ ProjectsClearEventHandler;
+    static public event APlayTest.Client.Delegates.void_ProjectManager StaticProjectsClearEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Project ProjectsInsertAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Project_ProjectManager StaticProjectsInsertAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Project ProjectsSetAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Project_ProjectManager StaticProjectsSetAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Project ProjectsRemoveAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Project_ProjectManager StaticProjectsRemoveAtEventHandler;
+    public event APlayTest.Client.Delegates.void_Project SelectedProjectChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_Project_ProjectManager StaticSelectedProjectChangeEventHandler;
     public event APlayTest.Client.Delegates.void_Client DataClientChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_Client_ProjectManager StaticDataClientChangeEventHandler;
     public event APlayTest.Client.Delegates.void_Project JoinedProjectEventHandler;
@@ -1122,22 +1050,20 @@ namespace APlayTest.Client
 {
   public partial struct ProjectDetail
   {
-    public ProjectDetail(String Name__, String CreatedBy__, DateTime CreationDate__, int ProjectId__)
+    public ProjectDetail(String Name__, String CreatedBy__, DateTime CreationDate__)
     {
       Name = Name__;
       CreatedBy = CreatedBy__;
       CreationDate = CreationDate__;
-      ProjectId = ProjectId__;
     }
     public String Name;
     public String CreatedBy;
     public DateTime CreationDate;
-    public int ProjectId;
     public static bool operator ==(ProjectDetail a, ProjectDetail b)
     {
       if (System.Object.ReferenceEquals(a, b)) return true;
       if (((object)a == null) || ((object)b == null)) return false;
-      return true&& (a.Name==b.Name)&& (a.CreatedBy==b.CreatedBy)&& (a.CreationDate==b.CreationDate)&& (a.ProjectId==b.ProjectId);
+      return true&& (a.Name==b.Name)&& (a.CreatedBy==b.CreatedBy)&& (a.CreationDate==b.CreationDate);
     }
     public override bool Equals(System.Object obj)
     {
@@ -1153,11 +1079,11 @@ namespace APlayTest.Client
       ProjectDetail b = (ProjectDetail)obj;
       if (System.Object.ReferenceEquals(a, b)) return true;
       if (((object)a == null) || ((object)b == null)) return false;
-      return (a.Name==b.Name)&&(a.CreatedBy==b.CreatedBy)&&(a.CreationDate==b.CreationDate)&&(a.ProjectId==b.ProjectId);
+      return (a.Name==b.Name)&&(a.CreatedBy==b.CreatedBy)&&(a.CreationDate==b.CreationDate);
     }
     public override int GetHashCode()
     {
-      return Name.GetHashCode() + CreatedBy.GetHashCode() + CreationDate.GetHashCode() + ProjectId.GetHashCode();
+      return Name.GetHashCode() + CreatedBy.GetHashCode() + CreationDate.GetHashCode();
     }
     public static bool operator !=(ProjectDetail a, ProjectDetail b)
     {
@@ -1165,27 +1091,27 @@ namespace APlayTest.Client
     }
     public override string ToString()
     {
-      return "["+Name.ToString()+"]" + "["+CreatedBy.ToString()+"]" + "["+CreationDate.ToString()+"]" + "["+ProjectId.ToString()+"]";
+      return "["+Name.ToString()+"]" + "["+CreatedBy.ToString()+"]" + "["+CreationDate.ToString()+"]";
     }
   }
 }
 namespace APlayTest.Client
 {
-  public partial class SheetList : IList<APlayTest.Client.Sheet>, APlay.Generated.Intern.Client.ISheetListEvents
+  public partial class ProjectList : IList<APlayTest.Client.Project>, APlay.Generated.Intern.Client.IProjectListEvents
   {
-    public SheetList()
+    public ProjectList()
     {
-      APlay.Generated.Intern.Client.ISheetListImpl impl_=null;
+      APlay.Generated.Intern.Client.IProjectListImpl impl_=null;
       if(impl_!=null)
       {
         impl = impl_;
       }
       else
       {
-        impl = new APlay.Generated.Intern.Client.SheetList();
+        impl = new APlay.Generated.Intern.Client.ProjectList();
       }
     }
-    public SheetList(APlay.Generated.Intern.Client.ISheetListImpl impl_)
+    public ProjectList(APlay.Generated.Intern.Client.IProjectListImpl impl_)
     {
       if(impl_!=null)
       {
@@ -1193,26 +1119,26 @@ namespace APlayTest.Client
       }
       else
       {
-        impl = new APlay.Generated.Intern.Client.SheetList();
+        impl = new APlay.Generated.Intern.Client.ProjectList();
       }
     }
-    public static APlayTest.Client.SheetList CreateForAPlay(APlay.Generated.Intern.Client.ISheetListImpl impl)
+    public static APlayTest.Client.ProjectList CreateForAPlay(APlay.Generated.Intern.Client.IProjectListImpl impl)
     {
-      APlayTest.Client.SheetList ob = new APlayTest.Client.SheetList(impl);
+      APlayTest.Client.ProjectList ob = new APlayTest.Client.ProjectList(impl);
       return (ob);
     }
-    public APlay.Generated.Intern.Client.ISheetListImpl getSheetObject()
+    public APlay.Generated.Intern.Client.IProjectListImpl getProjectObject()
     {
       return (impl);
     }
-    private APlay.Generated.Intern.Client.ISheetListImpl impl;
+    private APlay.Generated.Intern.Client.IProjectListImpl impl;
     
-public int IndexOf(APlayTest.Client.Sheet item)
+public int IndexOf(APlayTest.Client.Project item)
 {
     return (int)impl.indexOf(item);
 }
 
-public void Insert(int index, APlayTest.Client.Sheet item)
+public void Insert(int index, APlayTest.Client.Project item)
 {
     impl.insertAt(index, item);
 }
@@ -1222,21 +1148,21 @@ public void RemoveAt(int index)
     impl.removeAt(index);
 }
 
-public APlayTest.Client.Sheet this[int index]
+public APlayTest.Client.Project this[int index]
 {
     get
     {
          
-        return (APlayTest.Client.Sheet)impl.get((int)index);
+        return (APlayTest.Client.Project)impl.get((int)index);
     }
     set
     {
-        APlayTest.Client.Sheet item =value;
+        APlayTest.Client.Project item =value;
         impl.setAt(index,item);
     }
 }
 
-public void Add(APlayTest.Client.Sheet item)
+public void Add(APlayTest.Client.Project item)
 {
     impl.add(item);
 }
@@ -1246,15 +1172,15 @@ public void Clear()
     impl.clear();
 }
 
-public bool Contains(APlayTest.Client.Sheet item)
+public bool Contains(APlayTest.Client.Project item)
 {
     return impl.contains(item);
 }
 
-public void CopyTo(APlayTest.Client.Sheet[] array, int arrayIndex)
+public void CopyTo(APlayTest.Client.Project[] array, int arrayIndex)
 {
     int i=arrayIndex;
-    foreach (APlayTest.Client.Sheet item in this)
+    foreach (APlayTest.Client.Project item in this)
     {
         array[i++]=item;
     }
@@ -1270,7 +1196,7 @@ public bool IsReadOnly
     get { return false; }
 }
 
-public bool Remove(APlayTest.Client.Sheet item)
+public bool Remove(APlayTest.Client.Project item)
 {
     return impl.remove(item);
 }
@@ -1279,9 +1205,9 @@ System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     return GetEnumerator();
 }
 
-    public IEnumerator<APlayTest.Client.Sheet> GetEnumerator()
+    public IEnumerator<APlayTest.Client.Project> GetEnumerator()
     {
-        return new SheetListEnumerator(impl.GetEnumerator());
+        return new ProjectListEnumerator(impl.GetEnumerator());
     }
     
   }
@@ -1289,173 +1215,17 @@ System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 }
 namespace APlayTest.Client
 {
-  public partial class SheetListEnumerator : IEnumerator<APlayTest.Client.Sheet>
+  public partial class ProjectListEnumerator : IEnumerator<APlayTest.Client.Project>
   {
     
-        IEnumerator<APlay.Generated.Intern.Client.__Sheet> intern;
-        public SheetListEnumerator(IEnumerator<APlay.Generated.Intern.Client.__Sheet> intern)
+        IEnumerator<APlay.Generated.Intern.Client.__Project> intern;
+        public ProjectListEnumerator(IEnumerator<APlay.Generated.Intern.Client.__Project> intern)
         {
             this.intern = intern;
         }
-        public APlayTest.Client.Sheet Current
+        public APlayTest.Client.Project Current
         {
-            get { APlay.Generated.Intern.Client.__Sheet item = (APlay.Generated.Intern.Client.__Sheet)intern.Current; return ((APlayTest.Client.Sheet) ((item==null)?null:item.__GetExternSheet()));}
-        }
-
-        public void Dispose()
-        {
-            intern.Dispose();
-        }
-
-        object System.Collections.IEnumerator.Current
-        {
-            get { return Current; }
-        }
-
-        public bool MoveNext()
-        {
-            return intern.MoveNext();
-        }
-
-        public void Reset()
-        {
-            intern.Reset();
-        }
-
-  }
-  
-}
-namespace APlayTest.Client
-{
-  public partial class ProjectDetailList : IList<APlayTest.Client.ProjectDetail>, APlay.Generated.Intern.Client.IProjectDetailListEvents
-  {
-    public ProjectDetailList()
-    {
-      APlay.Generated.Intern.Client.IProjectDetailListImpl impl_=null;
-      if(impl_!=null)
-      {
-        impl = impl_;
-      }
-      else
-      {
-        impl = new APlay.Generated.Intern.Client.ProjectDetailList();
-      }
-    }
-    public ProjectDetailList(APlay.Generated.Intern.Client.IProjectDetailListImpl impl_)
-    {
-      if(impl_!=null)
-      {
-        impl = impl_;
-      }
-      else
-      {
-        impl = new APlay.Generated.Intern.Client.ProjectDetailList();
-      }
-    }
-    public static APlayTest.Client.ProjectDetailList CreateForAPlay(APlay.Generated.Intern.Client.IProjectDetailListImpl impl)
-    {
-      APlayTest.Client.ProjectDetailList ob = new APlayTest.Client.ProjectDetailList(impl);
-      return (ob);
-    }
-    public APlay.Generated.Intern.Client.IProjectDetailListImpl getProjectDetailObject()
-    {
-      return (impl);
-    }
-    private APlay.Generated.Intern.Client.IProjectDetailListImpl impl;
-    
-public int IndexOf(APlayTest.Client.ProjectDetail item)
-{
-    return (int)impl.indexOf(new APlay.Generated.Intern.Client.__ProjectDetail(((String) (item.Name)), ((String) (item.CreatedBy)), ((DateTime) (item.CreationDate)), ((int) (item.ProjectId))));
-}
-
-public void Insert(int index, APlayTest.Client.ProjectDetail item)
-{
-    impl.insertAt(index, new APlay.Generated.Intern.Client.__ProjectDetail(((String) (item.Name)), ((String) (item.CreatedBy)), ((DateTime) (item.CreationDate)), ((int) (item.ProjectId))));
-}
-
-public void RemoveAt(int index)
-{
-    impl.removeAt(index);
-}
-
-public APlayTest.Client.ProjectDetail this[int index]
-{
-    get
-    {
-        APlay.Generated.Intern.Client.__ProjectDetail item = (APlay.Generated.Intern.Client.__ProjectDetail)impl.get((int)index);
-        return new APlayTest.Client.ProjectDetail(((String) (item.Name)), ((String) (item.CreatedBy)), ((DateTime) (item.CreationDate)), ((int) (item.ProjectId)));
-    }
-    set
-    {
-        APlayTest.Client.ProjectDetail item =value;
-        impl.setAt(index,new APlay.Generated.Intern.Client.__ProjectDetail(((String) (item.Name)), ((String) (item.CreatedBy)), ((DateTime) (item.CreationDate)), ((int) (item.ProjectId))));
-    }
-}
-
-public void Add(APlayTest.Client.ProjectDetail item)
-{
-    impl.add(new APlay.Generated.Intern.Client.__ProjectDetail(((String) (item.Name)), ((String) (item.CreatedBy)), ((DateTime) (item.CreationDate)), ((int) (item.ProjectId))));
-}
-
-public void Clear()
-{
-    impl.clear();
-}
-
-public bool Contains(APlayTest.Client.ProjectDetail item)
-{
-    return impl.contains(new APlay.Generated.Intern.Client.__ProjectDetail(((String) (item.Name)), ((String) (item.CreatedBy)), ((DateTime) (item.CreationDate)), ((int) (item.ProjectId))));
-}
-
-public void CopyTo(APlayTest.Client.ProjectDetail[] array, int arrayIndex)
-{
-    int i=arrayIndex;
-    foreach (APlayTest.Client.ProjectDetail item in this)
-    {
-        array[i++]=item;
-    }
-}
-
-public int Count
-{
-    get { return (int)impl.length(); }
-}
-
-public bool IsReadOnly
-{
-    get { return false; }
-}
-
-public bool Remove(APlayTest.Client.ProjectDetail item)
-{
-    return impl.remove(new APlay.Generated.Intern.Client.__ProjectDetail(((String) (item.Name)), ((String) (item.CreatedBy)), ((DateTime) (item.CreationDate)), ((int) (item.ProjectId))));
-}
-System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-{
-    return GetEnumerator();
-}
-
-    public IEnumerator<APlayTest.Client.ProjectDetail> GetEnumerator()
-    {
-        return new ProjectDetailListEnumerator(impl.GetEnumerator());
-    }
-    
-  }
-  
-}
-namespace APlayTest.Client
-{
-  public partial class ProjectDetailListEnumerator : IEnumerator<APlayTest.Client.ProjectDetail>
-  {
-    
-        IEnumerator<APlay.Generated.Intern.Client.__ProjectDetail> intern;
-        public ProjectDetailListEnumerator(IEnumerator<APlay.Generated.Intern.Client.__ProjectDetail> intern)
-        {
-            this.intern = intern;
-        }
-        public APlayTest.Client.ProjectDetail Current
-        {
-            get { APlay.Generated.Intern.Client.__ProjectDetail item = (APlay.Generated.Intern.Client.__ProjectDetail)intern.Current; return new APlayTest.Client.ProjectDetail(((String) (item.Name)), ((String) (item.CreatedBy)), ((DateTime) (item.CreationDate)), ((int) (item.ProjectId)));}
+            get { APlay.Generated.Intern.Client.__Project item = (APlay.Generated.Intern.Client.__Project)intern.Current; return ((APlayTest.Client.Project) ((item==null)?null:item.__GetExternProject()));}
         }
 
         public void Dispose()
@@ -1816,13 +1586,9 @@ namespace APlayTest.Client
       APlay.Common.APlayInitializer.SetInitializer(null);
       return (retu__);
     }
-    public APlay.Generated.Intern.Client.ISheetListEvents CreateSheetListEvents(APlay.Generated.Intern.Client.ISheetListImpl impl)
+    public APlay.Generated.Intern.Client.IProjectListEvents CreateProjectListEvents(APlay.Generated.Intern.Client.IProjectListImpl impl)
     {
-      return (((APlay.Generated.Intern.Client.ISheetListEvents) (APlayTest.Client.SheetList.CreateForAPlay(impl))));
-    }
-    public APlay.Generated.Intern.Client.IProjectDetailListEvents CreateProjectDetailListEvents(APlay.Generated.Intern.Client.IProjectDetailListImpl impl)
-    {
-      return (((APlay.Generated.Intern.Client.IProjectDetailListEvents) (APlayTest.Client.ProjectDetailList.CreateForAPlay(impl))));
+      return (((APlay.Generated.Intern.Client.IProjectListEvents) (APlayTest.Client.ProjectList.CreateForAPlay(impl))));
     }
   }
   
@@ -1848,25 +1614,19 @@ namespace APlayTest.Client
     public delegate void void_Project_Client(APlayTest.Client.Project NewCurrentProject__, APlayTest.Client.Client this_);
     public delegate void void_ProjectManager(APlayTest.Client.ProjectManager NewProjectManager__);
     public delegate void void_ProjectManager_Client(APlayTest.Client.ProjectManager NewProjectManager__, APlayTest.Client.Client this_);
-    public delegate void void_WString(String NewName__);
-    public delegate void void_WString_Project(String NewName__, APlayTest.Client.Project this_);
+    public delegate void void_int32(int NewId__);
+    public delegate void void_int32_Project(int NewId__, APlayTest.Client.Project this_);
     public delegate void void_ProjectDetail(APlayTest.Client.ProjectDetail NewProjectDetail__);
     public delegate void void_ProjectDetail_Project(APlayTest.Client.ProjectDetail NewProjectDetail__, APlayTest.Client.Project this_);
-    public delegate APlayTest.Client.Sheet Sheet_WString(String name__);
-    public delegate APlayTest.Client.Sheet Sheet_WString_Project(String name__, APlayTest.Client.Project this_);
-    public delegate APlayTest.Client.SheetList SheetList_();
-    public delegate APlayTest.Client.SheetList SheetList_Project(APlayTest.Client.Project this_);
     public delegate void void_boolean(bool NewCanJoinProject__);
     public delegate void void_boolean_ProjectManager(bool NewCanJoinProject__, APlayTest.Client.ProjectManager this_);
-    public delegate void void_ProjectDetailList(APlayTest.Client.ProjectDetailList ProjectDetails__);
-    public delegate void void_ProjectDetailList_ProjectManager(APlayTest.Client.ProjectDetailList ProjectDetails__, APlayTest.Client.ProjectManager this_);
-    public delegate void void_ProjectDetail_ProjectManager(APlayTest.Client.ProjectDetail element, APlayTest.Client.ProjectManager this_);
+    public delegate void void_ProjectList(APlayTest.Client.ProjectList Projects__);
+    public delegate void void_ProjectList_ProjectManager(APlayTest.Client.ProjectList Projects__, APlayTest.Client.ProjectManager this_);
+    public delegate void void_Project_ProjectManager(APlayTest.Client.Project element, APlayTest.Client.ProjectManager this_);
     public delegate void void_();
-    public delegate void void_int32_ProjectDetail(int pos, APlayTest.Client.ProjectDetail element);
-    public delegate void void_int32_ProjectDetail_ProjectManager(int pos, APlayTest.Client.ProjectDetail element, APlayTest.Client.ProjectManager this_);
+    public delegate void void_int32_Project_ProjectManager(int pos, APlayTest.Client.Project element, APlayTest.Client.ProjectManager this_);
     public delegate void void_Client(APlayTest.Client.Client NewDataClient__);
     public delegate void void_Client_ProjectManager(APlayTest.Client.Client NewDataClient__, APlayTest.Client.ProjectManager this_);
-    public delegate void void_Project_ProjectManager(APlayTest.Client.Project project__, APlayTest.Client.ProjectManager this_);
     public delegate void void_Client_APlayClientSkeleton(APlayTest.Client.Client clientObject, APlayTest.Client.APlayClientSkeleton this_);
     public delegate void void_APlayClientSkeleton(APlayTest.Client.APlayClientSkeleton this_);
     public delegate void void_String(String reason);

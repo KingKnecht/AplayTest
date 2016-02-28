@@ -20,7 +20,7 @@ namespace APlayTest.Client
 {
     public class ProjectManager : APlayTest.Client.ProjectManagerSkeleton, IDisposable
     {
-        private readonly SourceCache<ProjectDetail, int> _projectDetailsRx;
+        private readonly SourceCache<Project, int> _projectsRx;
         private readonly CompositeDisposable _cleanup;
         /// <summary>
         /// Use this constructor to create instances in your code.
@@ -33,62 +33,61 @@ namespace APlayTest.Client
             //Todo: Read that shit and think about it.
             //Solange es keine Möglichkeit gibt die Änderungen der AplayList direkt 
             //per Extension-Methode in einen SourceCache umzuwandeln findet die Umwandlung hier statt und nicht im VM.
-            _projectDetailsRx = new SourceCache<ProjectDetail, int>(pd => pd.ProjectId);
+            _projectsRx = new SourceCache<Project, int>(pd => pd.Id);
 
-            _projectDetailsRx.Edit(e =>
+            _projectsRx.Edit(e =>
             {
-                e.AddOrUpdate(ProjectDetails);
+                e.AddOrUpdate(Projects);
             });
 
-            _cleanup = new CompositeDisposable(_projectDetailsRx);
+            _cleanup = new CompositeDisposable(_projectsRx);
 
+            
         }
         
-        public override void onJoinedProject(Project project)
+     
+        public IObservableCache<Project, int> ProjectsRx
         {
-            IsJoinedToProject.Value = true;
-        }
-
-        public ReactiveProperty<bool> IsJoinedToProject { get; private set; }
-
-
-        public IObservableCache<ProjectDetail, int> ProjectDetailsRx
-        {
-            get { return _projectDetailsRx.AsObservableCache(); }
+            get { return _projectsRx.AsObservableCache(); }
         }
 
 
         #region List to SourceCache convertion.
         //TODO: Einen allgemeinen Konverter/ExtensionMethod für AplayList -> SourceCache schreiben.
 
-        public override void onProjectDetailsClear()
+        public override void onProjectsClear()
         {
-            base.onProjectDetailsClear();
-            _projectDetailsRx.Clear();
+            base.onProjectsClear();
+            _projectsRx.Clear();
         }
 
-        public override void onProjectDetailsAdd(ProjectDetail element)
+        public override void onProjectsAdd(Project element)
         {
-            base.onProjectDetailsAdd(element);
-            _projectDetailsRx.AddOrUpdate(element);
+            base.onProjectsAdd(element);
+            _projectsRx.AddOrUpdate(element);
         }
 
-        public override void onProjectDetailsRemove(ProjectDetail element)
+        public override void onProjectsRemove(Project element)
         {
-            base.onProjectDetailsRemove(element);
-            _projectDetailsRx.Remove(element);
+            base.onProjectsRemove(element);
+            _projectsRx.Remove(element);
         }
 
-        public override void onProjectDetailsRemoveAt(int pos, ProjectDetail element)
+        public override void onProjectsRemoveAt(int pos, Project element)
         {
-            base.onProjectDetailsRemoveAt(pos, element);
-            _projectDetailsRx.Remove(element);
+            base.onProjectsRemoveAt(pos, element);
+            _projectsRx.Remove(element);
         }
 
-        public override void onProjectDetailsInsertAt(int pos, ProjectDetail element)
+        public override void onJoinedProject(Project project__)
         {
-            base.onProjectDetailsInsertAt(pos, element);
-            _projectDetailsRx.AddOrUpdate(element);
+            
+        }
+
+        public override void onProjectsInsertAt(int pos, Project element)
+        {
+            base.onProjectsInsertAt(pos, element);
+            _projectsRx.AddOrUpdate(element);
         }
 
 
