@@ -59,9 +59,7 @@ namespace APlayTest.Client.Wpf.ViewModels
                         return false;
 
                     if (SelectedProjectRx.Value != null && project.Id == SelectedProjectRx.Value.ProjectId)
-                    {
                         return false;
-                    }
 
                     return true;
                 })
@@ -159,6 +157,24 @@ namespace APlayTest.Client.Wpf.ViewModels
         public override string ToString()
         {
             return string.Format("[{0}][{1}][{2}][{3}]", Name, CreatedBy, CreationDate, ProjectId);
+        }
+
+        protected bool Equals(ProjectDetailsVm other)
+        {
+            return ProjectId == other.ProjectId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ProjectDetailsVm) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return ProjectId;
         }
     }
 }
