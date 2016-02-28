@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Security.Permissions;
 using System.Timers;
 using System.Windows.Data;
+using APlay.Common.Logging;
 using APlay.Generated.Intern.Client;
 using Caliburn.Micro;
 using DynamicData;
@@ -48,7 +49,7 @@ namespace APlayTest.Client.Wpf.ViewModels
                 ev => _projectManager.SelectedProjectDetailChangeEventHandler += ev,
                 ev => _projectManager.SelectedProjectDetailChangeEventHandler -= ev)
                 .ToReactiveProperty();
-           var selectProjectDetailAction = SelectedProjectRx.Subscribe(pd => _projectManager.SelectProject(pd.ProjectId)); //Rückkanal
+            var selectProjectDetailAction = SelectedProjectRx.Subscribe(pd => _projectManager.SelectProject(pd.ProjectId)); //Rückkanal
 
             CanJoinProjectRx = Observable.FromEvent<Delegates.void_boolean, bool>(
                 ev => _projectManager.CanJoinProjectChangeEventHandler += ev,
@@ -60,8 +61,17 @@ namespace APlayTest.Client.Wpf.ViewModels
                 ev => _projectManager.CanCreateProjectChangeEventHandler -= ev)
                 .ToReactiveProperty();
 
-            _cleanUp = new CompositeDisposable(selectProjectDetailAction,CanCreateProjectRx, CanJoinProjectRx, detailsDisp, searchAction,
-                SelectedProjectRx);
+            var joinedProjectObservable = Observable.FromEvent<Delegates.void_Project, Project>(
+                ev => _projectManager.JoinedProjectEventHandler += ev,
+                ev => _projectManager.JoinedProjectEventHandler -= ev)
+                .Subscribe(
+                    prj =>
+                        Logger.LogDesigned(2,
+                            "'Select-Project-Window' should be closed. Selected project: " + prj.ProjectDetail.Name,
+                            "Client.Designed"));
+                        
+            _cleanUp = new CompositeDisposable(selectProjectDetailAction, CanCreateProjectRx, CanJoinProjectRx, detailsDisp, searchAction,
+                SelectedProjectRx, joinedProjectObservable);
 
         }
 

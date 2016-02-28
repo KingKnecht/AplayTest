@@ -27,7 +27,10 @@ namespace APlayTest.Services
         /// </summary>
         IObservableCache<ProjectDetail, int> ProjectDetailsDelta { get; }
 
+        Project GetProject(int projectId);
     }
+
+    
 
     public class ProjectDetailsService : IProjectDetailsService, IDisposable
     {
@@ -54,13 +57,12 @@ namespace APlayTest.Services
             return _projects.Where(filter);
         }
 
-        //Todo: Username durchschleifen. CreationDate erzeugen
         public ProjectDetail CreateProject(string projectName, string userName)
         {
-            //Todo: Lock für Writer, wäre schlecht wenn das 2 Clients gleichzeitg machen.
+            //Todo: Lock für Writer; wäre schlecht wenn das 2 Clients/Threads gleichzeitig machen.
             if (!IsValidName(projectName))
             {
-                return new ProjectDetail();
+                return new ProjectDetail(); //todo: Geheimwissen: Alle ProjectDetails mit ProjectId == 0 werden als "nix" behandelt. Dringend ändern!? vlt doch Klasse statt Struct?
             }
 
             var newProjectDetails = new ProjectDetail()
@@ -68,7 +70,7 @@ namespace APlayTest.Services
                 CreatedBy = userName,
                 CreationDate = DateTime.Now,
                 Name = projectName,
-                ProjectId = ++_nextProjectId
+                ProjectId = ++_nextProjectId //Todo: thread-safer Id-Generator muss her.
             };
 
             _projects.Add(newProjectDetails);
@@ -88,11 +90,26 @@ namespace APlayTest.Services
             get { return _sourceCache.AsObservableCache(); }
         }
 
+        public Project GetProject(int projectId)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public void Dispose()
         {
             _cleanup.Dispose();
         }
+    }
+
+    public class Project
+    {
+        public Project(ProjectDetail projectDetail)
+        {
+            ProjectDetail = projectDetail;
+        }
+
+        public ProjectDetail ProjectDetail { get;private set; }
     }
 
     public class ProjectDetail

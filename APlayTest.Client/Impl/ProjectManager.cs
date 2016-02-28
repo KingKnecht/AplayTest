@@ -18,7 +18,7 @@ using Reactive.Bindings;
 
 namespace APlayTest.Client
 {
-    public  class ProjectManager : APlayTest.Client.ProjectManagerSkeleton, IDisposable
+    public class ProjectManager : APlayTest.Client.ProjectManagerSkeleton, IDisposable
     {
         private readonly SourceCache<ProjectDetail, int> _projectDetailsRx;
         private readonly CompositeDisposable _cleanup;
@@ -41,8 +41,9 @@ namespace APlayTest.Client
             });
 
             _cleanup = new CompositeDisposable(_projectDetailsRx);
-        }
 
+        }
+        
         public override void onJoinedProject(Project project)
         {
             IsJoinedToProject.Value = true;
@@ -50,14 +51,14 @@ namespace APlayTest.Client
 
         public ReactiveProperty<bool> IsJoinedToProject { get; private set; }
 
-   
+
         public IObservableCache<ProjectDetail, int> ProjectDetailsRx
         {
             get { return _projectDetailsRx.AsObservableCache(); }
         }
 
 
-        #region List to SourceCache convertion. 
+        #region List to SourceCache convertion.
         //TODO: Einen allgemeinen Konverter/ExtensionMethod für AplayList -> SourceCache schreiben.
 
         public override void onProjectDetailsClear()
@@ -90,10 +91,10 @@ namespace APlayTest.Client
             _projectDetailsRx.AddOrUpdate(element);
         }
 
-        
+
         #endregion
 
-    
+
 
         public void Dispose()
         {

@@ -76,7 +76,8 @@ namespace APlayTest.Server
             onSelectProject(projectId__);
             if (CanJoinProject)
             {
-                var joinedProject = new Project();
+
+                Project joinedProject = _projectDetailsService.GetProject(projectId__);
                 sender.CurrentProject = joinedProject;
                 JoinedProject(joinedProject);
                 APlay.Common.Logging.Logger.LogDesigned(2, "User: " + sender.CurrentUser.Name + " has joined project: " + SelectedProjectDetail + "[ClientId: " + sender.APlayClientId + "]", "APlayTest.Server.ProjectManager");

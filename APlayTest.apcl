@@ -22,15 +22,12 @@ ProjectManager ProjectManager;
       <code><![CDATA[//TODO: Your class based communication here:
 [Server -> Server Client]
 
-loopback WString Name;
-
-Sheet CreateSheet(WString name);
-
 List<Sheet> GetSheets();
 
-void SetName(WString name);
-
 ProjectDetail ProjectDetail;
+
+[Client -> Server]
+Sheet CreateSheet(WString name);
 
 ]]></code>
     </class>
