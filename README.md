@@ -1,5 +1,5 @@
 # AplayTest
-Proof of concept creating a business app in WPF with game network framework "Aplay" from aplaypowered.com
+Proof of concept creating a business app in WPF with game network framework "Aplay" from http://www.aplaypowered.com/
 
 Simple project selection dialog is shown at the beginning.
 
