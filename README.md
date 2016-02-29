@@ -18,7 +18,7 @@ Simple project selection dialog is shown at the beginning.
 - Search or create a new project. Check other clinet for updates. 
 - Join a project (nothing interesting will happen...)
 
-Network Adresses are hardcoded in Server:
+Network adresses are hard-coded in server:
 
 ```
  public static void Main()
@@ -27,7 +27,7 @@ Network Adresses are hardcoded in Server:
         }
 ```
 
-and in Client (ShellViewModel.cs):
+and in client (ShellViewModel.cs):
 
 ```
  APlayClient.Start("127.0.0.1:63422");
