@@ -25,7 +25,7 @@ namespace APlayTest.Client.Wpf.ViewModels
     {
         private readonly IWindowManager _windowManager;
         public static APlayClient APlayClient;
-        private CompositeDisposable _cleanup;
+        private readonly CompositeDisposable _cleanup;
         public ShellViewModel(IWindowManager windowManager)
         {
             _windowManager = windowManager;
@@ -53,13 +53,14 @@ namespace APlayTest.Client.Wpf.ViewModels
                         }
                     }
                 });
-
+            
             _cleanup = new CompositeDisposable(connectObservable);
         }
-
+        
         public void Dispose()
         {
             _cleanup.Dispose();
         }
     }
 }
+

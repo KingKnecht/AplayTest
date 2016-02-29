@@ -105,9 +105,14 @@ namespace APlayTest.Client.Wpf.ViewModels
                 ev => _projectManager.JoinedProjectEventHandler -= ev)
                 .Subscribe(
                     prj =>
+                    {
                         Logger.LogDesigned(2,
-                            "'Select-Project-Window' should be closed. Selected project: " + prj.ProjectDetail.Name,
-                            "Client.Designed"));
+                            "'Joined project: " + prj.ProjectDetail.Name,
+                            "Client.Designed");
+
+                        TryClose();
+                    }
+                );
 
             _cleanUp = new CompositeDisposable(selectProjectAction, CanCreateProjectRx, CanJoinProjectRx, detailsDisp, searchAction,
                 SelectedProjectRx, joinedProjectObservable);
@@ -129,10 +134,7 @@ namespace APlayTest.Client.Wpf.ViewModels
 
         public void CreateProject()
         {
-            //Todo: Cleanup
-            //Muss das mit _projectManager.DataClient wirklich sein? Das ist ziemlich viel Wissen an der Stelle über PrjMgr.
-            //besser überladene Methode und ProjectManager stopft den Client dann selber rein...Problem: Die Methode ist trotzdem sichtbar. IFace?
-            _projectManager.CreateProject(_projectManager.DataClient, SearchStringRx.Value);
+             _projectManager.CreateProject(_projectManager.DataClient, SearchStringRx.Value);
         }
 
         public void JoinProject()

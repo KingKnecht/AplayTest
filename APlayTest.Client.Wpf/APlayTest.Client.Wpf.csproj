@@ -63,6 +63,9 @@
     <Reference Include="ControlsLibrary.WPF">
       <HintPath>..\Libs\WpfControls\ControlsLibrary.WPF.dll</HintPath>
     </Reference>
+    <Reference Include="Dragablz">
+      <HintPath>..\packages\Dragablz.0.0.3.157\lib\net45\Dragablz.dll</HintPath>
+    </Reference>
     <Reference Include="DynamicData">
       <HintPath>..\packages\DynamicData.4.4.0.1110-beta\lib\net45\DynamicData.dll</HintPath>
     </Reference>
