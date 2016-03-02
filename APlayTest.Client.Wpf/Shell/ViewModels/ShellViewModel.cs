@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using APlayTest.Client.Wpf.Framework.Services;
+using APlayTest.Client.Wpf.Home.ViewModels;
 using APlayTest.Client.Wpf.ProjectSelection.ViewModels;
 using Caliburn.Micro;
 
@@ -15,7 +17,10 @@ namespace APlayTest.Client.Wpf.Shell.ViewModels
         private ProjectSelectionViewModel _projectSelectionViewModel;
         public ShellViewModel()
         {
-            
+            ((IActivate)this).Activate();
+            Items.Add(new HomeViewModel());
+            Items.Add(new HomeViewModel());
+            ActivateItem(Items.First());
         }
 
      

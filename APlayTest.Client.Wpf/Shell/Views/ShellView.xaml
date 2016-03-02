@@ -24,8 +24,22 @@
                             IsTabStop="False" />
 
             <xcad:DockingManager x:Name="Manager"
-                                 DocumentsSource="{Binding Items}">
-
+                                 DocumentsSource="{Binding Items}"
+                                 ActiveContent="{Binding ActiveLayoutItem, Mode=TwoWay}">
+                <xcad:DockingManager.DocumentHeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Content.DisplayName}" />
+                    </DataTemplate>
+                </xcad:DockingManager.DocumentHeaderTemplate>
+                <xcad:LayoutRoot>
+                    <xcad:LayoutPanel x:Name="VerticalPanel"
+                                      Orientation="Vertical">
+                        <xcad:LayoutPanel x:Name="HorizontalPanel"
+                                          Orientation="Horizontal">
+                            <xcad:LayoutDocumentPane />
+                        </xcad:LayoutPanel>
+                    </xcad:LayoutPanel>
+                </xcad:LayoutRoot>
             </xcad:DockingManager>
         </DockPanel>
 

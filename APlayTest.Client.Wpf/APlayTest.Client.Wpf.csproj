@@ -115,6 +115,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Framework\Controls\SmokeScreenAdorner.cs" />
+    <Compile Include="Home\ViewModels\HomeViewModel.cs" />
+    <Compile Include="Home\Views\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow\ViewModels\IMainWindow.cs" />
     <Compile Include="Framework\Services\Interface1.cs" />
     <Compile Include="MainWindow\ViewModels\MainWindowViewModel.cs" />
@@ -126,6 +130,10 @@
     <Compile Include="StatusBar\Views\StatusBarView.xaml.cs">
       <DependentUpon>StatusBarView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Home\Views\HomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ProjectSelection\Views\ProjectSelectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -191,7 +199,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="StatusBar\ViewModels\" />
-    <Folder Include="Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
