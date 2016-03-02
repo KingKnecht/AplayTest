@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using APlayTest.Client.Wpf.Framework.Controls;
 
-namespace APlayTest.Client.Wpf.Views
+namespace APlayTest.Client.Wpf.ProjectSelection.Views
 {
     /// <summary>
     /// Interaction logic for ProjectSelectionView.xaml
@@ -33,6 +23,9 @@ namespace APlayTest.Client.Wpf.Views
         {
             var layer = AdornerLayer.GetAdornerLayer(this);
             _screenAdorner = new SmokeScreenAdorner(this);
+            _screenAdorner.Name = "SmokeAdorner";
+            _screenAdorner.Color = Colors.Black;
+            _screenAdorner.Alpha = 95;
             layer.Add(_screenAdorner);
         }
     }

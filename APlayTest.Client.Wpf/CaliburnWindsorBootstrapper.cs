@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using APlayTest.Client.Wpf.Framework.Services;
+using APlayTest.Client.Wpf.MainWindow.ViewModels;
+using APlayTest.Client.Wpf.Shell.ViewModels;
 using Caliburn.Micro;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
-using APlayTest.Client.Wpf.ViewModels;
 
 namespace APlayTest.Client.Wpf
 {
@@ -35,7 +37,7 @@ namespace APlayTest.Client.Wpf
                 Component.For<IEventAggregator>().ImplementedBy<EventAggregator>().LifestyleSingleton(),
               
                 Classes.FromThisAssembly()
-                    .InSameNamespaceAs<IShellViewModel>()
+                    .InSameNamespaceAs<IMainWindow>()
                     .WithServiceDefaultInterfaces()
                     .LifestyleSingleton()
                 );
@@ -44,7 +46,7 @@ namespace APlayTest.Client.Wpf
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
-            DisplayRootViewFor<IShellViewModel>();
+            DisplayRootViewFor<IMainWindow>();
         }
 
         protected override object GetInstance(Type serviceType, string key)

@@ -12,8 +12,27 @@ namespace APlayTest.Client.Wpf.Framework.Controls
 {
     public class SmokeScreenAdorner : Adorner
     {
-        private readonly UIElement _control;
 
+        public static readonly DependencyProperty AlphaProperty = DependencyProperty.Register(
+            "Alpha", typeof (byte), typeof (SmokeScreenAdorner), new PropertyMetadata(default(byte)));
+
+        public byte Alpha
+        {
+            get { return (byte) GetValue(AlphaProperty); }
+            set { SetValue(AlphaProperty, value); }
+        }
+
+        public static readonly DependencyProperty ColorProperty = DependencyProperty.Register(
+            "Color", typeof (Color), typeof (SmokeScreenAdorner), new PropertyMetadata(default(Color)));
+
+        public Color Color
+        {
+            get { return (Color) GetValue(ColorProperty); }
+            set { SetValue(ColorProperty, value); }
+        }
+
+        private readonly UIElement _control;
+        
         public SmokeScreenAdorner([NotNull] UIElement adornedElement)
             : base(adornedElement)
         {
@@ -23,7 +42,7 @@ namespace APlayTest.Client.Wpf.Framework.Controls
         protected override void OnRender(DrawingContext drawingContext)
         {
 
-            var _fill = new SolidColorBrush(Color.FromArgb(80, Colors.Coral.R, Colors.Coral.G, Colors.Coral.B));
+            var _fill = new SolidColorBrush(Color.FromArgb(Alpha, Color.R, Color.G, Color.B));
             drawingContext.DrawRectangle(_fill, new Pen(Brushes.Black, 3.0), WindowRect());
             base.OnRender(drawingContext);
         }

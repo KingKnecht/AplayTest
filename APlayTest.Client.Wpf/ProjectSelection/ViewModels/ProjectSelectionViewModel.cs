@@ -1,22 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Security.Permissions;
-using System.Timers;
-using System.Windows.Data;
 using APlay.Common.Logging;
-using APlay.Generated.Intern.Client;
+using APlayTest.Client.Wpf.Framework.Services;
+using APlayTest.Client.Wpf.MainWindow.ViewModels;
 using Caliburn.Micro;
 using DynamicData;
-using DynamicData.Binding;
 using Reactive.Bindings;
-using Reactive.Bindings.Binding;
 using Reactive.Bindings.Extensions;
+using Action = System.Action;
 
-namespace APlayTest.Client.Wpf.ViewModels
+namespace APlayTest.Client.Wpf.ProjectSelection.ViewModels
 {
     public class ProjectSelectionViewModel : Screen, IDisposable
     {
@@ -24,10 +19,10 @@ namespace APlayTest.Client.Wpf.ViewModels
         private readonly CompositeDisposable _cleanUp;
         private readonly ReadOnlyObservableCollection<ProjectDetailsVm> _projectDetailsRx;
 
-        public ProjectSelectionViewModel(ProjectManager projectManager)
+        public ProjectSelectionViewModel(ProjectManager projectManager, Action<IDisposable> close)
         {
             _projectManager = projectManager;
-
+         
             var detailsDisp = _projectManager.ProjectsRx.Connect()
                 .Transform(prj => new ProjectDetailsVm()
                 {
@@ -110,7 +105,7 @@ namespace APlayTest.Client.Wpf.ViewModels
                             "'Joined project: " + prj.ProjectDetail.Name,
                             "Client.Designed");
 
-                        TryClose();
+                        close(this);
                     }
                 );
 
@@ -118,6 +113,7 @@ namespace APlayTest.Client.Wpf.ViewModels
                 SelectedProjectRx, joinedProjectObservable);
 
         }
+
 
 
         public ReadOnlyObservableCollection<ProjectDetailsVm> ProjectDetailsRx
@@ -134,7 +130,7 @@ namespace APlayTest.Client.Wpf.ViewModels
 
         public void CreateProject()
         {
-             _projectManager.CreateProject(_projectManager.DataClient, SearchStringRx.Value);
+            _projectManager.CreateProject(_projectManager.DataClient, SearchStringRx.Value);
         }
 
         public void JoinProject()
@@ -142,11 +138,13 @@ namespace APlayTest.Client.Wpf.ViewModels
             _projectManager.JoinProject(_projectManager.DataClient, SelectedProjectRx.Value.ProjectId);
         }
 
+
         public void Dispose()
         {
             _cleanUp.Dispose();
         }
 
+       
     }
 
     public class ProjectDetailsVm
@@ -171,7 +169,7 @@ namespace APlayTest.Client.Wpf.ViewModels
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((ProjectDetailsVm) obj);
+            return Equals((ProjectDetailsVm)obj);
         }
 
         public override int GetHashCode()

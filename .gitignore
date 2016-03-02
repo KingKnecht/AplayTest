@@ -157,3 +157,4 @@ $RECYCLE.BIN/
 #NuGet stuff
 /packages/
 !repositories.config
+LoginConfig.xml
