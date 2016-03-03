@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
              xmlns:cal="http://www.caliburnproject.org"
+             xmlns:controls="clr-namespace:APlayTest.Client.Wpf.Framework.Controls"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="500">
@@ -23,14 +24,21 @@
                 <ContentControl cal:View.Model="{Binding StatusBar}"
                                 IsTabStop="False" />
             </StackPanel>
+            
+            
+            
             <xcad:DockingManager x:Name="Manager"
                                  DocumentsSource="{Binding Items}"
-                                 AnchorablesSource="">
+                                 AnchorablesSource="{Binding Tools}">
                 <xcad:DockingManager.DocumentHeaderTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Content.DisplayName}" />
                     </DataTemplate>
                 </xcad:DockingManager.DocumentHeaderTemplate>
+
+                <xcad:DockingManager.LayoutUpdateStrategy>
+                    <controls:LayoutInitializer />
+                </xcad:DockingManager.LayoutUpdateStrategy>
 
                 <xcad:LayoutRoot>
                     <xcad:LayoutPanel Orientation="Horizontal">
@@ -64,7 +72,7 @@
                                                            CanHide="False">
                                         <ContentControl cal:View.Model="{Binding ContentTree}" />
                                     </xcad:LayoutAnchorable>
-                                    <xcad:LayoutAnchorable Title="Content Tree 1"
+                                    <xcad:LayoutAnchorable Title="Content Tree 2"
                                                            CanHide="False">
                                         <ContentControl cal:View.Model="{Binding ContentTree}" />
                                     </xcad:LayoutAnchorable>

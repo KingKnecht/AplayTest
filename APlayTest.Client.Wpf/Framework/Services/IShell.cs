@@ -27,7 +27,7 @@ namespace APlayTest.Client.Wpf.Framework.Services
         IDocument ActiveItem { get; }
 
         IObservableCollection<IDocument> Documents { get; }
-        //IObservableCollection<ITool> Tools { get; }
+        IObservableCollection<ITool> Tools { get; }
 
         //void ShowTool<TTool>() where TTool : ITool;
         //void ShowTool(ITool model);
@@ -47,7 +47,7 @@ namespace APlayTest.Client.Wpf.Framework.Services
     {
         Guid Id { get; }
         string ContentId { get; }
-        ICommand CloseCommand { get; }
+        //ICommand CloseCommand { get; }
         Uri IconSource { get; }
         bool IsSelected { get; set; }
         bool ShouldReopenOnStart { get; }

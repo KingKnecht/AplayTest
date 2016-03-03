@@ -114,13 +114,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Framework\Controls\LayoutInitializer.cs" />
     <Compile Include="Framework\Controls\SmokeScreenAdorner.cs" />
+    <Compile Include="Framework\Services\ITool.cs" />
     <Compile Include="Home\ViewModels\HomeViewModel.cs" />
     <Compile Include="Home\Views\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow\ViewModels\IMainWindow.cs" />
-    <Compile Include="Framework\Services\Interface1.cs" />
+    <Compile Include="Framework\Services\IShell.cs" />
     <Compile Include="MainWindow\ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ProjectSelection\ViewModels\ProjectSelectionViewModel.cs" />
     <Compile Include="Shell\ViewModels\ShellViewModel.cs" />
@@ -129,6 +131,10 @@
     </Compile>
     <Compile Include="StatusBar\Views\StatusBarView.xaml.cs">
       <DependentUpon>StatusBarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\ViewModels\Class1.cs" />
+    <Compile Include="Tools\Views\InspectorView.xaml.cs">
+      <DependentUpon>InspectorView.xaml</DependentUpon>
     </Compile>
     <Page Include="Home\Views\HomeView.xaml">
       <SubType>Designer</SubType>
@@ -159,6 +165,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="StatusBar\Views\StatusBarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tools\Views\InspectorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
