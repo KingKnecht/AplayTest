@@ -9,7 +9,7 @@ using Caliburn.Micro;
 
 namespace APlayTest.Client.Wpf.Shell.ViewModels
 {
-    public class ShellViewModel : Conductor<IDocument>.Collection.OneActive, IShell, IDisposable
+    public class ShellViewModel : Conductor<IDocument>.Collection.OneActive,  IDisposable
     {
         private readonly IWindowManager _windowManager;
         public static APlayClient APlayClient;
@@ -17,22 +17,23 @@ namespace APlayTest.Client.Wpf.Shell.ViewModels
         private ProjectSelectionViewModel _projectSelectionViewModel;
         public ShellViewModel()
         {
+            Items.Add(new HomeViewModel());
+            Items.Add(new HomeViewModel());
+
             ((IActivate)this).Activate();
-            Items.Add(new HomeViewModel());
-            Items.Add(new HomeViewModel());
+          
+        }
+
+        public Object ContentTree { get; set; }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+
+            ContentTree = new HomeViewModel();
             ActivateItem(Items.First());
         }
 
-     
-        public event EventHandler ActiveDocumentChanging;
-        public event EventHandler ActiveDocumentChanged;
-        public bool ShowFloatingWindowsInTaskbar { get; set; }
-        public ILayoutItem ActiveLayoutItem { get; set; }
-        public IObservableCollection<IDocument> Documents { get; private set; }
-        public void Close()
-        {
-            throw new NotImplementedException();
-        }
 
         public void Dispose()
         {

@@ -7,7 +7,7 @@
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d"
              d:DesignHeight="300"
-             d:DesignWidth="300">
+             d:DesignWidth="500">
     <Grid>
         <DockPanel>
             <StackPanel DockPanel.Dock="Top"
@@ -18,28 +18,71 @@
 
                 <TextBlock FontSize="30">Toolbar and Menu goes here</TextBlock>
             </StackPanel>
-
-            <ContentControl DockPanel.Dock="Bottom"
-                            cal:View.Model="{Binding StatusBar}"
-                            IsTabStop="False" />
-
+            <StackPanel DockPanel.Dock="Bottom">
+                <TextBlock FontSize="30">Statusbar goes here</TextBlock>
+                <ContentControl cal:View.Model="{Binding StatusBar}"
+                                IsTabStop="False" />
+            </StackPanel>
             <xcad:DockingManager x:Name="Manager"
                                  DocumentsSource="{Binding Items}"
-                                 ActiveContent="{Binding ActiveLayoutItem, Mode=TwoWay}">
+                                 AnchorablesSource="">
                 <xcad:DockingManager.DocumentHeaderTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Content.DisplayName}" />
                     </DataTemplate>
                 </xcad:DockingManager.DocumentHeaderTemplate>
+
                 <xcad:LayoutRoot>
-                    <xcad:LayoutPanel x:Name="VerticalPanel"
-                                      Orientation="Vertical">
-                        <xcad:LayoutPanel x:Name="HorizontalPanel"
-                                          Orientation="Horizontal">
-                            <xcad:LayoutDocumentPane />
+                    <xcad:LayoutPanel Orientation="Horizontal">
+
+                        <!--<xcad:LayoutAnchorablePaneGroup DockWidth="200">
+                            <xcad:LayoutAnchorablePane>
+                                <xcad:LayoutAnchorable Title="Content Tree 1"
+                                                       CanHide="False">
+                                    <ContentControl cal:View.Model="{Binding ContentTree}" />
+                                </xcad:LayoutAnchorable>
+                                <xcad:LayoutAnchorable Title="Content Tree 1"
+                                                       CanHide="False">
+                                    <ContentControl cal:View.Model="{Binding ContentTree}" />
+                                </xcad:LayoutAnchorable>
+                            </xcad:LayoutAnchorablePane>
+                        </xcad:LayoutAnchorablePaneGroup>-->
+
+                        <xcad:LayoutDocumentPaneGroup>
+                            <xcad:LayoutDocumentPane>
+                                <!--<xcad:LayoutDocument Title="Content 1">
+                                  <ContentControl cal:View.Model="{Binding ActiveItem}"/>
+                              </xcad:LayoutDocument>-->
+                            </xcad:LayoutDocumentPane>
+                        </xcad:LayoutDocumentPaneGroup>
+
+                        <xcad:LayoutPanel Orientation="Vertical"
+                                          DockWidth="200">
+                            <xcad:LayoutAnchorablePaneGroup DockWidth="200">
+                                <xcad:LayoutAnchorablePane>
+                                    <xcad:LayoutAnchorable Title="Content Tree 1"
+                                                           CanHide="False">
+                                        <ContentControl cal:View.Model="{Binding ContentTree}" />
+                                    </xcad:LayoutAnchorable>
+                                    <xcad:LayoutAnchorable Title="Content Tree 1"
+                                                           CanHide="False">
+                                        <ContentControl cal:View.Model="{Binding ContentTree}" />
+                                    </xcad:LayoutAnchorable>
+                                </xcad:LayoutAnchorablePane>
+                            </xcad:LayoutAnchorablePaneGroup>
+
+                            <xcad:LayoutAnchorablePane DockWidth="200">
+                                <xcad:LayoutAnchorable Title="Properties"
+                                                       CanHide="False">
+                                    <ContentControl cal:View.Model="{Binding ContentTree}" />
+                                </xcad:LayoutAnchorable>
+                            </xcad:LayoutAnchorablePane>
                         </xcad:LayoutPanel>
+
                     </xcad:LayoutPanel>
+
                 </xcad:LayoutRoot>
+
             </xcad:DockingManager>
         </DockPanel>
 
