@@ -82,7 +82,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             Thread.Sleep(2000);
             _aplayClient.Start(_serverAdress);
         }
-        private void Close(JoinProjectViewModel vm)
+        private void Close(IDisposable vm)
         {
             JoinProjectViewModel = null;
             vm.Dispose();
