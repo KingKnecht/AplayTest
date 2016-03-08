@@ -14,7 +14,7 @@ Simple project selection dialog is shown at the beginning.
 # Getting started
 - Download Zip or fork AplayTest
 - Start "AplayTest.Server.Console"
-- Start one or more instances of "AplayTest.Client.Wpf"
+- Start one or more instances of "AplayTest.Client.Gemini"
 - Search or create a new project. Check other clinet for updates. 
 - Join a project (nothing interesting will happen...)
 
