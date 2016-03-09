@@ -28,9 +28,9 @@ namespace APlayTest.Client
     bool IsAdmin {get; }
     String RemoteAddress {get; }
     ulong APlayClientId {get; }
-    APlayTest.Client.User CurrentUser {get; set; }
     APlayTest.Client.Project CurrentProject {get; }
     APlayTest.Client.ProjectManager ProjectManager {get; }
+    APlayTest.Client.User CurrentUser {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
   };
@@ -41,6 +41,8 @@ namespace APlayTest.Client
   {
     void onCurrentProjectChange (APlayTest.Client.Project NewCurrentProject__);
     void onProjectManagerChange (APlayTest.Client.ProjectManager NewProjectManager__);
+    void onCurrentUserChange (APlayTest.Client.User NewCurrentUser__);
+    APlayTest.Client.User onGetCurrentUser ();
   };
 }
 namespace APlayTest.Client
@@ -62,6 +64,7 @@ namespace APlayTest.Client
   {
     int Id {get; }
     APlayTest.Client.ProjectDetail ProjectDetail {get; }
+    APlayTest.Client.SheetManager SheetManager {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
   };
@@ -72,6 +75,7 @@ namespace APlayTest.Client
   {
     void onIdChange (int NewId__);
     void onProjectDetailChange (APlayTest.Client.ProjectDetail NewProjectDetail__);
+    void onSheetManagerChange (APlayTest.Client.SheetManager NewSheetManager__);
   };
 }
 namespace APlayTest.Client
@@ -166,6 +170,41 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
+  public interface  ISheetManagerImpl
+  {
+    APlayTest.Client.SheetList Sheets {get; }
+    ulong APlayEntityId {get; }
+    bool RequiresInit ();
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  ISheetManagerEvents
+  {
+    void onSheetsReplace (APlayTest.Client.SheetList Sheets__);
+    void onSheetsAdd (APlayTest.Client.Sheet element);
+    void onSheetsRemove (APlayTest.Client.Sheet element);
+    void onSheetsClear ();
+    void onSheetsInsertAt (int pos, APlayTest.Client.Sheet element);
+    void onSheetsSetAt (int pos, APlayTest.Client.Sheet element);
+    void onSheetsRemoveAt (int pos, APlayTest.Client.Sheet element);
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  ISheetManagerSkeleton : APlayTest.Client.ISheetManagerImpl, APlay.Generated.Intern.Client.__ISheetManagerAPEvents, APlayTest.Client.ISheetManagerEvents
+  {
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  ISheetManagerFactory
+  {
+    APlayTest.Client.SheetManager CreateSheetManager ();
+  };
+}
+namespace APlayTest.Client
+{
   public interface  IUserImpl
   {
     String Name {get; set; }
@@ -221,7 +260,7 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
-  public interface  IUserObjectFactory : APlayTest.Client.IClientUserFactory, APlayTest.Client.IProjectUserFactory, APlayTest.Client.IProjectManagerUserFactory, APlayTest.Client.ISheetUserFactory, APlayTest.Client.IUserUserFactory
+  public interface  IUserObjectFactory : APlayTest.Client.IClientUserFactory, APlayTest.Client.IProjectUserFactory, APlayTest.Client.IProjectManagerUserFactory, APlayTest.Client.ISheetUserFactory, APlayTest.Client.ISheetManagerUserFactory, APlayTest.Client.IUserUserFactory
   {
   };
 }
@@ -251,6 +290,13 @@ namespace APlayTest.Client
   public interface  ISheetUserFactory
   {
     APlayTest.Client.ISheetImpl CreateSheet ();
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  ISheetManagerUserFactory
+  {
+    APlayTest.Client.ISheetManagerImpl CreateSheetManager ();
   };
 }
 namespace APlayTest.Client
@@ -310,22 +356,6 @@ namespace APlayTest.Client
         }
       }
     }
-    public virtual APlayTest.Client.User CurrentUser
-    {
-      set
-      {
-        {
-          //User
-          implClient.CurrentUser = ((APlay.Generated.Intern.Client.__IUserAPEvents) (value));
-        }
-      }
-      get
-      {
-        {
-          return (((APlayTest.Client.User) (implClient.CurrentUser)));
-        }
-      }
-    }
     public virtual APlayTest.Client.Project CurrentProject
     {
       get
@@ -341,6 +371,15 @@ namespace APlayTest.Client
       {
         {
           return (((APlayTest.Client.ProjectManager) (implClient.ProjectManager)));
+        }
+      }
+    }
+    public virtual APlayTest.Client.User CurrentUser
+    {
+      get
+      {
+        {
+          return (((APlayTest.Client.User) (implClient.CurrentUser)));
         }
       }
     }
@@ -397,6 +436,50 @@ namespace APlayTest.Client
         }
       }
     }
+    public virtual void onCurrentUserChange(APlayTest.Client.User NewCurrentUser__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onCurrentUserChange received","Client.Designed");
+    }
+    public void onInternCurrentUserChange(APlay.Generated.Intern.Client.__IUserAPEvents NewCurrentUser__)
+    {
+      if(CurrentUserChangeEventHandler!=null)
+      {
+        CurrentUserChangeEventHandler(((APlayTest.Client.User) (NewCurrentUser__)));
+      }
+      else
+      {
+        if(APlayTest.Client.ClientSkeleton.StaticCurrentUserChangeEventHandler!=null)
+        {
+          APlayTest.Client.ClientSkeleton.StaticCurrentUserChangeEventHandler(((APlayTest.Client.User) (NewCurrentUser__)), ((APlayTest.Client.Client) (this)));
+        }
+        else
+        {
+          this.onCurrentUserChange(((APlayTest.Client.User) (NewCurrentUser__)));
+        }
+      }
+    }
+    public abstract APlayTest.Client.User onGetCurrentUser();
+    public APlay.Generated.Intern.Client.__IUserAPEvents onInternGetCurrentUser()
+    {
+      if(GetCurrentUserEventHandler!=null)
+      {
+        APlayTest.Client.User retu = GetCurrentUserEventHandler();
+        return (((APlay.Generated.Intern.Client.__IUserAPEvents) (retu)));
+      }
+      else
+      {
+        if(APlayTest.Client.ClientSkeleton.StaticGetCurrentUserEventHandler!=null)
+        {
+          APlayTest.Client.User retu = APlayTest.Client.ClientSkeleton.StaticGetCurrentUserEventHandler(((APlayTest.Client.Client) (this)));
+          return (((APlay.Generated.Intern.Client.__IUserAPEvents) (retu)));
+        }
+        else
+        {
+          APlayTest.Client.User retu = this.onGetCurrentUser();
+          return (((APlay.Generated.Intern.Client.__IUserAPEvents) (retu)));
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implClient.RequiresInit();
@@ -414,6 +497,10 @@ namespace APlayTest.Client
     static public event APlayTest.Client.Delegates.void_Project_Client StaticCurrentProjectChangeEventHandler;
     public event APlayTest.Client.Delegates.void_ProjectManager ProjectManagerChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_ProjectManager_Client StaticProjectManagerChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_User CurrentUserChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_User_Client StaticCurrentUserChangeEventHandler;
+    public event APlayTest.Client.Delegates.User_ GetCurrentUserEventHandler;
+    static public event APlayTest.Client.Delegates.User_Client StaticGetCurrentUserEventHandler;
     private APlay.Generated.Intern.Client.__IClientAPImpl implClient;
   }
   
@@ -449,6 +536,15 @@ namespace APlayTest.Client
       {
         {
           return (new APlayTest.Client.ProjectDetail(((String) (implProject.ProjectDetail.Name)), ((String) (implProject.ProjectDetail.CreatedBy)), ((DateTime) (implProject.ProjectDetail.CreationDate))));
+        }
+      }
+    }
+    public virtual APlayTest.Client.SheetManager SheetManager
+    {
+      get
+      {
+        {
+          return (((APlayTest.Client.SheetManager) (implProject.SheetManager)));
         }
       }
     }
@@ -505,6 +601,28 @@ namespace APlayTest.Client
         }
       }
     }
+    public virtual void onSheetManagerChange(APlayTest.Client.SheetManager NewSheetManager__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetManagerChange received","Client.Designed");
+    }
+    public void onInternSheetManagerChange(APlay.Generated.Intern.Client.__ISheetManagerAPEvents NewSheetManager__)
+    {
+      if(SheetManagerChangeEventHandler!=null)
+      {
+        SheetManagerChangeEventHandler(((APlayTest.Client.SheetManager) (NewSheetManager__)));
+      }
+      else
+      {
+        if(APlayTest.Client.ProjectSkeleton.StaticSheetManagerChangeEventHandler!=null)
+        {
+          APlayTest.Client.ProjectSkeleton.StaticSheetManagerChangeEventHandler(((APlayTest.Client.SheetManager) (NewSheetManager__)), ((APlayTest.Client.Project) (this)));
+        }
+        else
+        {
+          this.onSheetManagerChange(((APlayTest.Client.SheetManager) (NewSheetManager__)));
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implProject.RequiresInit();
@@ -522,6 +640,8 @@ namespace APlayTest.Client
     static public event APlayTest.Client.Delegates.void_int32_Project StaticIdChangeEventHandler;
     public event APlayTest.Client.Delegates.void_ProjectDetail ProjectDetailChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_ProjectDetail_Project StaticProjectDetailChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_SheetManager SheetManagerChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_SheetManager_Project StaticSheetManagerChangeEventHandler;
     private APlay.Generated.Intern.Client.__IProjectAPImpl implProject;
   }
   
@@ -990,6 +1110,225 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
+  public abstract partial class SheetManagerSkeleton : APlayTest.Client.ISheetManagerSkeleton, APlay.Generated.Intern.Client.__ISheetManagerAPEvents
+  {
+    public SheetManagerSkeleton()
+    {
+      if(APlay.Common.APlayInitializer.GetInitializer()!=null)
+      {
+        this.setSheetManagerObject(((APlay.Generated.Intern.Client.__ISheetManagerAPImpl) (APlay.Common.APlayInitializer.GetInitializer())));
+      }
+      else
+      {
+        this.setSheetManagerObject(APlayObjectFactory.CreateSheetManagerImpl());
+      }
+      ((APlay.Generated.Intern.Client.__SheetManager) (this.getSheetManagerObject())).SheetManagerHandler = ((APlay.Generated.Intern.Client.__ISheetManagerAPEvents) (((APlayTest.Client.SheetManagerSkeleton) (this))));
+    }
+    public virtual APlayTest.Client.SheetList Sheets
+    {
+      get
+      {
+        {
+          return (((APlayTest.Client.SheetList) (implSheetManager.Sheets)));
+        }
+      }
+    }
+    public virtual ulong APlayEntityId
+    {
+      get
+      {
+        {
+          return (implSheetManager.APlayEntityId);
+        }
+      }
+    }
+    public virtual void onSheetsReplace(APlayTest.Client.SheetList Sheets__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsReplace received","Client.Designed");
+    }
+    public void onInternSheetsReplace(APlay.Generated.Intern.Client.ISheetListEvents Sheets__)
+    {
+      if(SheetsReplaceEventHandler!=null)
+      {
+        SheetsReplaceEventHandler(((APlayTest.Client.SheetList) (Sheets__)));
+      }
+      else
+      {
+        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsReplaceEventHandler!=null)
+        {
+          APlayTest.Client.SheetManagerSkeleton.StaticSheetsReplaceEventHandler(((APlayTest.Client.SheetList) (Sheets__)), ((APlayTest.Client.SheetManager) (this)));
+        }
+        else
+        {
+          this.onSheetsReplace(((APlayTest.Client.SheetList) (Sheets__)));
+        }
+      }
+    }
+    public virtual void onSheetsAdd(APlayTest.Client.Sheet element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsAdd received","Client.Designed");
+    }
+    public void onInternSheetsAdd(APlay.Generated.Intern.Client.__ISheetAPEvents element)
+    {
+      if(SheetsAddEventHandler!=null)
+      {
+        SheetsAddEventHandler(((APlayTest.Client.Sheet) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsAddEventHandler!=null)
+        {
+          APlayTest.Client.SheetManagerSkeleton.StaticSheetsAddEventHandler(((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
+        }
+        else
+        {
+          this.onSheetsAdd(((APlayTest.Client.Sheet) (element)));
+        }
+      }
+    }
+    public virtual void onSheetsRemove(APlayTest.Client.Sheet element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsRemove received","Client.Designed");
+    }
+    public void onInternSheetsRemove(APlay.Generated.Intern.Client.__ISheetAPEvents element)
+    {
+      if(SheetsRemoveEventHandler!=null)
+      {
+        SheetsRemoveEventHandler(((APlayTest.Client.Sheet) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsRemoveEventHandler!=null)
+        {
+          APlayTest.Client.SheetManagerSkeleton.StaticSheetsRemoveEventHandler(((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
+        }
+        else
+        {
+          this.onSheetsRemove(((APlayTest.Client.Sheet) (element)));
+        }
+      }
+    }
+    public virtual void onSheetsClear()
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsClear received","Client.Designed");
+    }
+    public void onInternSheetsClear()
+    {
+      if(SheetsClearEventHandler!=null)
+      {
+        SheetsClearEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsClearEventHandler!=null)
+        {
+          APlayTest.Client.SheetManagerSkeleton.StaticSheetsClearEventHandler(((APlayTest.Client.SheetManager) (this)));
+        }
+        else
+        {
+          this.onSheetsClear();
+        }
+      }
+    }
+    public virtual void onSheetsInsertAt(int pos, APlayTest.Client.Sheet element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsInsertAt received","Client.Designed");
+    }
+    public void onInternSheetsInsertAt(int pos, APlay.Generated.Intern.Client.__ISheetAPEvents element)
+    {
+      if(SheetsInsertAtEventHandler!=null)
+      {
+        SheetsInsertAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsInsertAtEventHandler!=null)
+        {
+          APlayTest.Client.SheetManagerSkeleton.StaticSheetsInsertAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
+        }
+        else
+        {
+          this.onSheetsInsertAt(pos, ((APlayTest.Client.Sheet) (element)));
+        }
+      }
+    }
+    public virtual void onSheetsSetAt(int pos, APlayTest.Client.Sheet element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsSetAt received","Client.Designed");
+    }
+    public void onInternSheetsSetAt(int pos, APlay.Generated.Intern.Client.__ISheetAPEvents element)
+    {
+      if(SheetsSetAtEventHandler!=null)
+      {
+        SheetsSetAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsSetAtEventHandler!=null)
+        {
+          APlayTest.Client.SheetManagerSkeleton.StaticSheetsSetAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
+        }
+        else
+        {
+          this.onSheetsSetAt(pos, ((APlayTest.Client.Sheet) (element)));
+        }
+      }
+    }
+    public virtual void onSheetsRemoveAt(int pos, APlayTest.Client.Sheet element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsRemoveAt received","Client.Designed");
+    }
+    public void onInternSheetsRemoveAt(int pos, APlay.Generated.Intern.Client.__ISheetAPEvents element)
+    {
+      if(SheetsRemoveAtEventHandler!=null)
+      {
+        SheetsRemoveAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsRemoveAtEventHandler!=null)
+        {
+          APlayTest.Client.SheetManagerSkeleton.StaticSheetsRemoveAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
+        }
+        else
+        {
+          this.onSheetsRemoveAt(pos, ((APlayTest.Client.Sheet) (element)));
+        }
+      }
+    }
+    public bool RequiresInit()
+    {
+      bool retu = implSheetManager.RequiresInit();
+      return (((bool) (retu)));
+    }
+    public APlay.Generated.Intern.Client.__ISheetManagerAPImpl getSheetManagerObject()
+    {
+      return (implSheetManager);
+    }
+    public void setSheetManagerObject(APlay.Generated.Intern.Client.__ISheetManagerAPImpl impl)
+    {
+      implSheetManager = impl;
+    }
+    public event APlayTest.Client.Delegates.void_SheetList SheetsReplaceEventHandler;
+    static public event APlayTest.Client.Delegates.void_SheetList_SheetManager StaticSheetsReplaceEventHandler;
+    public event APlayTest.Client.Delegates.void_Sheet SheetsAddEventHandler;
+    static public event APlayTest.Client.Delegates.void_Sheet_SheetManager StaticSheetsAddEventHandler;
+    public event APlayTest.Client.Delegates.void_Sheet SheetsRemoveEventHandler;
+    static public event APlayTest.Client.Delegates.void_Sheet_SheetManager StaticSheetsRemoveEventHandler;
+    public event APlayTest.Client.Delegates.void_ SheetsClearEventHandler;
+    static public event APlayTest.Client.Delegates.void_SheetManager StaticSheetsClearEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Sheet SheetsInsertAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Sheet_SheetManager StaticSheetsInsertAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Sheet SheetsSetAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Sheet_SheetManager StaticSheetsSetAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Sheet SheetsRemoveAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Sheet_SheetManager StaticSheetsRemoveAtEventHandler;
+    private APlay.Generated.Intern.Client.__ISheetManagerAPImpl implSheetManager;
+  }
+  
+}
+namespace APlayTest.Client
+{
   public abstract partial class UserSkeleton : APlayTest.Client.IUserSkeleton, APlay.Generated.Intern.Client.__IUserAPEvents
   {
     public UserSkeleton()
@@ -1253,6 +1592,162 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
+  public partial class SheetList : IList<APlayTest.Client.Sheet>, APlay.Generated.Intern.Client.ISheetListEvents
+  {
+    public SheetList()
+    {
+      APlay.Generated.Intern.Client.ISheetListImpl impl_=null;
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Client.SheetList();
+      }
+    }
+    public SheetList(APlay.Generated.Intern.Client.ISheetListImpl impl_)
+    {
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Client.SheetList();
+      }
+    }
+    public static APlayTest.Client.SheetList CreateForAPlay(APlay.Generated.Intern.Client.ISheetListImpl impl)
+    {
+      APlayTest.Client.SheetList ob = new APlayTest.Client.SheetList(impl);
+      return (ob);
+    }
+    public APlay.Generated.Intern.Client.ISheetListImpl getSheetObject()
+    {
+      return (impl);
+    }
+    private APlay.Generated.Intern.Client.ISheetListImpl impl;
+    
+public int IndexOf(APlayTest.Client.Sheet item)
+{
+    return (int)impl.indexOf(item);
+}
+
+public void Insert(int index, APlayTest.Client.Sheet item)
+{
+    impl.insertAt(index, item);
+}
+
+public void RemoveAt(int index)
+{
+    impl.removeAt(index);
+}
+
+public APlayTest.Client.Sheet this[int index]
+{
+    get
+    {
+         
+        return (APlayTest.Client.Sheet)impl.get((int)index);
+    }
+    set
+    {
+        APlayTest.Client.Sheet item =value;
+        impl.setAt(index,item);
+    }
+}
+
+public void Add(APlayTest.Client.Sheet item)
+{
+    impl.add(item);
+}
+
+public void Clear()
+{
+    impl.clear();
+}
+
+public bool Contains(APlayTest.Client.Sheet item)
+{
+    return impl.contains(item);
+}
+
+public void CopyTo(APlayTest.Client.Sheet[] array, int arrayIndex)
+{
+    int i=arrayIndex;
+    foreach (APlayTest.Client.Sheet item in this)
+    {
+        array[i++]=item;
+    }
+}
+
+public int Count
+{
+    get { return (int)impl.length(); }
+}
+
+public bool IsReadOnly
+{
+    get { return false; }
+}
+
+public bool Remove(APlayTest.Client.Sheet item)
+{
+    return impl.remove(item);
+}
+System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+{
+    return GetEnumerator();
+}
+
+    public IEnumerator<APlayTest.Client.Sheet> GetEnumerator()
+    {
+        return new SheetListEnumerator(impl.GetEnumerator());
+    }
+    
+  }
+  
+}
+namespace APlayTest.Client
+{
+  public partial class SheetListEnumerator : IEnumerator<APlayTest.Client.Sheet>
+  {
+    
+        IEnumerator<APlay.Generated.Intern.Client.__Sheet> intern;
+        public SheetListEnumerator(IEnumerator<APlay.Generated.Intern.Client.__Sheet> intern)
+        {
+            this.intern = intern;
+        }
+        public APlayTest.Client.Sheet Current
+        {
+            get { APlay.Generated.Intern.Client.__Sheet item = (APlay.Generated.Intern.Client.__Sheet)intern.Current; return ((APlayTest.Client.Sheet) ((item==null)?null:item.__GetExternSheet()));}
+        }
+
+        public void Dispose()
+        {
+            intern.Dispose();
+        }
+
+        object System.Collections.IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public bool MoveNext()
+        {
+            return intern.MoveNext();
+        }
+
+        public void Reset()
+        {
+            intern.Reset();
+        }
+
+  }
+  
+}
+namespace APlayTest.Client
+{
   public abstract partial class APlayClientSkeleton : APlayTest.Client.IAPlayClientEvents, APlay.Generated.Intern.Client.IDesignedClient
   {
     public APlayClientSkeleton()
@@ -1429,6 +1924,7 @@ namespace APlayTest.Client
       Project_ = factory;
       ProjectManager_ = factory;
       Sheet_ = factory;
+      SheetManager_ = factory;
       User_ = factory;
     }
     public static void SetAPlayDefaultFactory()
@@ -1437,6 +1933,7 @@ namespace APlayTest.Client
       Project_ = null;
       ProjectManager_ = null;
       Sheet_ = null;
+      SheetManager_ = null;
       User_ = null;
     }
     public static void SetClientUserFactory(APlayTest.Client.IClientUserFactory factory)
@@ -1519,6 +2016,26 @@ namespace APlayTest.Client
         return (APlay.Generated.Intern.Client.APlayInternalFactory.CreateSheet());
       }
     }
+    public static void SetSheetManagerUserFactory(APlayTest.Client.ISheetManagerUserFactory factory)
+    {
+      SheetManager_ = factory;
+    }
+    public static void SetSheetManagerAPlayDefaultFactory()
+    {
+      SheetManager_ = null;
+    }
+    public static APlay.Generated.Intern.Client.__ISheetManagerAPImpl CreateSheetManagerImpl()
+    {
+      if(SheetManager_!=null)
+      {
+        APlay.Common.Logging.Logger.LogDesigned(6,"event adapters are temporarily disabled","Client.Designed");
+        return (null);
+      }
+      else
+      {
+        return (APlay.Generated.Intern.Client.APlayInternalFactory.CreateSheetManager());
+      }
+    }
     public static void SetUserUserFactory(APlayTest.Client.IUserUserFactory factory)
     {
       User_ = factory;
@@ -1543,6 +2060,7 @@ namespace APlayTest.Client
     static private APlayTest.Client.IProjectUserFactory Project_;
     static private APlayTest.Client.IProjectManagerUserFactory ProjectManager_;
     static private APlayTest.Client.ISheetUserFactory Sheet_;
+    static private APlayTest.Client.ISheetManagerUserFactory SheetManager_;
     static private APlayTest.Client.IUserUserFactory User_;
   }
   
@@ -1579,6 +2097,13 @@ namespace APlayTest.Client
       APlay.Common.APlayInitializer.SetInitializer(null);
       return (retu__);
     }
+    public APlay.Generated.Intern.Client.__ISheetManagerAPEvents CreateSheetManagerEvents(APlay.Generated.Intern.Client.__ISheetManagerAPImpl impl)
+    {
+      APlay.Common.APlayInitializer.SetInitializer(impl);
+      APlay.Generated.Intern.Client.__ISheetManagerAPEvents retu__ = ((APlay.Generated.Intern.Client.__ISheetManagerAPEvents) (new APlayTest.Client.SheetManager()));
+      APlay.Common.APlayInitializer.SetInitializer(null);
+      return (retu__);
+    }
     public APlay.Generated.Intern.Client.__IUserAPEvents CreateUserEvents(APlay.Generated.Intern.Client.__IUserAPImpl impl)
     {
       APlay.Common.APlayInitializer.SetInitializer(impl);
@@ -1589,6 +2114,10 @@ namespace APlayTest.Client
     public APlay.Generated.Intern.Client.IProjectListEvents CreateProjectListEvents(APlay.Generated.Intern.Client.IProjectListImpl impl)
     {
       return (((APlay.Generated.Intern.Client.IProjectListEvents) (APlayTest.Client.ProjectList.CreateForAPlay(impl))));
+    }
+    public APlay.Generated.Intern.Client.ISheetListEvents CreateSheetListEvents(APlay.Generated.Intern.Client.ISheetListImpl impl)
+    {
+      return (((APlay.Generated.Intern.Client.ISheetListEvents) (APlayTest.Client.SheetList.CreateForAPlay(impl))));
     }
   }
   
@@ -1614,10 +2143,16 @@ namespace APlayTest.Client
     public delegate void void_Project_Client(APlayTest.Client.Project NewCurrentProject__, APlayTest.Client.Client this_);
     public delegate void void_ProjectManager(APlayTest.Client.ProjectManager NewProjectManager__);
     public delegate void void_ProjectManager_Client(APlayTest.Client.ProjectManager NewProjectManager__, APlayTest.Client.Client this_);
+    public delegate void void_User(APlayTest.Client.User NewCurrentUser__);
+    public delegate void void_User_Client(APlayTest.Client.User NewCurrentUser__, APlayTest.Client.Client this_);
+    public delegate APlayTest.Client.User User_();
+    public delegate APlayTest.Client.User User_Client(APlayTest.Client.Client this_);
     public delegate void void_int32(int NewId__);
     public delegate void void_int32_Project(int NewId__, APlayTest.Client.Project this_);
     public delegate void void_ProjectDetail(APlayTest.Client.ProjectDetail NewProjectDetail__);
     public delegate void void_ProjectDetail_Project(APlayTest.Client.ProjectDetail NewProjectDetail__, APlayTest.Client.Project this_);
+    public delegate void void_SheetManager(APlayTest.Client.SheetManager NewSheetManager__);
+    public delegate void void_SheetManager_Project(APlayTest.Client.SheetManager NewSheetManager__, APlayTest.Client.Project this_);
     public delegate void void_boolean(bool NewCanJoinProject__);
     public delegate void void_boolean_ProjectManager(bool NewCanJoinProject__, APlayTest.Client.ProjectManager this_);
     public delegate void void_ProjectList(APlayTest.Client.ProjectList Projects__);
@@ -1627,6 +2162,12 @@ namespace APlayTest.Client
     public delegate void void_int32_Project_ProjectManager(int pos, APlayTest.Client.Project element, APlayTest.Client.ProjectManager this_);
     public delegate void void_Client(APlayTest.Client.Client NewDataClient__);
     public delegate void void_Client_ProjectManager(APlayTest.Client.Client NewDataClient__, APlayTest.Client.ProjectManager this_);
+    public delegate void void_SheetList(APlayTest.Client.SheetList Sheets__);
+    public delegate void void_SheetList_SheetManager(APlayTest.Client.SheetList Sheets__, APlayTest.Client.SheetManager this_);
+    public delegate void void_Sheet(APlayTest.Client.Sheet element);
+    public delegate void void_Sheet_SheetManager(APlayTest.Client.Sheet element, APlayTest.Client.SheetManager this_);
+    public delegate void void_int32_Sheet(int pos, APlayTest.Client.Sheet element);
+    public delegate void void_int32_Sheet_SheetManager(int pos, APlayTest.Client.Sheet element, APlayTest.Client.SheetManager this_);
     public delegate void void_Client_APlayClientSkeleton(APlayTest.Client.Client clientObject, APlayTest.Client.APlayClientSkeleton this_);
     public delegate void void_APlayClientSkeleton(APlayTest.Client.APlayClientSkeleton this_);
     public delegate void void_String(String reason);

@@ -2,31 +2,29 @@
   <namespace>
     <role name="Client" roleType="Client" namespace="[Language=csharp]:APlayTest.Client" className="APlayClient" remoteObject="Client"/>
     <role name="Server" roleType="Server" namespace="[Language=csharp]:APlayTest.Server" className="APlayServer"/>
-    <permissionGroup name="ClientToServer">
-      <access role="Client" read="false" write="true"/>
-      <access role="Server" read="true" write="false"/>
-    </permissionGroup>
     <permissionGroup name="ServerToClient">
       <access role="Client" read="true" write="false"/>
       <access role="Server" read="false" write="true"/>
     </permissionGroup>
     <communicationObject name="Client" persistable="false">
-      <permissionGroup baseType="ClientToServer">
-        <data type="User" name="CurrentUser" persistable="false"/>
-      </permissionGroup>
       <permissionGroup baseType="ServerToClient">
         <data type="Project" name="CurrentProject" persistable="false"/>
         <data type="ProjectManager" name="ProjectManager" persistable="false"/>
+        <data type="User" name="CurrentUser" persistable="false"/>
+        <event name="GetCurrentUser" returnType="User"/>
       </permissionGroup>
     </communicationObject>
-    <permissionGroup name="ServerToServer_AND_Client">
+    <permissionGroup name="ServerToClient_AND_Server">
       <access role="Client" read="true" write="false"/>
       <access role="Server" read="true" write="true"/>
     </permissionGroup>
     <communicationObject name="Project" persistable="false">
-      <permissionGroup baseType="ServerToServer_AND_Client">
+      <permissionGroup baseType="ServerToClient_AND_Server">
         <data type="int32" name="Id" persistable="false"/>
         <data type="ProjectDetail" name="ProjectDetail" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="ServerToClient">
+        <data type="SheetManager" name="SheetManager" persistable="false"/>
       </permissionGroup>
     </communicationObject>
     <primitive name="ProjectDetail" persistable="true">
@@ -34,6 +32,10 @@
       <data type="WString" name="CreatedBy" persistable="false"/>
       <data type="Date" name="CreationDate" persistable="false"/>
     </primitive>
+    <permissionGroup name="ClientToServer">
+      <access role="Client" read="false" write="true"/>
+      <access role="Server" read="true" write="false"/>
+    </permissionGroup>
     <communicationObject name="ProjectManager" persistable="false">
       <permissionGroup baseType="ClientToServer">
         <event name="JoinProject">
@@ -68,6 +70,11 @@
       <permissionGroup baseType="ClientToServer">
         <data type="int32" name="Id" persistable="false"/>
         <data type="WString" name="Name" persistable="false"/>
+      </permissionGroup>
+    </communicationObject>
+    <communicationObject name="SheetManager" persistable="false">
+      <permissionGroup baseType="ServerToClient">
+        <list type="Sheet" name="Sheets" persistable="false"/>
       </permissionGroup>
     </communicationObject>
     <communicationObject name="User" persistable="false">

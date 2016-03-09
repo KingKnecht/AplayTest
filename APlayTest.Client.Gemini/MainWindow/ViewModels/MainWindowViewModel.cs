@@ -41,7 +41,14 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             _aplayClient.ConnectEventHandler += _aplayClient_ConnectEventHandler;
             _aplayClient.DisconnectEventHandler += _aplayClient_DisconnectEventHandler;
 
+
             _aplayClient.Start(_serverAdress);
+        }
+
+
+        private User DataClient_GetCurrentUserEventHandler()
+        {
+            return new User() { Name = Environment.UserName };
         }
 
         void _aplayClient_DisconnectEventHandler()
@@ -68,6 +75,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             ServerNotFoundViewModel = null;
 
             _aplayClient.DataClient = NewDataClient__;
+            _aplayClient.DataClient.GetCurrentUserEventHandler += DataClient_GetCurrentUserEventHandler;
 
             JoinProjectViewModel = new JoinProjectViewModel(_aplayClient.DataClient.ProjectManager, Close);
         }

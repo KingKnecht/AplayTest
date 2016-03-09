@@ -28,11 +28,13 @@ namespace APlayTest.Server
     bool IsAdmin {get; }
     String RemoteAddress {get; }
     ulong APlayClientId {get; }
-    APlayTest.Server.User CurrentUser {get; }
     APlayTest.Server.Project CurrentProject {get; set; }
     APlayTest.Server.ProjectManager ProjectManager {get; set; }
+    APlayTest.Server.User CurrentUser {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
+    APlayTest.Server.User GetCurrentUser ();
+    void GetCurrentUser (APlayTest.Server.Delegates.void_User returnDelegate);
     bool Release ();
     void addOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
@@ -42,12 +44,14 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void forceClientDisconnect (String reason);
   };
@@ -56,7 +60,6 @@ namespace APlayTest.Server
 {
   public interface  IClientEvents
   {
-    void onCurrentUserChange (APlayTest.Server.User NewCurrentUser__);
   };
 }
 namespace APlayTest.Server
@@ -78,6 +81,7 @@ namespace APlayTest.Server
   {
     int Id {get; set; }
     APlayTest.Server.ProjectDetail ProjectDetail {get; set; }
+    APlayTest.Server.SheetManager SheetManager {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
     bool Release ();
@@ -89,12 +93,14 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
   };
 }
@@ -140,12 +146,14 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
   };
 }
@@ -189,12 +197,14 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
   };
 }
@@ -221,6 +231,52 @@ namespace APlayTest.Server
 }
 namespace APlayTest.Server
 {
+  public interface  ISheetManagerImpl
+  {
+    APlayTest.Server.SheetList Sheets {get; set; }
+    ulong APlayEntityId {get; }
+    bool RequiresInit ();
+    bool Release ();
+    void addOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
+    void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
+    bool isOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
+    void removeClientInterest (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IClientAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
+    void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
+    void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
+    void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
+    void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  ISheetManagerEvents
+  {
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  ISheetManagerSkeleton : APlayTest.Server.ISheetManagerImpl, APlay.Generated.Intern.Server.__ISheetManagerAPEvents, APlayTest.Server.ISheetManagerEvents
+  {
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  ISheetManagerFactory
+  {
+    APlayTest.Server.SheetManager CreateSheetManager ();
+  };
+}
+namespace APlayTest.Server
+{
   public interface  IUserImpl
   {
     String Name {get; }
@@ -235,12 +291,14 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
   };
 }
@@ -304,7 +362,7 @@ namespace APlayTest.Server
 }
 namespace APlayTest.Server
 {
-  public interface  IUserObjectFactory : APlayTest.Server.IClientUserFactory, APlayTest.Server.IProjectUserFactory, APlayTest.Server.IProjectManagerUserFactory, APlayTest.Server.ISheetUserFactory, APlayTest.Server.IUserUserFactory
+  public interface  IUserObjectFactory : APlayTest.Server.IClientUserFactory, APlayTest.Server.IProjectUserFactory, APlayTest.Server.IProjectManagerUserFactory, APlayTest.Server.ISheetUserFactory, APlayTest.Server.ISheetManagerUserFactory, APlayTest.Server.IUserUserFactory
   {
   };
 }
@@ -334,6 +392,13 @@ namespace APlayTest.Server
   public interface  ISheetUserFactory
   {
     APlayTest.Server.ISheetImpl CreateSheet ();
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  ISheetManagerUserFactory
+  {
+    APlayTest.Server.ISheetManagerImpl CreateSheetManager ();
   };
 }
 namespace APlayTest.Server
@@ -598,15 +663,6 @@ namespace APlayTest.Server
         }
       }
     }
-    public virtual APlayTest.Server.User CurrentUser
-    {
-      get
-      {
-        {
-          return (((APlayTest.Server.User) (implClient.CurrentUser)));
-        }
-      }
-    }
     public virtual APlayTest.Server.Project CurrentProject
     {
       set
@@ -639,6 +695,22 @@ namespace APlayTest.Server
         }
       }
     }
+    public virtual APlayTest.Server.User CurrentUser
+    {
+      set
+      {
+        {
+          //User
+          implClient.CurrentUser = ((APlay.Generated.Intern.Server.__IUserAPEvents) (value));
+        }
+      }
+      get
+      {
+        {
+          return (((APlayTest.Server.User) (implClient.CurrentUser)));
+        }
+      }
+    }
     public virtual ulong APlayEntityId
     {
       get
@@ -648,32 +720,24 @@ namespace APlayTest.Server
         }
       }
     }
-    public virtual void onCurrentUserChange(APlayTest.Server.User NewCurrentUser__)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onCurrentUserChange received","Server.Designed");
-    }
-    public void onInternCurrentUserChange(APlay.Generated.Intern.Server.__IUserAPEvents NewCurrentUser__)
-    {
-      if(CurrentUserChangeEventHandler!=null)
-      {
-        CurrentUserChangeEventHandler(((APlayTest.Server.User) (NewCurrentUser__)));
-      }
-      else
-      {
-        if(APlayTest.Server.ClientSkeleton.StaticCurrentUserChangeEventHandler!=null)
-        {
-          APlayTest.Server.ClientSkeleton.StaticCurrentUserChangeEventHandler(((APlayTest.Server.User) (NewCurrentUser__)), ((APlayTest.Server.Client) (this)));
-        }
-        else
-        {
-          this.onCurrentUserChange(((APlayTest.Server.User) (NewCurrentUser__)));
-        }
-      }
-    }
     public bool RequiresInit()
     {
       bool retu = implClient.RequiresInit();
       return (((bool) (retu)));
+    }
+    public APlayTest.Server.User GetCurrentUser()
+    {
+      APlay.Generated.Intern.Server.__IUserAPEvents retu = implClient.GetCurrentUser();
+      return (((APlayTest.Server.User) (retu)));
+    }
+    public void GetCurrentUser(APlayTest.Server.Delegates.void_User returnDelegate)
+    {
+      implClient.GetCurrentUser(delegate(APlay.Common.Protocol.MessageReader reader_){
+  APlay.Generated.Intern.Server.__User __retu__ = new APlay.Generated.Intern.Server.__User();
+  __retu__ = APlay.Generated.Intern.Server.__User.readReferenceFromStream(reader_);
+  returnDelegate(((APlayTest.Server.User) ((__retu__==null)?null:__retu__.__GetExternUser())));
+}
+);
     }
     public bool Release()
     {
@@ -713,6 +777,10 @@ namespace APlayTest.Server
     {
       implClient.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implClient.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implClient.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -737,6 +805,10 @@ namespace APlayTest.Server
     {
       implClient.SyncedWithSheet(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
     }
+    public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implClient.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implClient.SyncedWithUser(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -753,8 +825,6 @@ namespace APlayTest.Server
     {
       implClient = impl;
     }
-    public event APlayTest.Server.Delegates.void_User CurrentUserChangeEventHandler;
-    static public event APlayTest.Server.Delegates.void_User_Client StaticCurrentUserChangeEventHandler;
     private APlay.Generated.Intern.Server.__IClientAPImpl implClient;
   }
   
@@ -804,6 +874,22 @@ namespace APlayTest.Server
       {
         {
           return (new APlayTest.Server.ProjectDetail(((String) (implProject.ProjectDetail.Name)), ((String) (implProject.ProjectDetail.CreatedBy)), ((DateTime) (implProject.ProjectDetail.CreationDate))));
+        }
+      }
+    }
+    public virtual APlayTest.Server.SheetManager SheetManager
+    {
+      set
+      {
+        {
+          //SheetManager
+          implProject.SheetManager = ((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (value));
+        }
+      }
+      get
+      {
+        {
+          return (((APlayTest.Server.SheetManager) (implProject.SheetManager)));
         }
       }
     }
@@ -903,6 +989,10 @@ namespace APlayTest.Server
     {
       implProject.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implProject.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implProject.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -926,6 +1016,10 @@ namespace APlayTest.Server
     public void SyncedWithSheet(APlay.Generated.Intern.Server.__ISheetAPEvents ob)
     {
       implProject.SyncedWithSheet(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
+    }
+    public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implProject.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
@@ -1175,6 +1269,10 @@ namespace APlayTest.Server
     {
       implProjectManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implProjectManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implProjectManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -1198,6 +1296,10 @@ namespace APlayTest.Server
     public void SyncedWithSheet(APlay.Generated.Intern.Server.__ISheetAPEvents ob)
     {
       implProjectManager.SyncedWithSheet(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
+    }
+    public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implProjectManager.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
@@ -1353,6 +1455,10 @@ namespace APlayTest.Server
     {
       implSheet.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implSheet.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implSheet.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -1377,6 +1483,10 @@ namespace APlayTest.Server
     {
       implSheet.SyncedWithSheet(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
     }
+    public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implSheet.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implSheet.SyncedWithUser(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -1394,6 +1504,138 @@ namespace APlayTest.Server
     public event APlayTest.Server.Delegates.void_WString NameChangeEventHandler;
     static public event APlayTest.Server.Delegates.void_WString_Sheet StaticNameChangeEventHandler;
     private APlay.Generated.Intern.Server.__ISheetAPImpl implSheet;
+  }
+  
+}
+namespace APlayTest.Server
+{
+  public abstract partial class SheetManagerSkeleton : APlayTest.Server.ISheetManagerSkeleton, APlay.Generated.Intern.Server.__ISheetManagerAPEvents
+  {
+    public SheetManagerSkeleton()
+    {
+      if(APlay.Common.APlayInitializer.GetInitializer()!=null)
+      {
+        this.setSheetManagerObject(((APlay.Generated.Intern.Server.__ISheetManagerAPImpl) (APlay.Common.APlayInitializer.GetInitializer())));
+      }
+      else
+      {
+        this.setSheetManagerObject(APlayObjectFactory.CreateSheetManagerImpl());
+      }
+      ((APlay.Generated.Intern.Server.__SheetManager) (this.getSheetManagerObject())).SheetManagerHandler = ((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (((APlayTest.Server.SheetManagerSkeleton) (this))));
+    }
+    public virtual APlayTest.Server.SheetList Sheets
+    {
+      set
+      {
+        {
+          //Sheet
+          implSheetManager.Sheets = ((APlay.Generated.Intern.Server.ISheetListEvents) (value));
+        }
+      }
+      get
+      {
+        {
+          return (((APlayTest.Server.SheetList) (implSheetManager.Sheets)));
+        }
+      }
+    }
+    public virtual ulong APlayEntityId
+    {
+      get
+      {
+        {
+          return (implSheetManager.APlayEntityId);
+        }
+      }
+    }
+    public bool RequiresInit()
+    {
+      bool retu = implSheetManager.RequiresInit();
+      return (((bool) (retu)));
+    }
+    public bool Release()
+    {
+      bool retu = implSheetManager.Release();
+      return (((bool) (retu)));
+    }
+    public void addOwner(APlay.Generated.Intern.Server.__IClientAPEvents owner)
+    {
+      implSheetManager.addOwner(((APlay.Generated.Intern.Server.__IClientAPEvents) (owner)));
+    }
+    public void removeOwner(APlay.Generated.Intern.Server.__IClientAPEvents owner)
+    {
+      implSheetManager.removeOwner(((APlay.Generated.Intern.Server.__IClientAPEvents) (owner)));
+    }
+    public bool isOwner(APlay.Generated.Intern.Server.__IClientAPEvents owner)
+    {
+      bool retu = implSheetManager.isOwner(((APlay.Generated.Intern.Server.__IClientAPEvents) (owner)));
+      return (((bool) (retu)));
+    }
+    public void removeClientInterest(APlay.Generated.Intern.Server.__IClientAPEvents client)
+    {
+      implSheetManager.removeClientInterest(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IClientAPEvents ob)
+    {
+      implSheetManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IProjectAPEvents ob)
+    {
+      implSheetManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IProjectAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob)
+    {
+      implSheetManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IProjectManagerAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__ISheetAPEvents ob)
+    {
+      implSheetManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implSheetManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
+    {
+      implSheetManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByClient(APlay.Generated.Intern.Server.__IClientAPEvents client)
+    {
+      implSheetManager.removeClientInterestRecursiveByClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void SyncedWithClient(APlay.Generated.Intern.Server.__IClientAPEvents ob)
+    {
+      implSheetManager.SyncedWithClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
+    }
+    public void SyncedWithProject(APlay.Generated.Intern.Server.__IProjectAPEvents ob)
+    {
+      implSheetManager.SyncedWithProject(((APlay.Generated.Intern.Server.__IProjectAPEvents) (ob)));
+    }
+    public void SyncedWithProjectManager(APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob)
+    {
+      implSheetManager.SyncedWithProjectManager(((APlay.Generated.Intern.Server.__IProjectManagerAPEvents) (ob)));
+    }
+    public void SyncedWithSheet(APlay.Generated.Intern.Server.__ISheetAPEvents ob)
+    {
+      implSheetManager.SyncedWithSheet(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
+    }
+    public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implSheetManager.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
+    public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
+    {
+      implSheetManager.SyncedWithUser(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
+    }
+    public APlay.Generated.Intern.Server.__ISheetManagerAPImpl getSheetManagerObject()
+    {
+      return (implSheetManager);
+    }
+    public void setSheetManagerObject(APlay.Generated.Intern.Server.__ISheetManagerAPImpl impl)
+    {
+      implSheetManager = impl;
+    }
+    private APlay.Generated.Intern.Server.__ISheetManagerAPImpl implSheetManager;
   }
   
 }
@@ -1496,6 +1738,10 @@ namespace APlayTest.Server
     {
       implUser.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implUser.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implUser.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -1519,6 +1765,10 @@ namespace APlayTest.Server
     public void SyncedWithSheet(APlay.Generated.Intern.Server.__ISheetAPEvents ob)
     {
       implUser.SyncedWithSheet(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
+    }
+    public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implUser.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
@@ -1745,6 +1995,162 @@ namespace APlayTest.Server
 }
 namespace APlayTest.Server
 {
+  public partial class SheetList : IList<APlayTest.Server.Sheet>, APlay.Generated.Intern.Server.ISheetListEvents
+  {
+    public SheetList()
+    {
+      APlay.Generated.Intern.Server.ISheetListImpl impl_=null;
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Server.SheetList();
+      }
+    }
+    public SheetList(APlay.Generated.Intern.Server.ISheetListImpl impl_)
+    {
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Server.SheetList();
+      }
+    }
+    public static APlayTest.Server.SheetList CreateForAPlay(APlay.Generated.Intern.Server.ISheetListImpl impl)
+    {
+      APlayTest.Server.SheetList ob = new APlayTest.Server.SheetList(impl);
+      return (ob);
+    }
+    public APlay.Generated.Intern.Server.ISheetListImpl getSheetObject()
+    {
+      return (impl);
+    }
+    private APlay.Generated.Intern.Server.ISheetListImpl impl;
+    
+public int IndexOf(APlayTest.Server.Sheet item)
+{
+    return (int)impl.indexOf(item);
+}
+
+public void Insert(int index, APlayTest.Server.Sheet item)
+{
+    impl.insertAt(index, item);
+}
+
+public void RemoveAt(int index)
+{
+    impl.removeAt(index);
+}
+
+public APlayTest.Server.Sheet this[int index]
+{
+    get
+    {
+         
+        return (APlayTest.Server.Sheet)impl.get((int)index);
+    }
+    set
+    {
+        APlayTest.Server.Sheet item =value;
+        impl.setAt(index,item);
+    }
+}
+
+public void Add(APlayTest.Server.Sheet item)
+{
+    impl.add(item);
+}
+
+public void Clear()
+{
+    impl.clear();
+}
+
+public bool Contains(APlayTest.Server.Sheet item)
+{
+    return impl.contains(item);
+}
+
+public void CopyTo(APlayTest.Server.Sheet[] array, int arrayIndex)
+{
+    int i=arrayIndex;
+    foreach (APlayTest.Server.Sheet item in this)
+    {
+        array[i++]=item;
+    }
+}
+
+public int Count
+{
+    get { return (int)impl.length(); }
+}
+
+public bool IsReadOnly
+{
+    get { return false; }
+}
+
+public bool Remove(APlayTest.Server.Sheet item)
+{
+    return impl.remove(item);
+}
+System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+{
+    return GetEnumerator();
+}
+
+    public IEnumerator<APlayTest.Server.Sheet> GetEnumerator()
+    {
+        return new SheetListEnumerator(impl.GetEnumerator());
+    }
+    
+  }
+  
+}
+namespace APlayTest.Server
+{
+  public partial class SheetListEnumerator : IEnumerator<APlayTest.Server.Sheet>
+  {
+    
+        IEnumerator<APlay.Generated.Intern.Server.__Sheet> intern;
+        public SheetListEnumerator(IEnumerator<APlay.Generated.Intern.Server.__Sheet> intern)
+        {
+            this.intern = intern;
+        }
+        public APlayTest.Server.Sheet Current
+        {
+            get { APlay.Generated.Intern.Server.__Sheet item = (APlay.Generated.Intern.Server.__Sheet)intern.Current; return ((APlayTest.Server.Sheet) ((item==null)?null:item.__GetExternSheet()));}
+        }
+
+        public void Dispose()
+        {
+            intern.Dispose();
+        }
+
+        object System.Collections.IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public bool MoveNext()
+        {
+            return intern.MoveNext();
+        }
+
+        public void Reset()
+        {
+            intern.Reset();
+        }
+
+  }
+  
+}
+namespace APlayTest.Server
+{
   public partial class APlayObjectFactory
   {
     public static void SetUserFactory(APlayTest.Server.IUserObjectFactory factory)
@@ -1753,6 +2159,7 @@ namespace APlayTest.Server
       Project_ = factory;
       ProjectManager_ = factory;
       Sheet_ = factory;
+      SheetManager_ = factory;
       User_ = factory;
     }
     public static void SetAPlayDefaultFactory()
@@ -1761,6 +2168,7 @@ namespace APlayTest.Server
       Project_ = null;
       ProjectManager_ = null;
       Sheet_ = null;
+      SheetManager_ = null;
       User_ = null;
     }
     public static void SetClientUserFactory(APlayTest.Server.IClientUserFactory factory)
@@ -1843,6 +2251,26 @@ namespace APlayTest.Server
         return (APlay.Generated.Intern.Server.APlayInternalFactory.CreateSheet());
       }
     }
+    public static void SetSheetManagerUserFactory(APlayTest.Server.ISheetManagerUserFactory factory)
+    {
+      SheetManager_ = factory;
+    }
+    public static void SetSheetManagerAPlayDefaultFactory()
+    {
+      SheetManager_ = null;
+    }
+    public static APlay.Generated.Intern.Server.__ISheetManagerAPImpl CreateSheetManagerImpl()
+    {
+      if(SheetManager_!=null)
+      {
+        APlay.Common.Logging.Logger.LogDesigned(6,"event adapters are temporarily disabled","Server.Designed");
+        return (null);
+      }
+      else
+      {
+        return (APlay.Generated.Intern.Server.APlayInternalFactory.CreateSheetManager());
+      }
+    }
     public static void SetUserUserFactory(APlayTest.Server.IUserUserFactory factory)
     {
       User_ = factory;
@@ -1867,6 +2295,7 @@ namespace APlayTest.Server
     static private APlayTest.Server.IProjectUserFactory Project_;
     static private APlayTest.Server.IProjectManagerUserFactory ProjectManager_;
     static private APlayTest.Server.ISheetUserFactory Sheet_;
+    static private APlayTest.Server.ISheetManagerUserFactory SheetManager_;
     static private APlayTest.Server.IUserUserFactory User_;
   }
   
@@ -1903,6 +2332,13 @@ namespace APlayTest.Server
       APlay.Common.APlayInitializer.SetInitializer(null);
       return (retu__);
     }
+    public APlay.Generated.Intern.Server.__ISheetManagerAPEvents CreateSheetManagerEvents(APlay.Generated.Intern.Server.__ISheetManagerAPImpl impl)
+    {
+      APlay.Common.APlayInitializer.SetInitializer(impl);
+      APlay.Generated.Intern.Server.__ISheetManagerAPEvents retu__ = ((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (new APlayTest.Server.SheetManager()));
+      APlay.Common.APlayInitializer.SetInitializer(null);
+      return (retu__);
+    }
     public APlay.Generated.Intern.Server.__IUserAPEvents CreateUserEvents(APlay.Generated.Intern.Server.__IUserAPImpl impl)
     {
       APlay.Common.APlayInitializer.SetInitializer(impl);
@@ -1913,6 +2349,10 @@ namespace APlayTest.Server
     public APlay.Generated.Intern.Server.IProjectListEvents CreateProjectListEvents(APlay.Generated.Intern.Server.IProjectListImpl impl)
     {
       return (((APlay.Generated.Intern.Server.IProjectListEvents) (APlayTest.Server.ProjectList.CreateForAPlay(impl))));
+    }
+    public APlay.Generated.Intern.Server.ISheetListEvents CreateSheetListEvents(APlay.Generated.Intern.Server.ISheetListImpl impl)
+    {
+      return (((APlay.Generated.Intern.Server.ISheetListEvents) (APlayTest.Server.SheetList.CreateForAPlay(impl))));
     }
   }
   
@@ -1934,8 +2374,7 @@ namespace APlayTest.Server
 {
   public partial class Delegates
   {
-    public delegate void void_User(APlayTest.Server.User NewCurrentUser__);
-    public delegate void void_User_Client(APlayTest.Server.User NewCurrentUser__, APlayTest.Server.Client this_);
+    public delegate void void_User(APlayTest.Server.User returnValue);
     public delegate void void_int32(int NewId__);
     public delegate void void_int32_Project(int NewId__, APlayTest.Server.Project this_);
     public delegate void void_ProjectDetail(APlayTest.Server.ProjectDetail NewProjectDetail__);

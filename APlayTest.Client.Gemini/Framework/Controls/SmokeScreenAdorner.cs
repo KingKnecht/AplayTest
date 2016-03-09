@@ -66,7 +66,7 @@ namespace APlayTest.Client.Gemini.Framework.Controls
 
             // Get a point of the offset of the window
             Window window = Application.Current.MainWindow;
-
+          
             if (window == null)
             {
                 throw new ArgumentException("can't get main window");
@@ -78,7 +78,7 @@ namespace APlayTest.Client.Gemini.Framework.Controls
                 throw new ArgumentException("no transform to window");
             }
 
-            var windowOffset = transformToAncestor.Inverse.Transform(new Point(0, 0));
+            var windowOffset = transformToAncestor.Inverse.Transform(new Point(0, SystemParameters.WindowCaptionHeight + 5)); //Todo: MagicNumber
 
             // Get a point of the lower-right corner of the window
             Point windowLowerRight = windowOffset;

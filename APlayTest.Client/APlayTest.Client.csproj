@@ -86,6 +86,7 @@
     <Compile Include="Impl\Project.cs" />
     <Compile Include="Impl\ProjectManager.cs" />
     <Compile Include="Impl\Sheet.cs" />
+    <Compile Include="Impl\SheetManager.cs" />
     <Compile Include="Impl\User.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

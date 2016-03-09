@@ -207,8 +207,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="JoinProject\ViewModels\" />
-    <Folder Include="JoinProject\Views\" />
     <Folder Include="Shell\Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

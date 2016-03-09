@@ -5,14 +5,11 @@
   <target role="Client" language="C# .Net" userCompiledPath="APlayTest.Client/userCompiled/" libPath="APlayTest.Client/lib/" stubPath="APlayTest.Client/stubs/" active="true" targetPath="" baseNamespace="APlayTest.Client"/>
   <namespace>
     <class name="Client">
-      <code><![CDATA[//TODO: Your class based communication here:
-[Client -> Server]
-User CurrentUser;
-
-[Server -> Client]
+      <code><![CDATA[[Server -> Client]
 Project CurrentProject;
 ProjectManager ProjectManager;
-]]></code>
+User CurrentUser;
+User GetCurrentUser();]]></code>
       <__designerPresentation>
         <x>59</x>
         <y>13</y>
@@ -24,6 +21,8 @@ ProjectManager ProjectManager;
 int32 Id;
 ProjectDetail ProjectDetail;
 
+[Server -> Client]
+SheetManager SheetManager;
 
 
 ]]></code>
@@ -49,6 +48,7 @@ boolean CanJoinProject;
 boolean CanCreateProject;
 List<Project> Projects;
 
+
 [Server -> Client]
 Project SelectedProject;
 void JoinedProject(Project project);
@@ -60,6 +60,13 @@ Client DataClient;]]></code>
 
   int32 Id;
   WString Name;]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </class>
+    <class name="SheetManager">
+      <code><![CDATA[[ Server -> Client ]
+List<Sheet> Sheets;
+
+]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
     <class name="User">
