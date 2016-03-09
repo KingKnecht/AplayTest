@@ -11,8 +11,9 @@ using APlay.Common.DataTypes;
 using APlayTest.Client;
 namespace APlayTest.Client
 {
-  public class User : APlayTest.Client.UserSkeleton
-  {
+  
+    public class User : APlayTest.Client.UserSkeleton
+    {
     /// <summary>
     /// Use this constructor to create instances in your code.
     /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
