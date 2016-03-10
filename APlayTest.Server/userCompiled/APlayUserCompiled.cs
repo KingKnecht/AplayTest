@@ -30,11 +30,9 @@ namespace APlayTest.Server
     ulong APlayClientId {get; }
     APlayTest.Server.Project CurrentProject {get; set; }
     APlayTest.Server.ProjectManager ProjectManager {get; set; }
-    APlayTest.Server.User CurrentUser {get; set; }
+    APlayTest.Server.User CurrentUser {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
-    APlayTest.Server.User GetCurrentUser ();
-    void GetCurrentUser (APlayTest.Server.Delegates.void_User returnDelegate);
     bool Release ();
     void addOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
@@ -60,6 +58,7 @@ namespace APlayTest.Server
 {
   public interface  IClientEvents
   {
+    void onCurrentUserChange (APlayTest.Server.User NewCurrentUser__);
   };
 }
 namespace APlayTest.Server
@@ -697,13 +696,6 @@ namespace APlayTest.Server
     }
     public virtual APlayTest.Server.User CurrentUser
     {
-      set
-      {
-        {
-          //User
-          implClient.CurrentUser = ((APlay.Generated.Intern.Server.__IUserAPEvents) (value));
-        }
-      }
       get
       {
         {
@@ -720,24 +712,32 @@ namespace APlayTest.Server
         }
       }
     }
+    public virtual void onCurrentUserChange(APlayTest.Server.User NewCurrentUser__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onCurrentUserChange received","Server.Designed");
+    }
+    public void onInternCurrentUserChange(APlay.Generated.Intern.Server.__IUserAPEvents NewCurrentUser__)
+    {
+      if(CurrentUserChangeEventHandler!=null)
+      {
+        CurrentUserChangeEventHandler(((APlayTest.Server.User) (NewCurrentUser__)));
+      }
+      else
+      {
+        if(APlayTest.Server.ClientSkeleton.StaticCurrentUserChangeEventHandler!=null)
+        {
+          APlayTest.Server.ClientSkeleton.StaticCurrentUserChangeEventHandler(((APlayTest.Server.User) (NewCurrentUser__)), ((APlayTest.Server.Client) (this)));
+        }
+        else
+        {
+          this.onCurrentUserChange(((APlayTest.Server.User) (NewCurrentUser__)));
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implClient.RequiresInit();
       return (((bool) (retu)));
-    }
-    public APlayTest.Server.User GetCurrentUser()
-    {
-      APlay.Generated.Intern.Server.__IUserAPEvents retu = implClient.GetCurrentUser();
-      return (((APlayTest.Server.User) (retu)));
-    }
-    public void GetCurrentUser(APlayTest.Server.Delegates.void_User returnDelegate)
-    {
-      implClient.GetCurrentUser(delegate(APlay.Common.Protocol.MessageReader reader_){
-  APlay.Generated.Intern.Server.__User __retu__ = new APlay.Generated.Intern.Server.__User();
-  __retu__ = APlay.Generated.Intern.Server.__User.readReferenceFromStream(reader_);
-  returnDelegate(((APlayTest.Server.User) ((__retu__==null)?null:__retu__.__GetExternUser())));
-}
-);
     }
     public bool Release()
     {
@@ -825,6 +825,8 @@ namespace APlayTest.Server
     {
       implClient = impl;
     }
+    public event APlayTest.Server.Delegates.void_User CurrentUserChangeEventHandler;
+    static public event APlayTest.Server.Delegates.void_User_Client StaticCurrentUserChangeEventHandler;
     private APlay.Generated.Intern.Server.__IClientAPImpl implClient;
   }
   
@@ -2374,7 +2376,8 @@ namespace APlayTest.Server
 {
   public partial class Delegates
   {
-    public delegate void void_User(APlayTest.Server.User returnValue);
+    public delegate void void_User(APlayTest.Server.User NewCurrentUser__);
+    public delegate void void_User_Client(APlayTest.Server.User NewCurrentUser__, APlayTest.Server.Client this_);
     public delegate void void_int32(int NewId__);
     public delegate void void_int32_Project(int NewId__, APlayTest.Server.Project this_);
     public delegate void void_ProjectDetail(APlayTest.Server.ProjectDetail NewProjectDetail__);

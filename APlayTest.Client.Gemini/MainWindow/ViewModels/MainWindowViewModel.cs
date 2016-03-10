@@ -46,10 +46,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
         }
 
 
-        private User DataClient_GetCurrentUserEventHandler()
-        {
-            return new User() { Name = Environment.UserName };
-        }
+       
 
         void _aplayClient_DisconnectEventHandler()
         {
@@ -75,8 +72,8 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             ServerNotFoundViewModel = null;
 
             _aplayClient.DataClient = NewDataClient__;
-            _aplayClient.DataClient.GetCurrentUserEventHandler += DataClient_GetCurrentUserEventHandler;
-
+            _aplayClient.DataClient.CurrentUser = new User(){Name = Environment.UserName};
+         
             JoinProjectViewModel = new JoinProjectViewModel(_aplayClient.DataClient.ProjectManager, Close);
         }
 

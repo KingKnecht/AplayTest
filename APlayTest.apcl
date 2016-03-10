@@ -8,8 +8,10 @@
       <code><![CDATA[[Server -> Client]
 Project CurrentProject;
 ProjectManager ProjectManager;
+
+[Client -> Server]
 User CurrentUser;
-User GetCurrentUser();]]></code>
+]]></code>
       <__designerPresentation>
         <x>59</x>
         <y>13</y>

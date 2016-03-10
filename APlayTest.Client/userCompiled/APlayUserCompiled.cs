@@ -30,7 +30,7 @@ namespace APlayTest.Client
     ulong APlayClientId {get; }
     APlayTest.Client.Project CurrentProject {get; }
     APlayTest.Client.ProjectManager ProjectManager {get; }
-    APlayTest.Client.User CurrentUser {get; }
+    APlayTest.Client.User CurrentUser {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
   };
@@ -41,8 +41,6 @@ namespace APlayTest.Client
   {
     void onCurrentProjectChange (APlayTest.Client.Project NewCurrentProject__);
     void onProjectManagerChange (APlayTest.Client.ProjectManager NewProjectManager__);
-    void onCurrentUserChange (APlayTest.Client.User NewCurrentUser__);
-    APlayTest.Client.User onGetCurrentUser ();
   };
 }
 namespace APlayTest.Client
@@ -376,6 +374,13 @@ namespace APlayTest.Client
     }
     public virtual APlayTest.Client.User CurrentUser
     {
+      set
+      {
+        {
+          //User
+          implClient.CurrentUser = ((APlay.Generated.Intern.Client.__IUserAPEvents) (value));
+        }
+      }
       get
       {
         {
@@ -436,50 +441,6 @@ namespace APlayTest.Client
         }
       }
     }
-    public virtual void onCurrentUserChange(APlayTest.Client.User NewCurrentUser__)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onCurrentUserChange received","Client.Designed");
-    }
-    public void onInternCurrentUserChange(APlay.Generated.Intern.Client.__IUserAPEvents NewCurrentUser__)
-    {
-      if(CurrentUserChangeEventHandler!=null)
-      {
-        CurrentUserChangeEventHandler(((APlayTest.Client.User) (NewCurrentUser__)));
-      }
-      else
-      {
-        if(APlayTest.Client.ClientSkeleton.StaticCurrentUserChangeEventHandler!=null)
-        {
-          APlayTest.Client.ClientSkeleton.StaticCurrentUserChangeEventHandler(((APlayTest.Client.User) (NewCurrentUser__)), ((APlayTest.Client.Client) (this)));
-        }
-        else
-        {
-          this.onCurrentUserChange(((APlayTest.Client.User) (NewCurrentUser__)));
-        }
-      }
-    }
-    public abstract APlayTest.Client.User onGetCurrentUser();
-    public APlay.Generated.Intern.Client.__IUserAPEvents onInternGetCurrentUser()
-    {
-      if(GetCurrentUserEventHandler!=null)
-      {
-        APlayTest.Client.User retu = GetCurrentUserEventHandler();
-        return (((APlay.Generated.Intern.Client.__IUserAPEvents) (retu)));
-      }
-      else
-      {
-        if(APlayTest.Client.ClientSkeleton.StaticGetCurrentUserEventHandler!=null)
-        {
-          APlayTest.Client.User retu = APlayTest.Client.ClientSkeleton.StaticGetCurrentUserEventHandler(((APlayTest.Client.Client) (this)));
-          return (((APlay.Generated.Intern.Client.__IUserAPEvents) (retu)));
-        }
-        else
-        {
-          APlayTest.Client.User retu = this.onGetCurrentUser();
-          return (((APlay.Generated.Intern.Client.__IUserAPEvents) (retu)));
-        }
-      }
-    }
     public bool RequiresInit()
     {
       bool retu = implClient.RequiresInit();
@@ -497,10 +458,6 @@ namespace APlayTest.Client
     static public event APlayTest.Client.Delegates.void_Project_Client StaticCurrentProjectChangeEventHandler;
     public event APlayTest.Client.Delegates.void_ProjectManager ProjectManagerChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_ProjectManager_Client StaticProjectManagerChangeEventHandler;
-    public event APlayTest.Client.Delegates.void_User CurrentUserChangeEventHandler;
-    static public event APlayTest.Client.Delegates.void_User_Client StaticCurrentUserChangeEventHandler;
-    public event APlayTest.Client.Delegates.User_ GetCurrentUserEventHandler;
-    static public event APlayTest.Client.Delegates.User_Client StaticGetCurrentUserEventHandler;
     private APlay.Generated.Intern.Client.__IClientAPImpl implClient;
   }
   
@@ -2143,10 +2100,6 @@ namespace APlayTest.Client
     public delegate void void_Project_Client(APlayTest.Client.Project NewCurrentProject__, APlayTest.Client.Client this_);
     public delegate void void_ProjectManager(APlayTest.Client.ProjectManager NewProjectManager__);
     public delegate void void_ProjectManager_Client(APlayTest.Client.ProjectManager NewProjectManager__, APlayTest.Client.Client this_);
-    public delegate void void_User(APlayTest.Client.User NewCurrentUser__);
-    public delegate void void_User_Client(APlayTest.Client.User NewCurrentUser__, APlayTest.Client.Client this_);
-    public delegate APlayTest.Client.User User_();
-    public delegate APlayTest.Client.User User_Client(APlayTest.Client.Client this_);
     public delegate void void_int32(int NewId__);
     public delegate void void_int32_Project(int NewId__, APlayTest.Client.Project this_);
     public delegate void void_ProjectDetail(APlayTest.Client.ProjectDetail NewProjectDetail__);

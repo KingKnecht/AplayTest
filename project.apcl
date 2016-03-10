@@ -6,12 +6,17 @@
       <access role="Client" read="true" write="false"/>
       <access role="Server" read="false" write="true"/>
     </permissionGroup>
+    <permissionGroup name="ClientToServer">
+      <access role="Client" read="false" write="true"/>
+      <access role="Server" read="true" write="false"/>
+    </permissionGroup>
     <communicationObject name="Client" persistable="false">
       <permissionGroup baseType="ServerToClient">
         <data type="Project" name="CurrentProject" persistable="false"/>
         <data type="ProjectManager" name="ProjectManager" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="ClientToServer">
         <data type="User" name="CurrentUser" persistable="false"/>
-        <event name="GetCurrentUser" returnType="User"/>
       </permissionGroup>
     </communicationObject>
     <permissionGroup name="ServerToClient_AND_Server">
@@ -32,10 +37,6 @@
       <data type="WString" name="CreatedBy" persistable="false"/>
       <data type="Date" name="CreationDate" persistable="false"/>
     </primitive>
-    <permissionGroup name="ClientToServer">
-      <access role="Client" read="false" write="true"/>
-      <access role="Server" read="true" write="false"/>
-    </permissionGroup>
     <communicationObject name="ProjectManager" persistable="false">
       <permissionGroup baseType="ClientToServer">
         <event name="JoinProject">

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D2B47293-0448-467B-AA20-63F8AF6C9B13}</ProjectGuid>
+    <ProjectGuid>{76673EF4-A674-4E66-88A5-A7FE17174870}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>APlayTest.Client</RootNamespace>
-    <AssemblyName>APlayTest.Client</AssemblyName>
+    <RootNamespace>Aplay.Reactive</RootNamespace>
+    <AssemblyName>Aplay.Reactive</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -32,31 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="APlayClient">
-      <HintPath>lib\APlayClient.dll</HintPath>
-    </Reference>
-    <Reference Include="APlayCommon">
-      <HintPath>lib\APlayCommon.dll</HintPath>
-    </Reference>
-    <Reference Include="APlayTest_Client">
-      <HintPath>lib\APlayTest_Client.dll</HintPath>
-    </Reference>
     <Reference Include="DynamicData">
       <HintPath>..\packages\DynamicData.4.4.0.1110-beta\lib\net45\DynamicData.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="ReactiveProperty">
-      <HintPath>..\packages\ReactiveProperty.2.5\lib\net45\ReactiveProperty.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveProperty.DataAnnotations">
-      <HintPath>..\packages\ReactiveProperty.2.5\lib\net45\ReactiveProperty.DataAnnotations.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveProperty.NET45">
-      <HintPath>..\packages\ReactiveProperty.2.5\lib\net45\ReactiveProperty.NET45.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Reactive.Core">
       <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
@@ -67,43 +46,19 @@
     <Reference Include="System.Reactive.Linq">
       <HintPath>..\packages\Rx-Linq.2.2.5\lib\net45\System.Reactive.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reactive.PlatformServices">
-      <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Factories\AplayClientFactory.cs" />
-    <Compile Include="Factories\APlayUserFactory.cs" />
-    <Compile Include="Impl\APlayClient.cs" />
-    <Compile Include="Impl\Client.cs" />
-    <Compile Include="Impl\Project.cs" />
-    <Compile Include="Impl\ProjectManager.cs" />
-    <Compile Include="Impl\Sheet.cs" />
-    <Compile Include="Impl\SheetManager.cs" />
-    <Compile Include="Impl\User.cs" />
-    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="userCompiled\APlayUserCompiled.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="lib\APlayClient.dll" />
-    <Content Include="lib\APlayClient.pdb" />
-    <Content Include="lib\APlayCommon.dll" />
-    <Content Include="lib\APlayCommon.pdb" />
-    <Content Include="lib\APlayTest_Client.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

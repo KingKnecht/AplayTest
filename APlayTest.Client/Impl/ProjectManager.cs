@@ -18,9 +18,50 @@ using Reactive.Bindings;
 
 namespace APlayTest.Client
 {
+
+    //public class APlaySourceList : ISourceList<Project>
+    //{
+    //    readonly SourceList<Project> _sourceList = new SourceList<Project>();
+        
+    //    public APlaySourceList(Action< APlayTest.Client.Delegates.void_Project> addAttach)
+    //    {
+    //        addAttach(project => _sourceList.Add(project));
+    //    }
+
+    //    public void Edit(Action<IExtendedList<Project>> updateAction, Action<Exception> errorHandler = null)
+    //    {
+    //        _sourceList.Edit(updateAction,errorHandler);
+    //    }
+
+    //    public void Dispose()
+    //    {
+    //        _sourceList.Dispose();
+    //    }
+
+    //    public IObservable<IChangeSet<Project>> Connect(Func<Project, bool> predicate = null)
+    //    {
+    //        return _sourceList.Connect(predicate);
+    //    }
+
+    //    public IObservable<int> CountChanged
+    //    {
+    //        get { return _sourceList.CountChanged; }
+    //    }
+
+    //    public IEnumerable<Project> Items
+    //    {
+    //        get { return _sourceList.Items; }
+    //    }
+
+    //    public int Count
+    //    {
+    //        get { return _sourceList.Count; }
+    //    }
+    //}
+
     public class ProjectManager : APlayTest.Client.ProjectManagerSkeleton, IDisposable
     {
-        private readonly SourceCache<Project, int> _projectsRx;
+        private readonly SourceList<Project> _projectsRx;
         private readonly CompositeDisposable _cleanup;
         /// <summary>
         /// Use this constructor to create instances in your code.
@@ -33,22 +74,22 @@ namespace APlayTest.Client
             //Todo: Read that shit and think about it.
             //Solange es keine Möglichkeit gibt die Änderungen der AplayList direkt 
             //per Extension-Methode in einen SourceCache umzuwandeln findet die Umwandlung hier statt und nicht im VM.
-            _projectsRx = new SourceCache<Project, int>(pd => pd.Id);
+            _projectsRx = new SourceList<Project>();
 
             _projectsRx.Edit(e =>
             {
-                e.AddOrUpdate(Projects);
+                e.AddRange(Projects);
             });
 
             _cleanup = new CompositeDisposable(_projectsRx);
 
-            
+            //var asl = new APlaySourceList(handler => this.ProjectsAddEventHandler += handler);
         }
         
      
-        public IObservableCache<Project, int> ProjectsRx
+        public IObservableList<Project> ProjectsRx
         {
-            get { return _projectsRx.AsObservableCache(); }
+            get { return _projectsRx.AsObservableList(); }
         }
 
 
@@ -64,7 +105,7 @@ namespace APlayTest.Client
         public override void onProjectsAdd(Project element)
         {
             base.onProjectsAdd(element);
-            _projectsRx.AddOrUpdate(element);
+            _projectsRx.Add(element);
         }
 
         public override void onProjectsRemove(Project element)
@@ -87,7 +128,7 @@ namespace APlayTest.Client
         public override void onProjectsInsertAt(int pos, Project element)
         {
             base.onProjectsInsertAt(pos, element);
-            _projectsRx.AddOrUpdate(element);
+            _projectsRx.Insert(pos,element);
         }
 
 

@@ -31,10 +31,7 @@ namespace APlayTest.Client
 
         }
 
-        public override User onGetCurrentUser()
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 
 }

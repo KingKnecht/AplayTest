@@ -1,7 +1,7 @@
 ﻿<UserControl x:Class="APlayTest.Client.Gemini.MainWindow.Views.JoinProjectView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="clr-namespace:APlayTest.Client.Gemini.Framework.Controls"
              mc:Ignorable="d"
@@ -25,11 +25,16 @@
 
         <Label Grid.Row="0">Join project:</Label>
 
-        <controls:SearchTextBox Grid.Row="1"
-                            Grid.Column="0"
-                            LabelText="Search projects or create a new one"
-                            Height="30"
-                            Text="{Binding SearchStringRx.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <!--<controls:SearchTextBox Grid.Row="1"
+                                Grid.Column="0"
+                                LabelText="Search projects or create a new one"
+                                Height="30"
+                                Text="{Binding SearchStringRx.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
+
+        <TextBox Grid.Row="1"
+                 Grid.Column="0"
+                
+                 Text="{Binding SearchStringRx.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <ListBox SelectedItem="{Binding SelectedProjectRx.Value, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                  Grid.Row="2"

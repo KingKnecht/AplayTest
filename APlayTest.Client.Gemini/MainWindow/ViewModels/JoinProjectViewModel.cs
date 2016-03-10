@@ -24,7 +24,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
         public JoinProjectViewModel(ProjectManager projectManager, Action<IDisposable> close)
         {
             _projectManager = projectManager;
-
+            
             var detailsDisp = _projectManager.ProjectsRx.Connect()
                 .Transform(prj => new ProjectDetailsVm()
                 {

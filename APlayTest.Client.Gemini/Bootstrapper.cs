@@ -28,6 +28,7 @@ namespace APlayTest.Client.Gemini
             base.BindServices(batch);
 
             batch.AddExportedValue<IAplayClientFactory>(new AplayClientFactory());
+            batch.AddExportedValue<IAPlayUserFactory>(new APlayUserFactory());
         }
     }
 }
