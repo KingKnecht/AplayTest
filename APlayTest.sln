@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APlayTest.Client.Gemini", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APlayTest.Client.Modules.SheetTree", "APlayTest.Client.Modules.SheetTree\APlayTest.Client.Modules.SheetTree.csproj", "{AA6D9942-571F-42B7-9D63-FD0446B2D458}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APlayTest.Client.Contracts", "APlayTest.Client.Contracts\APlayTest.Client.Contracts.csproj", "{10354DA0-686D-47C3-864D-E57F17182654}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{AA6D9942-571F-42B7-9D63-FD0446B2D458}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA6D9942-571F-42B7-9D63-FD0446B2D458}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA6D9942-571F-42B7-9D63-FD0446B2D458}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10354DA0-686D-47C3-864D-E57F17182654}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10354DA0-686D-47C3-864D-E57F17182654}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10354DA0-686D-47C3-864D-E57F17182654}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10354DA0-686D-47C3-864D-E57F17182654}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,5 +67,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E82CD289-1D65-42A5-9410-82477873B9E7} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
 		{AA6D9942-571F-42B7-9D63-FD0446B2D458} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
+		{10354DA0-686D-47C3-864D-E57F17182654} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
 	EndGlobalSection
 EndGlobal

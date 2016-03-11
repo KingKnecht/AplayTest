@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using APlayTest.Client.Contracts;
 using APlayTest.Client.Gemini.Properties;
 using Caliburn.Micro;
 using Gemini.Framework.Services;
@@ -12,44 +13,50 @@ using Gemini.Modules.Shell.Views;
 
 namespace APlayTest.Client.Gemini.Shell.ViewModels
 {
-    [Export(typeof(IShell))]
-    public class ShellViewModel : global::Gemini.Modules.Shell.ViewModels.ShellViewModel
+
+   
+
+    [Export(typeof(IProjectAwareShell))]
+    public class ShellViewModel : global::Gemini.Modules.Shell.ViewModels.ShellViewModel, IProjectAwareShell
     {
         static ShellViewModel()
         {
             ViewLocator.AddNamespaceMapping(typeof(ShellViewModel).Namespace, typeof(ShellView).Namespace);
         }
 
-        public override void CanClose(Action<bool> callback)
-        {
-            Coroutine.BeginExecute(CanClose().GetEnumerator(), null, (s, e) => callback(!e.WasCancelled));
-        }
+        public event EventHandler<SheetManager> ProjectChanged;
 
-        private IEnumerable<IResult> CanClose()
-        {
-            yield return new MessageBoxResult();
-        }
+        //public override void CanClose(Action<bool> callback)
+        //{
+        //    Coroutine.BeginExecute(CanClose().GetEnumerator(), null, (s, e) => callback(!e.WasCancelled));
+        //}
 
-        private class MessageBoxResult : IResult
-        {
-            public event EventHandler<ResultCompletionEventArgs> Completed;
+        //private IEnumerable<IResult> CanClose()
+        //{
+        //    yield return new MessageBoxResult();
+        //}
 
-            public void Execute(CoroutineExecutionContext context)
-            {
-                var result = System.Windows.MessageBoxResult.Yes;
+        //private class MessageBoxResult : IResult
+        //{
+        //    public event EventHandler<ResultCompletionEventArgs> Completed;
 
-                //if (Settings.Default.ConfirmExit)
-                {
-                    result = MessageBox.Show("Are you sure you want to exit?", "Confirm", MessageBoxButton.YesNo);
-                }
+        //    public void Execute(CoroutineExecutionContext context)
+        //    {
+        //        var result = System.Windows.MessageBoxResult.Yes;
 
-                Completed(this, new ResultCompletionEventArgs { WasCancelled = (result != System.Windows.MessageBoxResult.Yes) });
-            }
-        }
+        //        //if (Settings.Default.ConfirmExit)
+        //        {
+        //            result = MessageBox.Show("Are you sure you want to exit?", "Confirm", MessageBoxButton.YesNo);
+        //        }
 
-        protected override void OnViewLoaded(object view)
-        {
-            base.OnViewLoaded(view);
-        }
+        //        Completed(this, new ResultCompletionEventArgs { WasCancelled = (result != System.Windows.MessageBoxResult.Yes) });
+        //    }
+        //}
+
+        //protected override void OnViewLoaded(object view)
+        //{
+        //    base.OnViewLoaded(view);
+        //}
+        
     }
 }

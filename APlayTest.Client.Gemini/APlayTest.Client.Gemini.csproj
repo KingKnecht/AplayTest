@@ -47,6 +47,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Caliburn.Micro.2.0.2\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="ControlsLibrary.WPF, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\WpfControls\ControlsLibrary.WPF.dll</HintPath>
+    </Reference>
     <Reference Include="DynamicData, Version=4.4.0.1110, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DynamicData.4.4.0.1110-beta\lib\net45\DynamicData.dll</HintPath>
@@ -140,7 +144,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Framework\Controls\SearchTextBox.cs" />
     <Compile Include="Framework\Controls\SmokeScreenAdorner.cs" />
     <Compile Include="MainWindow\ViewModels\MainWindowViewModel.cs" />
     <Compile Include="MainWindow\ViewModels\ServerNotFoundViewModel.cs" />
@@ -187,16 +190,20 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\APlayTest.Client.Contracts\APlayTest.Client.Contracts.csproj">
+      <Project>{10354DA0-686D-47C3-864D-E57F17182654}</Project>
+      <Name>APlayTest.Client.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\APlayTest.Client.Modules.SheetTree\APlayTest.Client.Modules.SheetTree.csproj">
+      <Project>{aa6d9942-571f-42b7-9d63-fd0446b2d458}</Project>
+      <Name>APlayTest.Client.Modules.SheetTree</Name>
+    </ProjectReference>
     <ProjectReference Include="..\APlayTest.Client\APlayTest.Client.csproj">
       <Project>{D2B47293-0448-467B-AA20-63F8AF6C9B13}</Project>
       <Name>APlayTest.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Framework\Themes\Generic.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow\Views\JoinProjectView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
