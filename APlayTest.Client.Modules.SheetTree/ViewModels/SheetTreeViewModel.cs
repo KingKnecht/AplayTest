@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
@@ -20,19 +19,28 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
     [Export(typeof(SheetTreeViewModel))]
     public class SheetTreeViewModel : Tool
     {
-        private readonly IProjectAwareShell _shell;
+        private readonly IAPlayAwareShell _shell;
         private readonly IInspectorTool _inspectorTool;
-        private IObservableCollection<SheetVm> _sheets;
-        private SheetVm _selectedSheet;
+        private IObservableCollection<SheetDocumentViewModel> _sheets;
+        private SheetDocumentViewModel _selectedSheet;
 
 
         [ImportingConstructor]
-        public SheetTreeViewModel(IProjectAwareShell shell, IInspectorTool inspectorTool)
+        public SheetTreeViewModel(IAPlayAwareShell shell, IInspectorTool inspectorTool)
         {
             _shell = shell;
             _inspectorTool = inspectorTool;
 
             DisplayName = "Sheet Tree";
+
+            if (shell.Project != null)
+            {
+                if (shell.Project.SheetManager.Sheets != null)
+                {
+                    Sheets =
+                        new BindableCollection<SheetDocumentViewModel>(shell.Project.SheetManager.Sheets.Select(s => new SheetDocumentViewModel(s, inspectorTool)));
+                }
+            }
 
             _shell.ProjectChanged += OnProjectChanged;
 
@@ -41,18 +49,17 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         void OnProjectChanged(object sender, Project e)
         {
             Sheets =
-                new BindableCollection<SheetVm>(
-                    e.SheetManager.Sheets.Select(s => new SheetVm(s)));
-
-
+                new BindableCollection<SheetDocumentViewModel>(
+                    e.SheetManager.Sheets.Select(s => new SheetDocumentViewModel(s,_inspectorTool)));
         }
+        
 
         public override PaneLocation PreferredLocation
         {
             get { return PaneLocation.Left; }
         }
 
-        public IObservableCollection<SheetVm> Sheets
+        public IObservableCollection<SheetDocumentViewModel> Sheets
         {
             get { return _sheets; }
             set
@@ -63,7 +70,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             }
         }
 
-        public SheetVm SelectedSheet
+        public SheetDocumentViewModel SelectedSheet
         {
             get { return _selectedSheet; }
             set
@@ -77,8 +84,8 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
                     _inspectorTool.SelectedObject =
                         new InspectableObjectBuilder()
-                        .WithObjectProperties(_selectedSheet, x => true)
-                        .ToInspectableObject();
+                     .WithEditor(_selectedSheet, x => x.Name, new TextBoxEditorViewModel<string>())
+                      .ToInspectableObject();
                 }
                 else
                 {
@@ -89,40 +96,6 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             }
         }
 
-
-    }
-
-    public class SheetVm : Document
-    {
-        private readonly Sheet _sheet;
-        private string _name;
-
-        public SheetVm(Sheet sheet)
-        {
-            _sheet = sheet;
-            _name = _sheet.Name;
-            _sheet.NameChangeEventHandler += _sheet_NameChangeEventHandler;
-        }
-        
-        void _sheet_NameChangeEventHandler(string NewName__)
-        {
-            Name = NewName__;
-        }
-
-        public string Name
-        {
-            get { return _name; }
-            set
-            {
-                if (value == _name) return;
-                _name = value;
-                _sheet.Name = _name;
-                NotifyOfPropertyChange(() => Name);
-            }
-        }
-
-        [Browsable(false)]
-        public int Id { get; set; }
 
     }
 }

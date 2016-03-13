@@ -7,9 +7,11 @@ using Gemini.Framework.Services;
 
 namespace APlayTest.Client.Contracts
 {
-    public interface IProjectAwareShell : IShell
+    public interface IAPlayAwareShell : IShell
     {
         event EventHandler<Project> ProjectChanged;
-        void SetProject(Project project);
+        Project Project { get; set; }
+
+        Client Client { get; set; }
     }
 }

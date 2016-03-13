@@ -10,6 +10,7 @@ using APlayTest.Client.Gemini.Properties;
 using Caliburn.Micro;
 using Gemini.Framework.Services;
 using Gemini.Modules.Shell.Views;
+using Gemini.Modules.StatusBar.ViewModels;
 using Gemini.Modules.UndoRedo.Services;
 
 namespace APlayTest.Client.Gemini.Shell.ViewModels
@@ -17,25 +18,47 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
 
 
     [Export(typeof(IShell))]
-    [Export(typeof(IProjectAwareShell))]
-    public class ShellViewModel : global::Gemini.Modules.Shell.ViewModels.ShellViewModel, IProjectAwareShell
+    [Export(typeof(IAPlayAwareShell))]
+    public class ShellViewModel : global::Gemini.Modules.Shell.ViewModels.ShellViewModel, IAPlayAwareShell
     {
+        private Project _project;
+        private Client _client;
+
         static ShellViewModel()
         {
             ViewLocator.AddNamespaceMapping(typeof(ShellViewModel).Namespace, typeof(ShellView).Namespace);
         }
 
-        public ShellViewModel()
-            : base()
+        public event EventHandler<Project> ProjectChanged;
+        
+        public Project Project
         {
+            get { return _project; }
+            set
+            {
+                if (Equals(value, _project)) return;
+                _project = value;
+                OnProjectChanged(_project);
 
+                StatusBar.Items.Clear();
+                //StatusBar.AddItem(Project.ProjectDetail.Name, new GridLength(1, GridUnitType.Star));
+                //StatusBar.AddItem(Project.ProjectDetail.CreatedBy, new GridLength(100));
+                ////StatusBar.AddItem(Project.ProjectDetail.CreationDate.ToLongDateString(), new GridLength(100));
+                NotifyOfPropertyChange(() => Project);
+            }
         }
 
-        public event EventHandler<Project> ProjectChanged;
-        public void SetProject(Project project)
+        public Client Client
         {
-
-            OnProjectChanged(project);
+            get { return _client; }
+            set
+            {
+                if (Equals(value, _client)) return;
+                _client = value;
+                StatusBar.Items.Clear();
+                StatusBar.AddItem("Connected to " + Client.RemoteAddress, GridLength.Auto);
+                NotifyOfPropertyChange();
+            }
         }
 
         //public override void CanClose(Action<bool> callback)
@@ -75,10 +98,6 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
             var handler = ProjectChanged;
             if (handler != null) handler(this, e);
         }
-
-        protected override void OnActivate()
-        {
-            base.OnActivate();
-        }
+        
     }
 }

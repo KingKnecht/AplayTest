@@ -45,10 +45,10 @@ namespace APlayTest.Client.Modules.SheetTree.Commands
     [CommandHandler]
     public class ViewSheetTreeCommandHandler : CommandHandlerBase<ViewSheetTreeCommandDefinition>
     {
-        private readonly IProjectAwareShell _shell;
+        private readonly IAPlayAwareShell _shell;
 
         [ImportingConstructor]
-        public ViewSheetTreeCommandHandler(IProjectAwareShell shell)
+        public ViewSheetTreeCommandHandler(IAPlayAwareShell shell)
         {
             _shell = shell;
         }

@@ -71,8 +71,11 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             ServerNotFoundViewModel = null;
 
             _aplayClient.DataClient = NewDataClient__;
-            _aplayClient.DataClient.CurrentUser = new User(){Name = Environment.UserName};
-         
+            _aplayClient.DataClient.CurrentUser = new User() { Name = Environment.UserName };
+
+            var aPlayAwareShell = (IAPlayAwareShell)Shell;
+            aPlayAwareShell.Client = NewDataClient__;
+
             JoinProjectViewModel = new JoinProjectViewModel(_aplayClient.DataClient.ProjectManager, Close);
 
             _aplayClient.DataClient.CurrentProjectChangeEventHandler += DataClientOnCurrentProjectChangeEventHandler;
@@ -80,12 +83,10 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
 
         private void DataClientOnCurrentProjectChangeEventHandler(Project newCurrentProject)
         {
-            var projectAwareShell = Shell as IProjectAwareShell;
-            if (projectAwareShell != null)
-            {
-                Title = "APlayTest [" +  newCurrentProject.ProjectDetail.Name + "]";
-                projectAwareShell.SetProject(newCurrentProject);
-            }
+            var aPlayAwareShell = (IAPlayAwareShell)Shell;
+
+            Title = "APlayTest [" + newCurrentProject.ProjectDetail.Name + "]";
+            aPlayAwareShell.Project = newCurrentProject;
         }
 
         void aplayClient_ConnectionFailedEventHandler()

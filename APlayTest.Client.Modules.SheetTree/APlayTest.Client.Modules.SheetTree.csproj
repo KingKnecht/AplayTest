@@ -44,6 +44,9 @@
     <Reference Include="Gemini">
       <HintPath>..\packages\GeminiWpf.0.6.2\lib\net45\Gemini.dll</HintPath>
     </Reference>
+    <Reference Include="Gemini.Modules.GraphEditor">
+      <HintPath>..\packages\Gemini.Modules.GraphEditor.0.6.2\lib\net45\Gemini.Modules.GraphEditor.dll</HintPath>
+    </Reference>
     <Reference Include="Gemini.Modules.Inspector">
       <HintPath>..\packages\Gemini.Modules.Inspector.0.6.2\lib\net45\Gemini.Modules.Inspector.dll</HintPath>
     </Reference>
@@ -55,6 +58,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.0.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -91,7 +96,18 @@
     <Compile Include="MenuDefinitions.cs" />
     <Compile Include="Commands\ViewSheetTreeCommandDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\ConnectionViewModel.cs" />
+    <Compile Include="ViewModels\ConnectorDirection.cs" />
+    <Compile Include="ViewModels\ConnectorViewModel.cs" />
+    <Compile Include="ViewModels\Elements\Block.cs" />
+    <Compile Include="ViewModels\ElementViewModel.cs" />
+    <Compile Include="ViewModels\InputConnectorViewModel.cs" />
+    <Compile Include="ViewModels\OutputConnectorViewModel.cs" />
     <Compile Include="ViewModels\SheetTreeViewModel.cs" />
+    <Compile Include="ViewModels\SheetDocumentViewModel.cs" />
+    <Compile Include="Views\SheetDocumentView.xaml.cs">
+      <DependentUpon>SheetDocumentView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SheetTreeView.xaml.cs">
       <DependentUpon>SheetTreeView.xaml</DependentUpon>
     </Compile>
@@ -112,6 +128,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\SheetDocumentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SheetTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
