@@ -19,7 +19,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
     }
 
     [Export(typeof(IMainWindowEx))]
-    public class MainWindowViewModel : global::Gemini.Modules.MainWindow.ViewModels.MainWindowViewModel, IMainWindowEx
+    public class MainWindowViewModel : global::Gemini.Modules.MainWindow.ViewModels.MainWindowViewModel, IMainWindowEx, IPartImportsSatisfiedNotification
     {
         private readonly IAplayClientFactory _aplayClientFactory;
         private APlayClient _aplayClient;
@@ -33,6 +33,15 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             Title = "APlayTest [not connected]";
             _aplayClientFactory = aplayClientFactory;
             StartNewClient();
+            Icon = null;
+        }
+
+        void IPartImportsSatisfiedNotification.OnImportsSatisfied()
+        {
+            Icon = null;
+            //if (_icon == null)
+                //_resourceManager.GetBitmap("Resources/Icons/Gemini-32.png");
+            ActivateItem(Shell);
         }
 
         private void StartNewClient()
