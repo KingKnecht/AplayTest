@@ -1,8 +1,8 @@
 <apcl:apcl version="2.1" xmlns:apcl="http://www.aplaypowered.com/apcl">
   <role name="Client" roleType="Client" remoteObject="Client"/>
   <role name="Server" roleType="Server"/>
-  <target role="Server" language="C# .Net" userCompiledPath="APlayTest.Server/userCompiled/" libPath="APlayTest.Server/lib/" stubPath="APlayTest.Server/stubs/" active="true" targetPath="" baseNamespace="APlayTest.Server"/>
-  <target role="Client" language="C# .Net" userCompiledPath="APlayTest.Client/userCompiled/" libPath="APlayTest.Client/lib/" stubPath="APlayTest.Client/stubs/" active="true" targetPath="" baseNamespace="APlayTest.Client"/>
+  <target role="Server" language="C# .Net" userCompiledPath="../APlayTest.Server/userCompiled/" libPath="../APlayTest.Server/lib/" stubPath="../APlayTest.Server/stubs/" active="true" targetPath="" baseNamespace="APlayTest.Server"/>
+  <target role="Client" language="C# .Net" userCompiledPath="../APlayTest.Client/userCompiled/" libPath="../APlayTest.Client/lib/" stubPath="../APlayTest.Client/stubs/" active="true" targetPath="" baseNamespace="APlayTest.Client"/>
   <namespace>
     <class name="Client">
       <code><![CDATA[[Server -> Client]
@@ -61,6 +61,8 @@ Client DataClient;]]></code>
 [ Client -> Server ]
 
   int32 Id;
+
+[Server  Client -> Server Client]
   WString Name;]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
@@ -68,7 +70,9 @@ Client DataClient;]]></code>
       <code><![CDATA[[ Server -> Client ]
 List<Sheet> Sheets;
 
-]]></code>
+[Client -> Server]
+Sheet CreateSheet();
+void AddSheet(Sheet sheet);]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
     <class name="User">

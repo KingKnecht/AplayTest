@@ -9,6 +9,7 @@ namespace APlayTest.Client.Contracts
 {
     public interface IProjectAwareShell : IShell
     {
-        event EventHandler<SheetManager> ProjectChanged;
+        event EventHandler<Project> ProjectChanged;
+        void SetProject(Project project);
     }
 }

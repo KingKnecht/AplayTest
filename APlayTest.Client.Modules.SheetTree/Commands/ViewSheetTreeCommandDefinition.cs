@@ -43,12 +43,12 @@ namespace APlayTest.Client.Modules.SheetTree.Commands
     }
 
     [CommandHandler]
-    public class ViewErrorListCommandHandler : CommandHandlerBase<ViewSheetTreeCommandDefinition>
+    public class ViewSheetTreeCommandHandler : CommandHandlerBase<ViewSheetTreeCommandDefinition>
     {
         private readonly IProjectAwareShell _shell;
 
         [ImportingConstructor]
-        public ViewErrorListCommandHandler(IProjectAwareShell shell)
+        public ViewSheetTreeCommandHandler(IProjectAwareShell shell)
         {
             _shell = shell;
         }

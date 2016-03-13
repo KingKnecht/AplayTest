@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,16 +30,17 @@ namespace APlayTest.Server.Factories
     public class ProjectManagerFactory : IProjectManagerFactory
     {
         private readonly IProjectManagerService _projectManagerService;
-   
+        private readonly AplayProjectsCache _aplayProjectsCache;
+
         public ProjectManagerFactory(IProjectManagerService projectManagerService)
         {
             _projectManagerService = projectManagerService;
-            
+            _aplayProjectsCache = new AplayProjectsCache();
         }
 
         public ProjectManager CreateProjectManager()
         {
-            return new ProjectManager(_projectManagerService);
+            return new ProjectManager(_projectManagerService, _aplayProjectsCache);
         }
     }
 }

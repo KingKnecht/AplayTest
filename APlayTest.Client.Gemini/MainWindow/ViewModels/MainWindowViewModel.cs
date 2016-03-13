@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using APlayTest.Client.Contracts;
 using APlayTest.Client.Factories;
 using Gemini.Framework.Services;
 
@@ -29,6 +30,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
         [ImportingConstructor]
         public MainWindowViewModel(IAplayClientFactory aplayClientFactory)
         {
+            Title = "APlayTest [not connected]";
             _aplayClientFactory = aplayClientFactory;
             StartNewClient();
         }
@@ -72,7 +74,18 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             _aplayClient.DataClient.CurrentUser = new User(){Name = Environment.UserName};
          
             JoinProjectViewModel = new JoinProjectViewModel(_aplayClient.DataClient.ProjectManager, Close);
-            
+
+            _aplayClient.DataClient.CurrentProjectChangeEventHandler += DataClientOnCurrentProjectChangeEventHandler;
+        }
+
+        private void DataClientOnCurrentProjectChangeEventHandler(Project newCurrentProject)
+        {
+            var projectAwareShell = Shell as IProjectAwareShell;
+            if (projectAwareShell != null)
+            {
+                Title = "APlayTest [" +  newCurrentProject.ProjectDetail.Name + "]";
+                projectAwareShell.SetProject(newCurrentProject);
+            }
         }
 
         void aplayClient_ConnectionFailedEventHandler()

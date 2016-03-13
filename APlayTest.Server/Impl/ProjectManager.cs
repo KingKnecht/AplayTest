@@ -15,6 +15,7 @@ using APlay.Common.Utils;
 using APlay.Common.DataTypes;
 using APlay.Generated.Intern.Server;
 using APlayTest.Server;
+using APlayTest.Server.Factories;
 using APlayTest.Services;
 using DynamicData;
 using Reactive.Bindings.Extensions;
@@ -24,9 +25,9 @@ namespace APlayTest.Server
     public sealed class ProjectManager : APlayTest.Server.ProjectManagerSkeleton, IDisposable
     {
         private readonly IProjectManagerService _projectManagerService;
+        private readonly IAplayProjectsCache _aplayProjectsCache;
         private string _searchString = String.Empty;
         private CompositeDisposable _cleanUp = new CompositeDisposable();
-        private Dictionary<int, Project> _loadedProjects = new Dictionary<int, Project>();
         /// <summary>
         /// Use this constructor to create instances in your code.
         /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
@@ -36,19 +37,21 @@ namespace APlayTest.Server
         {
         }
 
-        public ProjectManager(IProjectManagerService projectManagerService)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="projectManagerService">Gets projects from some source i.e. DB</param>
+        /// <param name="aplayProjectsCache">A cache of transformed projects. Contains Aplay-Projects. These projects must be the same over all ProjectManagers.</param>
+        public ProjectManager(IProjectManagerService projectManagerService, IAplayProjectsCache aplayProjectsCache)
         {
             _projectManagerService = projectManagerService;
+            _aplayProjectsCache = aplayProjectsCache;
 
 
             //Subscribe for newly added, deleted projects from the service.
             var serviceUpdates = _projectManagerService.ProjectsDelta.Connect()
                 .Filter(project => Filter(_searchString, project))
-               .Transform(pd => new Project()
-                {
-                    Id = pd.Id,
-                    ProjectDetail = new ProjectDetail(pd.ProjectDetail.Name, pd.ProjectDetail.CreatedBy, pd.ProjectDetail.CreationDate)
-                })
+                 .Transform(GetAplayProject)
                 .Subscribe(changeSet =>
                 {
                     foreach (var change in changeSet)
@@ -83,14 +86,18 @@ namespace APlayTest.Server
             {
                 if (sender.CurrentUser != null)
                 {
-                    Project joinedProject = GetAplayProject(_projectManagerService.GetProject(projectId__));
+                    Project joinedProject;
+                    if (_aplayProjectsCache.TryGetProject(projectId__, out joinedProject))
+                    {
+                        sender.CurrentProject = joinedProject;
 
-                    sender.CurrentProject = joinedProject;
-                    JoinedProject(joinedProject);
-                    APlay.Common.Logging.Logger.LogDesigned(2,
-                        "User: " + sender.CurrentUser.Name + " has joined project: " +
-                        SelectedProject.ProjectDetail.Name + "[ClientId: " + sender.APlayClientId + "]",
-                        "APlayTest.Server.ProjectManager");
+                        JoinedProject(joinedProject);
+
+                        APlay.Common.Logging.Logger.LogDesigned(2,
+                            "User: " + sender.CurrentUser.Name + " has joined project: " +
+                            SelectedProject.ProjectDetail.Name + "[ClientId: " + sender.APlayClientId + "]",
+                            "APlayTest.Server.ProjectManager");
+                    }
                 }
             }
         }
@@ -103,10 +110,27 @@ namespace APlayTest.Server
             {
                 Services.Project newProject = _projectManagerService.CreateProject(name__, dataClient.CurrentUser.Name);
 
-                SelectedProject = GetAplayProject(newProject);
+                var newAplayProject = GetAplayProject(newProject);
 
-                UpdateStates();    
+                SelectedProject = newAplayProject;
+
+                UpdateStates();
             }
+        }
+
+        private Project GetAplayProject(Services.Project srvProject)
+        {
+            Project loadedProject;
+            if (_aplayProjectsCache.TryGetProject(srvProject.Id, out loadedProject))
+            {
+                return loadedProject;
+            }
+
+            var aplayProject = CreateAplayProject(srvProject);
+
+            _aplayProjectsCache.AddProject(aplayProject);
+
+            return aplayProject;
         }
 
         private void PublishProjectDetailsList(IEnumerable<Project> projects)
@@ -138,6 +162,7 @@ namespace APlayTest.Server
                                         .Select(srvProject => GetAplayProject(srvProject))
                                         .ToList();
 
+
             PublishProjectDetailsList(foundAplayProjects);
 
             SelectedProject = foundAplayProjects.FirstOrDefault();
@@ -152,40 +177,30 @@ namespace APlayTest.Server
                 return;
             }
 
-            var result = _projectManagerService.GetProjects(pd => pd.Id == projectId__).FirstOrDefault();
-            if (result == null)
-            {
-                return;
-            }
+            Project project;
+            _aplayProjectsCache.TryGetProject(projectId__, out project);
 
-
-
-            SelectedProject = GetAplayProject(result);
+            SelectedProject = project;
 
             UpdateStates();
         }
 
-        private Project GetAplayProject(Services.Project srvProject)
-        {
-            Project loadedProject;
-            if (_loadedProjects.TryGetValue(srvProject.Id, out loadedProject))
-            {
-                return loadedProject;
-            }
 
-            var aplayProject = CreateAplayProject(srvProject);
 
-            return aplayProject;
-        }
-
-        private static Project CreateAplayProject(Services.Project srvProject)
+        private Project CreateAplayProject(Services.Project srvProject)
         {
             Project aplayProject = new Project()
             {
                 Id = srvProject.Id,
                 ProjectDetail = new ProjectDetail(srvProject.ProjectDetail.Name,
-                    srvProject.ProjectDetail.CreatedBy, srvProject.ProjectDetail.CreationDate)
+                    srvProject.ProjectDetail.CreatedBy, srvProject.ProjectDetail.CreationDate),
+                SheetManager = new SheetManager()
             };
+
+            aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 1 " + DateTime.Now.ToLongTimeString() });
+            aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 2 " + DateTime.Now.ToLongTimeString() });
+            aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 3 " + DateTime.Now.ToLongTimeString() });
+
             return aplayProject;
         }
 
@@ -225,5 +240,6 @@ namespace APlayTest.Server
             _cleanUp.Dispose();
         }
     }
+
 
 }

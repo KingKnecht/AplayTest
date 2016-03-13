@@ -151,6 +151,7 @@ namespace APlayTest.Client
 {
   public interface  ISheetEvents
   {
+    void onNameChange (String NewName__);
   };
 }
 namespace APlayTest.Client
@@ -173,6 +174,9 @@ namespace APlayTest.Client
     APlayTest.Client.SheetList Sheets {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
+    APlayTest.Client.Sheet CreateSheet ();
+    void CreateSheet (APlayTest.Client.Delegates.void_Sheet returnDelegate);
+    void AddSheet (APlayTest.Client.Sheet sheet__);
   };
 }
 namespace APlayTest.Client
@@ -1048,6 +1052,28 @@ namespace APlayTest.Client
         }
       }
     }
+    public virtual void onNameChange(String NewName__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onNameChange received","Client.Designed");
+    }
+    public void onInternNameChange(String NewName__)
+    {
+      if(NameChangeEventHandler!=null)
+      {
+        NameChangeEventHandler(NewName__);
+      }
+      else
+      {
+        if(APlayTest.Client.SheetSkeleton.StaticNameChangeEventHandler!=null)
+        {
+          APlayTest.Client.SheetSkeleton.StaticNameChangeEventHandler(NewName__, ((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          this.onNameChange(NewName__);
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implSheet.RequiresInit();
@@ -1061,6 +1087,8 @@ namespace APlayTest.Client
     {
       implSheet = impl;
     }
+    public event APlayTest.Client.Delegates.void_WString NameChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_WString_Sheet StaticNameChangeEventHandler;
     private APlay.Generated.Intern.Client.__ISheetAPImpl implSheet;
   }
   
@@ -1257,6 +1285,24 @@ namespace APlayTest.Client
     {
       bool retu = implSheetManager.RequiresInit();
       return (((bool) (retu)));
+    }
+    public APlayTest.Client.Sheet CreateSheet()
+    {
+      APlay.Generated.Intern.Client.__ISheetAPEvents retu = implSheetManager.CreateSheet();
+      return (((APlayTest.Client.Sheet) (retu)));
+    }
+    public void CreateSheet(APlayTest.Client.Delegates.void_Sheet returnDelegate)
+    {
+      implSheetManager.CreateSheet(delegate(APlay.Common.Protocol.MessageReader reader_){
+  APlay.Generated.Intern.Client.__Sheet __retu__ = new APlay.Generated.Intern.Client.__Sheet();
+  __retu__ = APlay.Generated.Intern.Client.__Sheet.readReferenceFromStream(reader_);
+  returnDelegate(((APlayTest.Client.Sheet) ((__retu__==null)?null:__retu__.__GetExternSheet())));
+}
+);
+    }
+    public void AddSheet(APlayTest.Client.Sheet sheet__)
+    {
+      implSheetManager.AddSheet(((APlay.Generated.Intern.Client.__ISheetAPEvents) (sheet__)));
     }
     public APlay.Generated.Intern.Client.__ISheetManagerAPImpl getSheetManagerObject()
     {
@@ -2115,9 +2161,11 @@ namespace APlayTest.Client
     public delegate void void_int32_Project_ProjectManager(int pos, APlayTest.Client.Project element, APlayTest.Client.ProjectManager this_);
     public delegate void void_Client(APlayTest.Client.Client NewDataClient__);
     public delegate void void_Client_ProjectManager(APlayTest.Client.Client NewDataClient__, APlayTest.Client.ProjectManager this_);
+    public delegate void void_WString(String NewName__);
+    public delegate void void_WString_Sheet(String NewName__, APlayTest.Client.Sheet this_);
+    public delegate void void_Sheet(APlayTest.Client.Sheet returnValue);
     public delegate void void_SheetList(APlayTest.Client.SheetList Sheets__);
     public delegate void void_SheetList_SheetManager(APlayTest.Client.SheetList Sheets__, APlayTest.Client.SheetManager this_);
-    public delegate void void_Sheet(APlayTest.Client.Sheet element);
     public delegate void void_Sheet_SheetManager(APlayTest.Client.Sheet element, APlayTest.Client.SheetManager this_);
     public delegate void void_int32_Sheet(int pos, APlayTest.Client.Sheet element);
     public delegate void void_int32_Sheet_SheetManager(int pos, APlayTest.Client.Sheet element, APlayTest.Client.SheetManager this_);

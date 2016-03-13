@@ -10,12 +10,13 @@ using APlayTest.Client.Gemini.Properties;
 using Caliburn.Micro;
 using Gemini.Framework.Services;
 using Gemini.Modules.Shell.Views;
+using Gemini.Modules.UndoRedo.Services;
 
 namespace APlayTest.Client.Gemini.Shell.ViewModels
 {
 
-   
 
+    [Export(typeof(IShell))]
     [Export(typeof(IProjectAwareShell))]
     public class ShellViewModel : global::Gemini.Modules.Shell.ViewModels.ShellViewModel, IProjectAwareShell
     {
@@ -24,7 +25,18 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
             ViewLocator.AddNamespaceMapping(typeof(ShellViewModel).Namespace, typeof(ShellView).Namespace);
         }
 
-        public event EventHandler<SheetManager> ProjectChanged;
+        public ShellViewModel()
+            : base()
+        {
+
+        }
+
+        public event EventHandler<Project> ProjectChanged;
+        public void SetProject(Project project)
+        {
+
+            OnProjectChanged(project);
+        }
 
         //public override void CanClose(Action<bool> callback)
         //{
@@ -57,6 +69,16 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
         //{
         //    base.OnViewLoaded(view);
         //}
-        
+
+        protected virtual void OnProjectChanged(Project e)
+        {
+            var handler = ProjectChanged;
+            if (handler != null) handler(this, e);
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+        }
     }
 }

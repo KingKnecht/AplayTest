@@ -184,7 +184,7 @@ namespace APlayTest.Server
   public interface  ISheetImpl
   {
     int Id {get; }
-    String Name {get; }
+    String Name {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
     bool Release ();
@@ -259,6 +259,8 @@ namespace APlayTest.Server
 {
   public interface  ISheetManagerEvents
   {
+    APlayTest.Server.Sheet onCreateSheet ();
+    void onAddSheet (APlayTest.Server.Sheet sheet__);
   };
 }
 namespace APlayTest.Server
@@ -1354,6 +1356,13 @@ namespace APlayTest.Server
     }
     public virtual String Name
     {
+      set
+      {
+        {
+          //WString
+          implSheet.Name = value;
+        }
+      }
       get
       {
         {
@@ -1550,6 +1559,47 @@ namespace APlayTest.Server
         }
       }
     }
+    public abstract APlayTest.Server.Sheet onCreateSheet();
+    public APlay.Generated.Intern.Server.__ISheetAPEvents onInternCreateSheet()
+    {
+      if(CreateSheetEventHandler!=null)
+      {
+        APlayTest.Server.Sheet retu = CreateSheetEventHandler();
+        return (((APlay.Generated.Intern.Server.__ISheetAPEvents) (retu)));
+      }
+      else
+      {
+        if(APlayTest.Server.SheetManagerSkeleton.StaticCreateSheetEventHandler!=null)
+        {
+          APlayTest.Server.Sheet retu = APlayTest.Server.SheetManagerSkeleton.StaticCreateSheetEventHandler(((APlayTest.Server.SheetManager) (this)));
+          return (((APlay.Generated.Intern.Server.__ISheetAPEvents) (retu)));
+        }
+        else
+        {
+          APlayTest.Server.Sheet retu = this.onCreateSheet();
+          return (((APlay.Generated.Intern.Server.__ISheetAPEvents) (retu)));
+        }
+      }
+    }
+    public abstract void onAddSheet(APlayTest.Server.Sheet sheet__);
+    public void onInternAddSheet(APlay.Generated.Intern.Server.__ISheetAPEvents sheet__)
+    {
+      if(AddSheetEventHandler!=null)
+      {
+        AddSheetEventHandler(((APlayTest.Server.Sheet) (sheet__)));
+      }
+      else
+      {
+        if(APlayTest.Server.SheetManagerSkeleton.StaticAddSheetEventHandler!=null)
+        {
+          APlayTest.Server.SheetManagerSkeleton.StaticAddSheetEventHandler(((APlayTest.Server.Sheet) (sheet__)), ((APlayTest.Server.SheetManager) (this)));
+        }
+        else
+        {
+          this.onAddSheet(((APlayTest.Server.Sheet) (sheet__)));
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implSheetManager.RequiresInit();
@@ -1637,6 +1687,10 @@ namespace APlayTest.Server
     {
       implSheetManager = impl;
     }
+    public event APlayTest.Server.Delegates.Sheet_ CreateSheetEventHandler;
+    static public event APlayTest.Server.Delegates.Sheet_SheetManager StaticCreateSheetEventHandler;
+    public event APlayTest.Server.Delegates.void_Sheet AddSheetEventHandler;
+    static public event APlayTest.Server.Delegates.void_Sheet_SheetManager StaticAddSheetEventHandler;
     private APlay.Generated.Intern.Server.__ISheetManagerAPImpl implSheetManager;
   }
   
@@ -2391,6 +2445,10 @@ namespace APlayTest.Server
     public delegate void void_int32_ProjectManager(int projectId__, APlayTest.Server.ProjectManager this_);
     public delegate void void_int32_Sheet(int NewId__, APlayTest.Server.Sheet this_);
     public delegate void void_WString_Sheet(String NewName__, APlayTest.Server.Sheet this_);
+    public delegate APlayTest.Server.Sheet Sheet_();
+    public delegate APlayTest.Server.Sheet Sheet_SheetManager(APlayTest.Server.SheetManager this_);
+    public delegate void void_Sheet(APlayTest.Server.Sheet sheet__);
+    public delegate void void_Sheet_SheetManager(APlayTest.Server.Sheet sheet__, APlayTest.Server.SheetManager this_);
     public delegate void void_WString_User(String NewName__, APlayTest.Server.User this_);
     public delegate void void_Client(APlayTest.Server.Client client);
     public delegate void void_Client_APlayServerSkeleton(APlayTest.Server.Client client, APlayTest.Server.APlayServerSkeleton this_);

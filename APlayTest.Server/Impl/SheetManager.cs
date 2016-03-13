@@ -11,18 +11,29 @@ using APlay.Common.DataTypes;
 using APlayTest.Server;
 namespace APlayTest.Server
 {
-  public class SheetManager : APlayTest.Server.SheetManagerSkeleton
-  {
-    /// <summary>
-    /// Use this constructor to create instances in your code.
-    /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
-    ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
-    /// </summary>
-    
-    public SheetManager()
+    public class SheetManager : APlayTest.Server.SheetManagerSkeleton
     {
-      /// TODO: add your code here
+        /// <summary>
+        /// Use this constructor to create instances in your code.
+        /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
+        ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
+        /// </summary>
+
+        public SheetManager()
+        {
+            /// TODO: add your code here
+        }
+
+        public override Sheet onCreateSheet()
+        {
+            return new Sheet();
+            
+        }
+
+        public override void onAddSheet(Sheet sheet__)
+        {
+            Sheets.Add(sheet__);
+        }
     }
-  }
-  
+
 }
