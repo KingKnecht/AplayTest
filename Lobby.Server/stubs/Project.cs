@@ -8,10 +8,10 @@ using System.Collections.Generic;
 using APlay.Common;
 using APlay.Common.Utils;
 using APlay.Common.DataTypes;
-using APlayTest.Client;
-namespace APlayTest.Client
+using Lobby.Server;
+namespace Lobby.Server
 {
-  public class SheetManager : APlayTest.Client.SheetManagerSkeleton
+  public class Project : Lobby.Server.ProjectSkeleton
   {
     /// <summary>
     /// Use this constructor to create instances in your code.
@@ -19,7 +19,7 @@ namespace APlayTest.Client
     ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
     /// </summary>
     
-    public SheetManager()
+    public Project()
     {
       /// TODO: add your code here
     }

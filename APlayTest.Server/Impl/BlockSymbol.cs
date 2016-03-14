@@ -8,10 +8,10 @@ using System.Collections.Generic;
 using APlay.Common;
 using APlay.Common.Utils;
 using APlay.Common.DataTypes;
-using APlayTest.Client;
-namespace APlayTest.Client
+using APlayTest.Server;
+namespace APlayTest.Server
 {
-  public class Sheet : APlayTest.Client.SheetSkeleton
+  public class BlockSymbol : APlayTest.Server.BlockSymbolSkeleton
   {
     /// <summary>
     /// Use this constructor to create instances in your code.
@@ -19,7 +19,7 @@ namespace APlayTest.Client
     ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
     /// </summary>
     
-    public Sheet()
+    public BlockSymbol()
     {
       /// TODO: add your code here
     }

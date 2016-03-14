@@ -14,32 +14,10 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         public const double PreviewSize = 100;
 
-        private double _x;
+        public abstract double X { get; set; }
+        public abstract double Y { get; set; }
 
-        [Browsable(false)]
-        public double X
-        {
-            get { return _x; }
-            set
-            {
-                _x = value;
-                NotifyOfPropertyChange(() => X);
-            }
-        }
-
-        private double _y;
-
-        [Browsable(false)]
-        public double Y
-        {
-            get { return _y; }
-            set
-            {
-                _y = value;
-                NotifyOfPropertyChange(() => Y);
-            }
-        }
-
+        
         private string _name;
 
         [Browsable(false)]

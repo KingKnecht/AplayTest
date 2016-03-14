@@ -17,6 +17,7 @@ using APlay.Generated.Intern.Server;
 using APlayTest.Server;
 using APlayTest.Server.Factories;
 using APlayTest.Services;
+using APlayTest.Services.Infracstructure;
 using DynamicData;
 using Reactive.Bindings.Extensions;
 
@@ -197,9 +198,13 @@ namespace APlayTest.Server
                 SheetManager = new SheetManager()
             };
 
-            aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 1 " + DateTime.Now.ToLongTimeString() });
-            aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 2 " + DateTime.Now.ToLongTimeString() });
-            aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 3 " + DateTime.Now.ToLongTimeString() });
+            aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 1 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId()});
+            aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 2 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
+            aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 3 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
+
+             aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol(){Id = IdGenerator.GetNextId()});
+             aplayProject.SheetManager.Sheets[1].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId() });
+             aplayProject.SheetManager.Sheets[2].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId() });
 
             return aplayProject;
         }

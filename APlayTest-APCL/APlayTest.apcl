@@ -4,6 +4,31 @@
   <target role="Server" language="C# .Net" userCompiledPath="../APlayTest.Server/userCompiled/" libPath="../APlayTest.Server/lib/" stubPath="../APlayTest.Server/stubs/" active="true" targetPath="" baseNamespace="APlayTest.Server"/>
   <target role="Client" language="C# .Net" userCompiledPath="../APlayTest.Client/userCompiled/" libPath="../APlayTest.Client/lib/" stubPath="../APlayTest.Client/stubs/" active="true" targetPath="" baseNamespace="APlayTest.Client"/>
   <namespace>
+    <struct name="AplayPoint">
+      <code><![CDATA[float32 X;
+float32 Y;]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </struct>
+    <struct name="AplaySize">
+      <code><![CDATA[float32 Width;
+float32 Height;]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </struct>
+    <class name="BlockSymbol" userCreated="servers">
+      <code><![CDATA[[ Server -> All ]
+
+int32 Id;
+  
+[All -> All]
+  
+float64 PositionX;
+float64 PositionY;
+
+AplaySize Size;
+
+]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </class>
     <class name="Client">
       <code><![CDATA[[Server -> Client]
 Project CurrentProject;
@@ -17,9 +42,9 @@ User CurrentUser;
         <y>13</y>
       </__designerPresentation>
     </class>
-    <class name="Project">
+    <class name="Project" userCreated="servers">
       <code><![CDATA[//TODO: Your class based communication here:
-[Server -> Client Server]
+[Server -> All]
 int32 Id;
 ProjectDetail ProjectDetail;
 
@@ -56,17 +81,23 @@ Project SelectedProject;
 void JoinedProject(Project project);
 Client DataClient;]]></code>
     </class>
-    <class name="Sheet">
+    <class name="Sheet" userCreated="servers">
       <code><![CDATA[//TODO: Your class based communication here:
+
 [ Client -> Server ]
 
-  int32 Id;
+  BlockSymbol CreateBlockSymbol();
+  void Add(BlockSymbol blockSymbol);
 
-[Server  Client -> Server Client]
-  WString Name;]]></code>
+[Server  Client -> All]
+  WString Name;
+
+[Server -> All]
+  Set<BlockSymbol> BlockSymbols;
+  int32 Id;]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
-    <class name="SheetManager">
+    <class name="SheetManager" userCreated="servers">
       <code><![CDATA[[ Server -> Client ]
 List<Sheet> Sheets;
 

@@ -9,11 +9,9 @@ using APlay.Common;
 using APlay.Common.Utils;
 using APlay.Common.DataTypes;
 using APlayTest.Server;
-using APlayTest.Services.Infracstructure;
-
 namespace APlayTest.Server
 {
-  public class Sheet : APlayTest.Server.SheetSkeleton
+  public class BlockSymbol : APlayTest.Server.BlockSymbolSkeleton
   {
     /// <summary>
     /// Use this constructor to create instances in your code.
@@ -21,20 +19,10 @@ namespace APlayTest.Server
     ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
     /// </summary>
     
-    public Sheet()
+    public BlockSymbol()
     {
-     
+      /// TODO: add your code here
     }
-
-      public override BlockSymbol onCreateBlockSymbol()
-      {
-          return new BlockSymbol() {Id = IdGenerator.GetNextId(), PositionX = 0, PositionY = 0};
-      }
-
-      public override void onAdd(BlockSymbol blockSymbol__)
-      {
-          BlockSymbols.Add(blockSymbol__);
-      }
   }
   
 }

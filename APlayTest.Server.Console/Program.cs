@@ -14,9 +14,8 @@ namespace APlayTest.Server.Console
     {
         public static void Main()
         {
-            var server = new APlayServer(63422, new ProjectManagerFactory(new ProjectManagerService()));
-            
-            
+            var server = new APlayServer(Int32.Parse(Properties.Settings.Default.ServerPort), new ProjectManagerFactory(new ProjectManagerService()));
+                       
         }
     }
 }

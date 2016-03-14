@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -23,7 +24,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
     {
         private readonly IAplayClientFactory _aplayClientFactory;
         private APlayClient _aplayClient;
-        private string _serverAdress = "127.0.0.1:63422";
+        private readonly string _serverAddress;
         private ServerNotFoundViewModel _serverNotFoundViewModel;
         private JoinProjectViewModel _joinProjectViewModel;
 
@@ -32,7 +33,9 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
         {
             Title = "APlayTest [not connected]";
             _aplayClientFactory = aplayClientFactory;
+            _serverAddress = Properties.Settings.Default.ServerAddress;
             StartNewClient();
+           
             Icon = null;
         }
 
@@ -53,7 +56,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             _aplayClient.DisconnectEventHandler += _aplayClient_DisconnectEventHandler;
 
 
-            _aplayClient.Start(_serverAdress);
+            _aplayClient.Start(_serverAddress);
         }
 
         void _aplayClient_DisconnectEventHandler()
@@ -106,7 +109,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             }
 
             Thread.Sleep(2000);
-            _aplayClient.Start(_serverAdress);
+            _aplayClient.Start(_serverAddress);
         }
         private void Close(IDisposable vm)
         {

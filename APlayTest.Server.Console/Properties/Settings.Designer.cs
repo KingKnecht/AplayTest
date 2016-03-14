@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace APlayTest.Client.Gemini.Properties {
+namespace APlayTest.Server.Console.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -25,37 +25,13 @@ namespace APlayTest.Client.Gemini.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Light")]
-        public string ThemeName {
+        [global::System.Configuration.DefaultSettingValueAttribute("63422")]
+        public string ServerPort {
             get {
-                return ((string)(this["ThemeName"]));
+                return ((string)(this["ServerPort"]));
             }
             set {
-                this["ThemeName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoHideMainMenu {
-            get {
-                return ((bool)(this["AutoHideMainMenu"]));
-            }
-            set {
-                this["AutoHideMainMenu"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1:63422")]
-        public string ServerAddress {
-            get {
-                return ((string)(this["ServerAddress"]));
-            }
-            set {
-                this["ServerAddress"] = value;
+                this["ServerPort"] = value;
             }
         }
     }

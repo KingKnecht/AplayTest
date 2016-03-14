@@ -23,6 +23,34 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
+  public interface  IBlockSymbolImpl
+  {
+    int Id {get; }
+    double PositionX {get; set; }
+    double PositionY {get; set; }
+    APlayTest.Client.AplaySize Size {get; set; }
+    ulong APlayEntityId {get; }
+    bool RequiresInit ();
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IBlockSymbolEvents
+  {
+    void onIdChange (int NewId__);
+    void onPositionXChange (double NewPositionX__);
+    void onPositionYChange (double NewPositionY__);
+    void onSizeChange (APlayTest.Client.AplaySize NewSize__);
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IBlockSymbolSkeleton : APlayTest.Client.IBlockSymbolImpl, APlay.Generated.Intern.Client.__IBlockSymbolAPEvents
+  {
+  };
+}
+namespace APlayTest.Client
+{
   public interface  IClientImpl
   {
     bool IsAdmin {get; }
@@ -78,15 +106,8 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
-  public interface  IProjectSkeleton : APlayTest.Client.IProjectImpl, APlay.Generated.Intern.Client.__IProjectAPEvents, APlayTest.Client.IProjectEvents
+  public interface  IProjectSkeleton : APlayTest.Client.IProjectImpl, APlay.Generated.Intern.Client.__IProjectAPEvents
   {
-  };
-}
-namespace APlayTest.Client
-{
-  public interface  IProjectFactory
-  {
-    APlayTest.Client.Project CreateProject ();
   };
 }
 namespace APlayTest.Client
@@ -141,10 +162,14 @@ namespace APlayTest.Client
 {
   public interface  ISheetImpl
   {
-    int Id {get; set; }
     String Name {get; set; }
+    APlayTest.Client.BlockSymbolSet BlockSymbols {get; }
+    int Id {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
+    APlayTest.Client.BlockSymbol CreateBlockSymbol ();
+    void CreateBlockSymbol (APlayTest.Client.Delegates.void_BlockSymbol returnDelegate);
+    void Add (APlayTest.Client.BlockSymbol blockSymbol__);
   };
 }
 namespace APlayTest.Client
@@ -152,19 +177,17 @@ namespace APlayTest.Client
   public interface  ISheetEvents
   {
     void onNameChange (String NewName__);
+    void onBlockSymbolsReplace (APlayTest.Client.BlockSymbolSet BlockSymbols__);
+    void onBlockSymbolsAdd (APlayTest.Client.BlockSymbol element);
+    void onBlockSymbolsRemove (APlayTest.Client.BlockSymbol element);
+    void onBlockSymbolsClear ();
+    void onIdChange (int NewId__);
   };
 }
 namespace APlayTest.Client
 {
-  public interface  ISheetSkeleton : APlayTest.Client.ISheetImpl, APlay.Generated.Intern.Client.__ISheetAPEvents, APlayTest.Client.ISheetEvents
+  public interface  ISheetSkeleton : APlayTest.Client.ISheetImpl, APlay.Generated.Intern.Client.__ISheetAPEvents
   {
-  };
-}
-namespace APlayTest.Client
-{
-  public interface  ISheetFactory
-  {
-    APlayTest.Client.Sheet CreateSheet ();
   };
 }
 namespace APlayTest.Client
@@ -194,15 +217,8 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
-  public interface  ISheetManagerSkeleton : APlayTest.Client.ISheetManagerImpl, APlay.Generated.Intern.Client.__ISheetManagerAPEvents, APlayTest.Client.ISheetManagerEvents
+  public interface  ISheetManagerSkeleton : APlayTest.Client.ISheetManagerImpl, APlay.Generated.Intern.Client.__ISheetManagerAPEvents
   {
-  };
-}
-namespace APlayTest.Client
-{
-  public interface  ISheetManagerFactory
-  {
-    APlayTest.Client.SheetManager CreateSheetManager ();
   };
 }
 namespace APlayTest.Client
@@ -262,8 +278,15 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
-  public interface  IUserObjectFactory : APlayTest.Client.IClientUserFactory, APlayTest.Client.IProjectUserFactory, APlayTest.Client.IProjectManagerUserFactory, APlayTest.Client.ISheetUserFactory, APlayTest.Client.ISheetManagerUserFactory, APlayTest.Client.IUserUserFactory
+  public interface  IUserObjectFactory : APlayTest.Client.IBlockSymbolUserFactory, APlayTest.Client.IClientUserFactory, APlayTest.Client.IProjectUserFactory, APlayTest.Client.IProjectManagerUserFactory, APlayTest.Client.ISheetUserFactory, APlayTest.Client.ISheetManagerUserFactory, APlayTest.Client.IUserUserFactory
   {
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IBlockSymbolUserFactory
+  {
+    APlayTest.Client.IBlockSymbolImpl CreateBlockSymbol ();
   };
 }
 namespace APlayTest.Client
@@ -312,6 +335,241 @@ namespace APlayTest.Client
 {
   public partial class APlayFactory
   {
+  }
+  
+}
+namespace APlayTest.Client
+{
+  public partial class BlockSymbol : APlayTest.Client.IBlockSymbolSkeleton, APlay.Generated.Intern.Client.__IBlockSymbolAPEvents
+  {
+    public BlockSymbol()
+    {
+      if(APlay.Common.APlayInitializer.GetInitializer()!=null)
+      {
+        this.setBlockSymbolObject(((APlay.Generated.Intern.Client.__IBlockSymbolAPImpl) (APlay.Common.APlayInitializer.GetInitializer())));
+      }
+      else
+      {
+        this.setBlockSymbolObject(APlayObjectFactory.CreateBlockSymbolImpl());
+      }
+      ((APlay.Generated.Intern.Client.__BlockSymbol) (this.getBlockSymbolObject())).BlockSymbolHandler = ((APlay.Generated.Intern.Client.__IBlockSymbolAPEvents) (((APlayTest.Client.BlockSymbol) (this))));
+    }
+    public virtual APlayTest.Client.IBlockSymbolEvents BlockSymbolHandler
+    {
+      set
+      {
+        {
+          handler_ = value;
+        }
+      }
+      get
+      {
+        {
+          return (handler_);
+        }
+      }
+    }
+    public virtual int Id
+    {
+      get
+      {
+        {
+          return (implBlockSymbol.Id);
+        }
+      }
+    }
+    public virtual double PositionX
+    {
+      set
+      {
+        {
+          //float64
+          implBlockSymbol.PositionX = value;
+        }
+      }
+      get
+      {
+        {
+          return (implBlockSymbol.PositionX);
+        }
+      }
+    }
+    public virtual double PositionY
+    {
+      set
+      {
+        {
+          //float64
+          implBlockSymbol.PositionY = value;
+        }
+      }
+      get
+      {
+        {
+          return (implBlockSymbol.PositionY);
+        }
+      }
+    }
+    public virtual APlayTest.Client.AplaySize Size
+    {
+      set
+      {
+        {
+          //AplaySize
+          implBlockSymbol.Size = new APlay.Generated.Intern.Client.__AplaySize(value.Width, value.Height);
+        }
+      }
+      get
+      {
+        {
+          return (new APlayTest.Client.AplaySize(((float) (implBlockSymbol.Size.Width)), ((float) (implBlockSymbol.Size.Height))));
+        }
+      }
+    }
+    public virtual ulong APlayEntityId
+    {
+      get
+      {
+        {
+          return (implBlockSymbol.APlayEntityId);
+        }
+      }
+    }
+    public void onInternIdChange(int NewId__)
+    {
+      if(IdChangeEventHandler!=null)
+      {
+        IdChangeEventHandler(NewId__);
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbol.StaticIdChangeEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbol.StaticIdChangeEventHandler(NewId__, ((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          if(BlockSymbolHandler!=null)
+          {
+            BlockSymbolHandler.onIdChange(NewId__);
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __IBlockSymbolAPEvents.onIdChange","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternPositionXChange(double NewPositionX__)
+    {
+      if(PositionXChangeEventHandler!=null)
+      {
+        PositionXChangeEventHandler(NewPositionX__);
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbol.StaticPositionXChangeEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbol.StaticPositionXChangeEventHandler(NewPositionX__, ((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          if(BlockSymbolHandler!=null)
+          {
+            BlockSymbolHandler.onPositionXChange(NewPositionX__);
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __IBlockSymbolAPEvents.onPositionXChange","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternPositionYChange(double NewPositionY__)
+    {
+      if(PositionYChangeEventHandler!=null)
+      {
+        PositionYChangeEventHandler(NewPositionY__);
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbol.StaticPositionYChangeEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbol.StaticPositionYChangeEventHandler(NewPositionY__, ((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          if(BlockSymbolHandler!=null)
+          {
+            BlockSymbolHandler.onPositionYChange(NewPositionY__);
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __IBlockSymbolAPEvents.onPositionYChange","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternSizeChange(APlay.Generated.Intern.Client.__AplaySize NewSize__)
+    {
+      if(SizeChangeEventHandler!=null)
+      {
+        SizeChangeEventHandler(new APlayTest.Client.AplaySize(((float) (NewSize__.Width)), ((float) (NewSize__.Height))));
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbol.StaticSizeChangeEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbol.StaticSizeChangeEventHandler(new APlayTest.Client.AplaySize(((float) (NewSize__.Width)), ((float) (NewSize__.Height))), ((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          if(BlockSymbolHandler!=null)
+          {
+            BlockSymbolHandler.onSizeChange(new APlayTest.Client.AplaySize(((float) (NewSize__.Width)), ((float) (NewSize__.Height))));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __IBlockSymbolAPEvents.onSizeChange","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public bool RequiresInit()
+    {
+      bool retu = implBlockSymbol.RequiresInit();
+      return (((bool) (retu)));
+    }
+    public APlay.Generated.Intern.Client.__IBlockSymbolAPImpl getBlockSymbolObject()
+    {
+      return (implBlockSymbol);
+    }
+    public void setBlockSymbolObject(APlay.Generated.Intern.Client.__IBlockSymbolAPImpl impl)
+    {
+      implBlockSymbol = impl;
+    }
+    private APlayTest.Client.IBlockSymbolEvents handler_;
+    public event APlayTest.Client.Delegates.void_int32 IdChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_BlockSymbol StaticIdChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_float64 PositionXChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_float64_BlockSymbol StaticPositionXChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_float64 PositionYChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_float64_BlockSymbol StaticPositionYChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_AplaySize SizeChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_AplaySize_BlockSymbol StaticSizeChangeEventHandler;
+    private APlay.Generated.Intern.Client.__IBlockSymbolAPImpl implBlockSymbol;
   }
   
 }
@@ -468,9 +726,9 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
-  public abstract partial class ProjectSkeleton : APlayTest.Client.IProjectSkeleton, APlay.Generated.Intern.Client.__IProjectAPEvents
+  public partial class Project : APlayTest.Client.IProjectSkeleton, APlay.Generated.Intern.Client.__IProjectAPEvents
   {
-    public ProjectSkeleton()
+    public Project()
     {
       if(APlay.Common.APlayInitializer.GetInitializer()!=null)
       {
@@ -480,7 +738,22 @@ namespace APlayTest.Client
       {
         this.setProjectObject(APlayObjectFactory.CreateProjectImpl());
       }
-      ((APlay.Generated.Intern.Client.__Project) (this.getProjectObject())).ProjectHandler = ((APlay.Generated.Intern.Client.__IProjectAPEvents) (((APlayTest.Client.ProjectSkeleton) (this))));
+      ((APlay.Generated.Intern.Client.__Project) (this.getProjectObject())).ProjectHandler = ((APlay.Generated.Intern.Client.__IProjectAPEvents) (((APlayTest.Client.Project) (this))));
+    }
+    public virtual APlayTest.Client.IProjectEvents ProjectHandler
+    {
+      set
+      {
+        {
+          handler_ = value;
+        }
+      }
+      get
+      {
+        {
+          return (handler_);
+        }
+      }
     }
     public virtual int Id
     {
@@ -518,10 +791,6 @@ namespace APlayTest.Client
         }
       }
     }
-    public virtual void onIdChange(int NewId__)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onIdChange received","Client.Designed");
-    }
     public void onInternIdChange(int NewId__)
     {
       if(IdChangeEventHandler!=null)
@@ -530,19 +799,25 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.ProjectSkeleton.StaticIdChangeEventHandler!=null)
+        if(APlayTest.Client.Project.StaticIdChangeEventHandler!=null)
         {
-          APlayTest.Client.ProjectSkeleton.StaticIdChangeEventHandler(NewId__, ((APlayTest.Client.Project) (this)));
+          APlayTest.Client.Project.StaticIdChangeEventHandler(NewId__, ((APlayTest.Client.Project) (this)));
         }
         else
         {
-          this.onIdChange(NewId__);
+          if(ProjectHandler!=null)
+          {
+            ProjectHandler.onIdChange(NewId__);
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __IProjectAPEvents.onIdChange","Client.Designed");
+            }
+          }
         }
       }
-    }
-    public virtual void onProjectDetailChange(APlayTest.Client.ProjectDetail NewProjectDetail__)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onProjectDetailChange received","Client.Designed");
     }
     public void onInternProjectDetailChange(APlay.Generated.Intern.Client.__ProjectDetail NewProjectDetail__)
     {
@@ -552,19 +827,25 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.ProjectSkeleton.StaticProjectDetailChangeEventHandler!=null)
+        if(APlayTest.Client.Project.StaticProjectDetailChangeEventHandler!=null)
         {
-          APlayTest.Client.ProjectSkeleton.StaticProjectDetailChangeEventHandler(new APlayTest.Client.ProjectDetail(((String) (NewProjectDetail__.Name)), ((String) (NewProjectDetail__.CreatedBy)), ((DateTime) (NewProjectDetail__.CreationDate))), ((APlayTest.Client.Project) (this)));
+          APlayTest.Client.Project.StaticProjectDetailChangeEventHandler(new APlayTest.Client.ProjectDetail(((String) (NewProjectDetail__.Name)), ((String) (NewProjectDetail__.CreatedBy)), ((DateTime) (NewProjectDetail__.CreationDate))), ((APlayTest.Client.Project) (this)));
         }
         else
         {
-          this.onProjectDetailChange(new APlayTest.Client.ProjectDetail(((String) (NewProjectDetail__.Name)), ((String) (NewProjectDetail__.CreatedBy)), ((DateTime) (NewProjectDetail__.CreationDate))));
+          if(ProjectHandler!=null)
+          {
+            ProjectHandler.onProjectDetailChange(new APlayTest.Client.ProjectDetail(((String) (NewProjectDetail__.Name)), ((String) (NewProjectDetail__.CreatedBy)), ((DateTime) (NewProjectDetail__.CreationDate))));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __IProjectAPEvents.onProjectDetailChange","Client.Designed");
+            }
+          }
         }
       }
-    }
-    public virtual void onSheetManagerChange(APlayTest.Client.SheetManager NewSheetManager__)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetManagerChange received","Client.Designed");
     }
     public void onInternSheetManagerChange(APlay.Generated.Intern.Client.__ISheetManagerAPEvents NewSheetManager__)
     {
@@ -574,13 +855,23 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.ProjectSkeleton.StaticSheetManagerChangeEventHandler!=null)
+        if(APlayTest.Client.Project.StaticSheetManagerChangeEventHandler!=null)
         {
-          APlayTest.Client.ProjectSkeleton.StaticSheetManagerChangeEventHandler(((APlayTest.Client.SheetManager) (NewSheetManager__)), ((APlayTest.Client.Project) (this)));
+          APlayTest.Client.Project.StaticSheetManagerChangeEventHandler(((APlayTest.Client.SheetManager) (NewSheetManager__)), ((APlayTest.Client.Project) (this)));
         }
         else
         {
-          this.onSheetManagerChange(((APlayTest.Client.SheetManager) (NewSheetManager__)));
+          if(ProjectHandler!=null)
+          {
+            ProjectHandler.onSheetManagerChange(((APlayTest.Client.SheetManager) (NewSheetManager__)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __IProjectAPEvents.onSheetManagerChange","Client.Designed");
+            }
+          }
         }
       }
     }
@@ -597,6 +888,7 @@ namespace APlayTest.Client
     {
       implProject = impl;
     }
+    private APlayTest.Client.IProjectEvents handler_;
     public event APlayTest.Client.Delegates.void_int32 IdChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_int32_Project StaticIdChangeEventHandler;
     public event APlayTest.Client.Delegates.void_ProjectDetail ProjectDetailChangeEventHandler;
@@ -997,9 +1289,9 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
-  public abstract partial class SheetSkeleton : APlayTest.Client.ISheetSkeleton, APlay.Generated.Intern.Client.__ISheetAPEvents
+  public partial class Sheet : APlayTest.Client.ISheetSkeleton, APlay.Generated.Intern.Client.__ISheetAPEvents
   {
-    public SheetSkeleton()
+    public Sheet()
     {
       if(APlay.Common.APlayInitializer.GetInitializer()!=null)
       {
@@ -1009,21 +1301,20 @@ namespace APlayTest.Client
       {
         this.setSheetObject(APlayObjectFactory.CreateSheetImpl());
       }
-      ((APlay.Generated.Intern.Client.__Sheet) (this.getSheetObject())).SheetHandler = ((APlay.Generated.Intern.Client.__ISheetAPEvents) (((APlayTest.Client.SheetSkeleton) (this))));
+      ((APlay.Generated.Intern.Client.__Sheet) (this.getSheetObject())).SheetHandler = ((APlay.Generated.Intern.Client.__ISheetAPEvents) (((APlayTest.Client.Sheet) (this))));
     }
-    public virtual int Id
+    public virtual APlayTest.Client.ISheetEvents SheetHandler
     {
       set
       {
         {
-          //int32
-          implSheet.Id = value;
+          handler_ = value;
         }
       }
       get
       {
         {
-          return (implSheet.Id);
+          return (handler_);
         }
       }
     }
@@ -1043,6 +1334,24 @@ namespace APlayTest.Client
         }
       }
     }
+    public virtual APlayTest.Client.BlockSymbolSet BlockSymbols
+    {
+      get
+      {
+        {
+          return (((APlayTest.Client.BlockSymbolSet) (implSheet.BlockSymbols)));
+        }
+      }
+    }
+    public virtual int Id
+    {
+      get
+      {
+        {
+          return (implSheet.Id);
+        }
+      }
+    }
     public virtual ulong APlayEntityId
     {
       get
@@ -1052,10 +1361,6 @@ namespace APlayTest.Client
         }
       }
     }
-    public virtual void onNameChange(String NewName__)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onNameChange received","Client.Designed");
-    }
     public void onInternNameChange(String NewName__)
     {
       if(NameChangeEventHandler!=null)
@@ -1064,13 +1369,163 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.SheetSkeleton.StaticNameChangeEventHandler!=null)
+        if(APlayTest.Client.Sheet.StaticNameChangeEventHandler!=null)
         {
-          APlayTest.Client.SheetSkeleton.StaticNameChangeEventHandler(NewName__, ((APlayTest.Client.Sheet) (this)));
+          APlayTest.Client.Sheet.StaticNameChangeEventHandler(NewName__, ((APlayTest.Client.Sheet) (this)));
         }
         else
         {
-          this.onNameChange(NewName__);
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onNameChange(NewName__);
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onNameChange","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternBlockSymbolsReplace(APlay.Generated.Intern.Client.IBlockSymbolSetEvents BlockSymbols__)
+    {
+      if(BlockSymbolsReplaceEventHandler!=null)
+      {
+        BlockSymbolsReplaceEventHandler(((APlayTest.Client.BlockSymbolSet) (BlockSymbols__)));
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticBlockSymbolsReplaceEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticBlockSymbolsReplaceEventHandler(((APlayTest.Client.BlockSymbolSet) (BlockSymbols__)), ((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onBlockSymbolsReplace(((APlayTest.Client.BlockSymbolSet) (BlockSymbols__)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onBlockSymbolsReplace","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternBlockSymbolsAdd(APlay.Generated.Intern.Client.__IBlockSymbolAPEvents element)
+    {
+      if(BlockSymbolsAddEventHandler!=null)
+      {
+        BlockSymbolsAddEventHandler(((APlayTest.Client.BlockSymbol) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticBlockSymbolsAddEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticBlockSymbolsAddEventHandler(((APlayTest.Client.BlockSymbol) (element)), ((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onBlockSymbolsAdd(((APlayTest.Client.BlockSymbol) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onBlockSymbolsAdd","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternBlockSymbolsRemove(APlay.Generated.Intern.Client.__IBlockSymbolAPEvents element)
+    {
+      if(BlockSymbolsRemoveEventHandler!=null)
+      {
+        BlockSymbolsRemoveEventHandler(((APlayTest.Client.BlockSymbol) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticBlockSymbolsRemoveEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticBlockSymbolsRemoveEventHandler(((APlayTest.Client.BlockSymbol) (element)), ((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onBlockSymbolsRemove(((APlayTest.Client.BlockSymbol) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onBlockSymbolsRemove","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternBlockSymbolsClear()
+    {
+      if(BlockSymbolsClearEventHandler!=null)
+      {
+        BlockSymbolsClearEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticBlockSymbolsClearEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticBlockSymbolsClearEventHandler(((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onBlockSymbolsClear();
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onBlockSymbolsClear","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternIdChange(int NewId__)
+    {
+      if(IdChangeEventHandler!=null)
+      {
+        IdChangeEventHandler(NewId__);
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticIdChangeEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticIdChangeEventHandler(NewId__, ((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onIdChange(NewId__);
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onIdChange","Client.Designed");
+            }
+          }
         }
       }
     }
@@ -1078,6 +1533,24 @@ namespace APlayTest.Client
     {
       bool retu = implSheet.RequiresInit();
       return (((bool) (retu)));
+    }
+    public APlayTest.Client.BlockSymbol CreateBlockSymbol()
+    {
+      APlay.Generated.Intern.Client.__IBlockSymbolAPEvents retu = implSheet.CreateBlockSymbol();
+      return (((APlayTest.Client.BlockSymbol) (retu)));
+    }
+    public void CreateBlockSymbol(APlayTest.Client.Delegates.void_BlockSymbol returnDelegate)
+    {
+      implSheet.CreateBlockSymbol(delegate(APlay.Common.Protocol.MessageReader reader_){
+  APlay.Generated.Intern.Client.__BlockSymbol __retu__ = new APlay.Generated.Intern.Client.__BlockSymbol();
+  __retu__ = APlay.Generated.Intern.Client.__BlockSymbol.readReferenceFromStream(reader_);
+  returnDelegate(((APlayTest.Client.BlockSymbol) ((__retu__==null)?null:__retu__.__GetExternBlockSymbol())));
+}
+);
+    }
+    public void Add(APlayTest.Client.BlockSymbol blockSymbol__)
+    {
+      implSheet.Add(((APlay.Generated.Intern.Client.__IBlockSymbolAPEvents) (blockSymbol__)));
     }
     public APlay.Generated.Intern.Client.__ISheetAPImpl getSheetObject()
     {
@@ -1087,17 +1560,28 @@ namespace APlayTest.Client
     {
       implSheet = impl;
     }
+    private APlayTest.Client.ISheetEvents handler_;
     public event APlayTest.Client.Delegates.void_WString NameChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_WString_Sheet StaticNameChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_BlockSymbolSet BlockSymbolsReplaceEventHandler;
+    static public event APlayTest.Client.Delegates.void_BlockSymbolSet_Sheet StaticBlockSymbolsReplaceEventHandler;
+    public event APlayTest.Client.Delegates.void_BlockSymbol BlockSymbolsAddEventHandler;
+    static public event APlayTest.Client.Delegates.void_BlockSymbol_Sheet StaticBlockSymbolsAddEventHandler;
+    public event APlayTest.Client.Delegates.void_BlockSymbol BlockSymbolsRemoveEventHandler;
+    static public event APlayTest.Client.Delegates.void_BlockSymbol_Sheet StaticBlockSymbolsRemoveEventHandler;
+    public event APlayTest.Client.Delegates.void_ BlockSymbolsClearEventHandler;
+    static public event APlayTest.Client.Delegates.void_Sheet StaticBlockSymbolsClearEventHandler;
+    public event APlayTest.Client.Delegates.void_int32 IdChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Sheet StaticIdChangeEventHandler;
     private APlay.Generated.Intern.Client.__ISheetAPImpl implSheet;
   }
   
 }
 namespace APlayTest.Client
 {
-  public abstract partial class SheetManagerSkeleton : APlayTest.Client.ISheetManagerSkeleton, APlay.Generated.Intern.Client.__ISheetManagerAPEvents
+  public partial class SheetManager : APlayTest.Client.ISheetManagerSkeleton, APlay.Generated.Intern.Client.__ISheetManagerAPEvents
   {
-    public SheetManagerSkeleton()
+    public SheetManager()
     {
       if(APlay.Common.APlayInitializer.GetInitializer()!=null)
       {
@@ -1107,7 +1591,22 @@ namespace APlayTest.Client
       {
         this.setSheetManagerObject(APlayObjectFactory.CreateSheetManagerImpl());
       }
-      ((APlay.Generated.Intern.Client.__SheetManager) (this.getSheetManagerObject())).SheetManagerHandler = ((APlay.Generated.Intern.Client.__ISheetManagerAPEvents) (((APlayTest.Client.SheetManagerSkeleton) (this))));
+      ((APlay.Generated.Intern.Client.__SheetManager) (this.getSheetManagerObject())).SheetManagerHandler = ((APlay.Generated.Intern.Client.__ISheetManagerAPEvents) (((APlayTest.Client.SheetManager) (this))));
+    }
+    public virtual APlayTest.Client.ISheetManagerEvents SheetManagerHandler
+    {
+      set
+      {
+        {
+          handler_ = value;
+        }
+      }
+      get
+      {
+        {
+          return (handler_);
+        }
+      }
     }
     public virtual APlayTest.Client.SheetList Sheets
     {
@@ -1127,10 +1626,6 @@ namespace APlayTest.Client
         }
       }
     }
-    public virtual void onSheetsReplace(APlayTest.Client.SheetList Sheets__)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsReplace received","Client.Designed");
-    }
     public void onInternSheetsReplace(APlay.Generated.Intern.Client.ISheetListEvents Sheets__)
     {
       if(SheetsReplaceEventHandler!=null)
@@ -1139,19 +1634,25 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsReplaceEventHandler!=null)
+        if(APlayTest.Client.SheetManager.StaticSheetsReplaceEventHandler!=null)
         {
-          APlayTest.Client.SheetManagerSkeleton.StaticSheetsReplaceEventHandler(((APlayTest.Client.SheetList) (Sheets__)), ((APlayTest.Client.SheetManager) (this)));
+          APlayTest.Client.SheetManager.StaticSheetsReplaceEventHandler(((APlayTest.Client.SheetList) (Sheets__)), ((APlayTest.Client.SheetManager) (this)));
         }
         else
         {
-          this.onSheetsReplace(((APlayTest.Client.SheetList) (Sheets__)));
+          if(SheetManagerHandler!=null)
+          {
+            SheetManagerHandler.onSheetsReplace(((APlayTest.Client.SheetList) (Sheets__)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetManagerAPEvents.onSheetsReplace","Client.Designed");
+            }
+          }
         }
       }
-    }
-    public virtual void onSheetsAdd(APlayTest.Client.Sheet element)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsAdd received","Client.Designed");
     }
     public void onInternSheetsAdd(APlay.Generated.Intern.Client.__ISheetAPEvents element)
     {
@@ -1161,19 +1662,25 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsAddEventHandler!=null)
+        if(APlayTest.Client.SheetManager.StaticSheetsAddEventHandler!=null)
         {
-          APlayTest.Client.SheetManagerSkeleton.StaticSheetsAddEventHandler(((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
+          APlayTest.Client.SheetManager.StaticSheetsAddEventHandler(((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
         }
         else
         {
-          this.onSheetsAdd(((APlayTest.Client.Sheet) (element)));
+          if(SheetManagerHandler!=null)
+          {
+            SheetManagerHandler.onSheetsAdd(((APlayTest.Client.Sheet) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetManagerAPEvents.onSheetsAdd","Client.Designed");
+            }
+          }
         }
       }
-    }
-    public virtual void onSheetsRemove(APlayTest.Client.Sheet element)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsRemove received","Client.Designed");
     }
     public void onInternSheetsRemove(APlay.Generated.Intern.Client.__ISheetAPEvents element)
     {
@@ -1183,19 +1690,25 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsRemoveEventHandler!=null)
+        if(APlayTest.Client.SheetManager.StaticSheetsRemoveEventHandler!=null)
         {
-          APlayTest.Client.SheetManagerSkeleton.StaticSheetsRemoveEventHandler(((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
+          APlayTest.Client.SheetManager.StaticSheetsRemoveEventHandler(((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
         }
         else
         {
-          this.onSheetsRemove(((APlayTest.Client.Sheet) (element)));
+          if(SheetManagerHandler!=null)
+          {
+            SheetManagerHandler.onSheetsRemove(((APlayTest.Client.Sheet) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetManagerAPEvents.onSheetsRemove","Client.Designed");
+            }
+          }
         }
       }
-    }
-    public virtual void onSheetsClear()
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsClear received","Client.Designed");
     }
     public void onInternSheetsClear()
     {
@@ -1205,19 +1718,25 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsClearEventHandler!=null)
+        if(APlayTest.Client.SheetManager.StaticSheetsClearEventHandler!=null)
         {
-          APlayTest.Client.SheetManagerSkeleton.StaticSheetsClearEventHandler(((APlayTest.Client.SheetManager) (this)));
+          APlayTest.Client.SheetManager.StaticSheetsClearEventHandler(((APlayTest.Client.SheetManager) (this)));
         }
         else
         {
-          this.onSheetsClear();
+          if(SheetManagerHandler!=null)
+          {
+            SheetManagerHandler.onSheetsClear();
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetManagerAPEvents.onSheetsClear","Client.Designed");
+            }
+          }
         }
       }
-    }
-    public virtual void onSheetsInsertAt(int pos, APlayTest.Client.Sheet element)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsInsertAt received","Client.Designed");
     }
     public void onInternSheetsInsertAt(int pos, APlay.Generated.Intern.Client.__ISheetAPEvents element)
     {
@@ -1227,19 +1746,25 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsInsertAtEventHandler!=null)
+        if(APlayTest.Client.SheetManager.StaticSheetsInsertAtEventHandler!=null)
         {
-          APlayTest.Client.SheetManagerSkeleton.StaticSheetsInsertAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
+          APlayTest.Client.SheetManager.StaticSheetsInsertAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
         }
         else
         {
-          this.onSheetsInsertAt(pos, ((APlayTest.Client.Sheet) (element)));
+          if(SheetManagerHandler!=null)
+          {
+            SheetManagerHandler.onSheetsInsertAt(pos, ((APlayTest.Client.Sheet) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetManagerAPEvents.onSheetsInsertAt","Client.Designed");
+            }
+          }
         }
       }
-    }
-    public virtual void onSheetsSetAt(int pos, APlayTest.Client.Sheet element)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsSetAt received","Client.Designed");
     }
     public void onInternSheetsSetAt(int pos, APlay.Generated.Intern.Client.__ISheetAPEvents element)
     {
@@ -1249,19 +1774,25 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsSetAtEventHandler!=null)
+        if(APlayTest.Client.SheetManager.StaticSheetsSetAtEventHandler!=null)
         {
-          APlayTest.Client.SheetManagerSkeleton.StaticSheetsSetAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
+          APlayTest.Client.SheetManager.StaticSheetsSetAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
         }
         else
         {
-          this.onSheetsSetAt(pos, ((APlayTest.Client.Sheet) (element)));
+          if(SheetManagerHandler!=null)
+          {
+            SheetManagerHandler.onSheetsSetAt(pos, ((APlayTest.Client.Sheet) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetManagerAPEvents.onSheetsSetAt","Client.Designed");
+            }
+          }
         }
       }
-    }
-    public virtual void onSheetsRemoveAt(int pos, APlayTest.Client.Sheet element)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onSheetsRemoveAt received","Client.Designed");
     }
     public void onInternSheetsRemoveAt(int pos, APlay.Generated.Intern.Client.__ISheetAPEvents element)
     {
@@ -1271,13 +1802,23 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.SheetManagerSkeleton.StaticSheetsRemoveAtEventHandler!=null)
+        if(APlayTest.Client.SheetManager.StaticSheetsRemoveAtEventHandler!=null)
         {
-          APlayTest.Client.SheetManagerSkeleton.StaticSheetsRemoveAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
+          APlayTest.Client.SheetManager.StaticSheetsRemoveAtEventHandler(pos, ((APlayTest.Client.Sheet) (element)), ((APlayTest.Client.SheetManager) (this)));
         }
         else
         {
-          this.onSheetsRemoveAt(pos, ((APlayTest.Client.Sheet) (element)));
+          if(SheetManagerHandler!=null)
+          {
+            SheetManagerHandler.onSheetsRemoveAt(pos, ((APlayTest.Client.Sheet) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetManagerAPEvents.onSheetsRemoveAt","Client.Designed");
+            }
+          }
         }
       }
     }
@@ -1312,6 +1853,7 @@ namespace APlayTest.Client
     {
       implSheetManager = impl;
     }
+    private APlayTest.Client.ISheetManagerEvents handler_;
     public event APlayTest.Client.Delegates.void_SheetList SheetsReplaceEventHandler;
     static public event APlayTest.Client.Delegates.void_SheetList_SheetManager StaticSheetsReplaceEventHandler;
     public event APlayTest.Client.Delegates.void_Sheet SheetsAddEventHandler;
@@ -1387,6 +1929,100 @@ namespace APlayTest.Client
     private APlay.Generated.Intern.Client.__IUserAPImpl implUser;
   }
   
+}
+namespace APlayTest.Client
+{
+  public partial struct AplayPoint
+  {
+    public AplayPoint(float X__, float Y__)
+    {
+      X = X__;
+      Y = Y__;
+    }
+    public float X;
+    public float Y;
+    public static bool operator ==(AplayPoint a, AplayPoint b)
+    {
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return true&& (a.X==b.X)&& (a.Y==b.Y);
+    }
+    public override bool Equals(System.Object obj)
+    {
+      if (ReferenceEquals(null, obj))
+      {
+        return false;
+      }
+      if (obj.GetType() != typeof(AplayPoint))
+      {
+        return false;
+      }
+      AplayPoint a = this;
+      AplayPoint b = (AplayPoint)obj;
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return (a.X==b.X)&&(a.Y==b.Y);
+    }
+    public override int GetHashCode()
+    {
+      return X.GetHashCode() + Y.GetHashCode();
+    }
+    public static bool operator !=(AplayPoint a, AplayPoint b)
+    {
+      return !(a == b);
+    }
+    public override string ToString()
+    {
+      return "["+X.ToString()+"]" + "["+Y.ToString()+"]";
+    }
+  }
+}
+namespace APlayTest.Client
+{
+  public partial struct AplaySize
+  {
+    public AplaySize(float Width__, float Height__)
+    {
+      Width = Width__;
+      Height = Height__;
+    }
+    public float Width;
+    public float Height;
+    public static bool operator ==(AplaySize a, AplaySize b)
+    {
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return true&& (a.Width==b.Width)&& (a.Height==b.Height);
+    }
+    public override bool Equals(System.Object obj)
+    {
+      if (ReferenceEquals(null, obj))
+      {
+        return false;
+      }
+      if (obj.GetType() != typeof(AplaySize))
+      {
+        return false;
+      }
+      AplaySize a = this;
+      AplaySize b = (AplaySize)obj;
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return (a.Width==b.Width)&&(a.Height==b.Height);
+    }
+    public override int GetHashCode()
+    {
+      return Width.GetHashCode() + Height.GetHashCode();
+    }
+    public static bool operator !=(AplaySize a, AplaySize b)
+    {
+      return !(a == b);
+    }
+    public override string ToString()
+    {
+      return "["+Width.ToString()+"]" + "["+Height.ToString()+"]";
+    }
+  }
 }
 namespace APlayTest.Client
 {
@@ -1568,6 +2204,130 @@ namespace APlayTest.Client
         public APlayTest.Client.Project Current
         {
             get { APlay.Generated.Intern.Client.__Project item = (APlay.Generated.Intern.Client.__Project)intern.Current; return ((APlayTest.Client.Project) ((item==null)?null:item.__GetExternProject()));}
+        }
+
+        public void Dispose()
+        {
+            intern.Dispose();
+        }
+
+        object System.Collections.IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public bool MoveNext()
+        {
+            return intern.MoveNext();
+        }
+
+        public void Reset()
+        {
+            intern.Reset();
+        }
+
+  }
+  
+}
+namespace APlayTest.Client
+{
+  public partial class BlockSymbolSet : ICollection<APlayTest.Client.BlockSymbol>, APlay.Generated.Intern.Client.IBlockSymbolSetEvents
+  {
+    public BlockSymbolSet()
+    {
+      APlay.Generated.Intern.Client.IBlockSymbolSetImpl impl_=null;
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Client.BlockSymbolSet();
+      }
+    }
+    public BlockSymbolSet(APlay.Generated.Intern.Client.IBlockSymbolSetImpl impl_)
+    {
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Client.BlockSymbolSet();
+      }
+    }
+    public static APlayTest.Client.BlockSymbolSet CreateForAPlay(APlay.Generated.Intern.Client.IBlockSymbolSetImpl impl)
+    {
+      APlayTest.Client.BlockSymbolSet ob = new APlayTest.Client.BlockSymbolSet(impl);
+      return (ob);
+    }
+    public APlay.Generated.Intern.Client.IBlockSymbolSetImpl getBlockSymbolObject()
+    {
+      return (impl);
+    }
+    private APlay.Generated.Intern.Client.IBlockSymbolSetImpl impl;
+    
+public void Add(APlayTest.Client.BlockSymbol item)
+{
+    impl.add(item);
+}
+public void Clear()
+{
+    impl.clear();
+}
+
+public bool Contains(APlayTest.Client.BlockSymbol item)
+{
+    return impl.contains(item);
+}
+
+public void CopyTo(APlayTest.Client.BlockSymbol[] array, int arrayIndex)
+{
+    int i=arrayIndex;
+    foreach (APlayTest.Client.BlockSymbol item in this)
+    {
+        array[i++]=item;
+    }
+}
+
+public int Count
+{
+    get { return (int)impl.length(); }
+}
+
+public bool IsReadOnly
+{
+    get { return true; }
+}
+System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+{
+    return GetEnumerator();
+}
+public bool Remove(APlayTest.Client.BlockSymbol item)
+{
+    return impl.remove(item);
+}
+    public IEnumerator<APlayTest.Client.BlockSymbol> GetEnumerator()
+    {
+        return new BlockSymbolSetEnumerator(impl.GetEnumerator());
+    }
+    
+  }
+  
+}
+namespace APlayTest.Client
+{
+  public partial class BlockSymbolSetEnumerator : IEnumerator<APlayTest.Client.BlockSymbol>
+  {
+    
+        IEnumerator<APlay.Generated.Intern.Client.__BlockSymbol> intern;
+        public BlockSymbolSetEnumerator(IEnumerator<APlay.Generated.Intern.Client.__BlockSymbol> intern)
+        {
+            this.intern = intern;
+        }
+        public APlayTest.Client.BlockSymbol Current
+        {
+            get { APlay.Generated.Intern.Client.__BlockSymbol item = (APlay.Generated.Intern.Client.__BlockSymbol)intern.Current; return ((APlayTest.Client.BlockSymbol) ((item==null)?null:item.__GetExternBlockSymbol()));}
         }
 
         public void Dispose()
@@ -1923,6 +2683,7 @@ namespace APlayTest.Client
   {
     public static void SetUserFactory(APlayTest.Client.IUserObjectFactory factory)
     {
+      BlockSymbol_ = factory;
       Client_ = factory;
       Project_ = factory;
       ProjectManager_ = factory;
@@ -1932,12 +2693,33 @@ namespace APlayTest.Client
     }
     public static void SetAPlayDefaultFactory()
     {
+      BlockSymbol_ = null;
       Client_ = null;
       Project_ = null;
       ProjectManager_ = null;
       Sheet_ = null;
       SheetManager_ = null;
       User_ = null;
+    }
+    public static void SetBlockSymbolUserFactory(APlayTest.Client.IBlockSymbolUserFactory factory)
+    {
+      BlockSymbol_ = factory;
+    }
+    public static void SetBlockSymbolAPlayDefaultFactory()
+    {
+      BlockSymbol_ = null;
+    }
+    public static APlay.Generated.Intern.Client.__IBlockSymbolAPImpl CreateBlockSymbolImpl()
+    {
+      if(BlockSymbol_!=null)
+      {
+        APlay.Common.Logging.Logger.LogDesigned(6,"event adapters are temporarily disabled","Client.Designed");
+        return (null);
+      }
+      else
+      {
+        return (APlay.Generated.Intern.Client.APlayInternalFactory.CreateBlockSymbol());
+      }
     }
     public static void SetClientUserFactory(APlayTest.Client.IClientUserFactory factory)
     {
@@ -2059,6 +2841,7 @@ namespace APlayTest.Client
         return (APlay.Generated.Intern.Client.APlayInternalFactory.CreateUser());
       }
     }
+    static private APlayTest.Client.IBlockSymbolUserFactory BlockSymbol_;
     static private APlayTest.Client.IClientUserFactory Client_;
     static private APlayTest.Client.IProjectUserFactory Project_;
     static private APlayTest.Client.IProjectManagerUserFactory ProjectManager_;
@@ -2072,6 +2855,13 @@ namespace APlayTest.Client
 {
   public partial class UserClassFactory : APlay.Generated.Intern.Client.IUserClassFactory
   {
+    public APlay.Generated.Intern.Client.__IBlockSymbolAPEvents CreateBlockSymbolEvents(APlay.Generated.Intern.Client.__IBlockSymbolAPImpl impl)
+    {
+      APlay.Common.APlayInitializer.SetInitializer(impl);
+      APlay.Generated.Intern.Client.__IBlockSymbolAPEvents retu__ = ((APlay.Generated.Intern.Client.__IBlockSymbolAPEvents) (new APlayTest.Client.BlockSymbol()));
+      APlay.Common.APlayInitializer.SetInitializer(null);
+      return (retu__);
+    }
     public APlay.Generated.Intern.Client.__IClientAPEvents CreateClientEvents(APlay.Generated.Intern.Client.__IClientAPImpl impl)
     {
       APlay.Common.APlayInitializer.SetInitializer(impl);
@@ -2118,6 +2908,10 @@ namespace APlayTest.Client
     {
       return (((APlay.Generated.Intern.Client.IProjectListEvents) (APlayTest.Client.ProjectList.CreateForAPlay(impl))));
     }
+    public APlay.Generated.Intern.Client.IBlockSymbolSetEvents CreateBlockSymbolSetEvents(APlay.Generated.Intern.Client.IBlockSymbolSetImpl impl)
+    {
+      return (((APlay.Generated.Intern.Client.IBlockSymbolSetEvents) (APlayTest.Client.BlockSymbolSet.CreateForAPlay(impl))));
+    }
     public APlay.Generated.Intern.Client.ISheetListEvents CreateSheetListEvents(APlay.Generated.Intern.Client.ISheetListImpl impl)
     {
       return (((APlay.Generated.Intern.Client.ISheetListEvents) (APlayTest.Client.SheetList.CreateForAPlay(impl))));
@@ -2142,11 +2936,16 @@ namespace APlayTest.Client
 {
   public partial class Delegates
   {
+    public delegate void void_int32(int NewId__);
+    public delegate void void_int32_BlockSymbol(int NewId__, APlayTest.Client.BlockSymbol this_);
+    public delegate void void_float64(double NewPositionX__);
+    public delegate void void_float64_BlockSymbol(double NewPositionX__, APlayTest.Client.BlockSymbol this_);
+    public delegate void void_AplaySize(APlayTest.Client.AplaySize NewSize__);
+    public delegate void void_AplaySize_BlockSymbol(APlayTest.Client.AplaySize NewSize__, APlayTest.Client.BlockSymbol this_);
     public delegate void void_Project(APlayTest.Client.Project NewCurrentProject__);
     public delegate void void_Project_Client(APlayTest.Client.Project NewCurrentProject__, APlayTest.Client.Client this_);
     public delegate void void_ProjectManager(APlayTest.Client.ProjectManager NewProjectManager__);
     public delegate void void_ProjectManager_Client(APlayTest.Client.ProjectManager NewProjectManager__, APlayTest.Client.Client this_);
-    public delegate void void_int32(int NewId__);
     public delegate void void_int32_Project(int NewId__, APlayTest.Client.Project this_);
     public delegate void void_ProjectDetail(APlayTest.Client.ProjectDetail NewProjectDetail__);
     public delegate void void_ProjectDetail_Project(APlayTest.Client.ProjectDetail NewProjectDetail__, APlayTest.Client.Project this_);
@@ -2161,13 +2960,17 @@ namespace APlayTest.Client
     public delegate void void_int32_Project_ProjectManager(int pos, APlayTest.Client.Project element, APlayTest.Client.ProjectManager this_);
     public delegate void void_Client(APlayTest.Client.Client NewDataClient__);
     public delegate void void_Client_ProjectManager(APlayTest.Client.Client NewDataClient__, APlayTest.Client.ProjectManager this_);
+    public delegate void void_BlockSymbol(APlayTest.Client.BlockSymbol returnValue);
     public delegate void void_WString(String NewName__);
     public delegate void void_WString_Sheet(String NewName__, APlayTest.Client.Sheet this_);
-    public delegate void void_Sheet(APlayTest.Client.Sheet returnValue);
+    public delegate void void_BlockSymbolSet(APlayTest.Client.BlockSymbolSet BlockSymbols__);
+    public delegate void void_BlockSymbolSet_Sheet(APlayTest.Client.BlockSymbolSet BlockSymbols__, APlayTest.Client.Sheet this_);
+    public delegate void void_BlockSymbol_Sheet(APlayTest.Client.BlockSymbol element, APlayTest.Client.Sheet this_);
+    public delegate void void_Sheet(APlayTest.Client.Sheet this_);
+    public delegate void void_int32_Sheet(int NewId__, APlayTest.Client.Sheet this_);
     public delegate void void_SheetList(APlayTest.Client.SheetList Sheets__);
     public delegate void void_SheetList_SheetManager(APlayTest.Client.SheetList Sheets__, APlayTest.Client.SheetManager this_);
     public delegate void void_Sheet_SheetManager(APlayTest.Client.Sheet element, APlayTest.Client.SheetManager this_);
-    public delegate void void_int32_Sheet(int pos, APlayTest.Client.Sheet element);
     public delegate void void_int32_Sheet_SheetManager(int pos, APlayTest.Client.Sheet element, APlayTest.Client.SheetManager this_);
     public delegate void void_Client_APlayClientSkeleton(APlayTest.Client.Client clientObject, APlayTest.Client.APlayClientSkeleton this_);
     public delegate void void_APlayClientSkeleton(APlayTest.Client.APlayClientSkeleton this_);

@@ -30,7 +30,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         {
             _shell = shell;
             _inspectorTool = inspectorTool;
-
+            
             DisplayName = "Sheet Tree";
 
             if (shell.Project != null)
@@ -85,6 +85,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
                     _inspectorTool.SelectedObject =
                         new InspectableObjectBuilder()
                      .WithEditor(_selectedSheet, x => x.Name, new TextBoxEditorViewModel<string>())
+                     .WithEditor(_selectedSheet, s => s.SheetId, new TextBoxEditorViewModel<int>())
                       .ToInspectableObject();
                 }
                 else

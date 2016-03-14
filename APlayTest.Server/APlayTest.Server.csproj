@@ -101,6 +101,7 @@
     <Compile Include="Factories\AplayProjectsCache.cs" />
     <Compile Include="Factories\ProjectManagerFactory.cs" />
     <Compile Include="Impl\APlayServer.cs" />
+    <Compile Include="Impl\BlockSymbol.cs" />
     <Compile Include="Impl\Client.cs" />
     <Compile Include="Impl\Project.cs" />
     <Compile Include="Impl\ProjectManager.cs" />

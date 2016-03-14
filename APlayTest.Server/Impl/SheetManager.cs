@@ -9,6 +9,8 @@ using APlay.Common;
 using APlay.Common.Utils;
 using APlay.Common.DataTypes;
 using APlayTest.Server;
+using APlayTest.Services.Infracstructure;
+
 namespace APlayTest.Server
 {
     public class SheetManager : APlayTest.Server.SheetManagerSkeleton
@@ -26,8 +28,7 @@ namespace APlayTest.Server
 
         public override Sheet onCreateSheet()
         {
-            return new Sheet();
-            
+            return new Sheet(){Id = IdGenerator.GetNextId()};
         }
 
         public override void onAddSheet(Sheet sheet__)

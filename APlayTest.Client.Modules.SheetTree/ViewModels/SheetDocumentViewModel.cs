@@ -7,21 +7,22 @@ using APlayTest.Client.Modules.SheetTree.ViewModels.Elements;
 using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Modules.Inspector;
+using Gemini.Modules.UndoRedo;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {
-     [Export(typeof(SheetDocumentViewModel))]
-     [PartCreationPolicy(CreationPolicy.NonShared)]
+    [Export(typeof(SheetDocumentViewModel))]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class SheetDocumentViewModel : Document
     {
         private readonly Sheet _sheet;
         private string _name;
-
         public SheetDocumentViewModel(Sheet sheet, IInspectorTool inspectorTool)
         {
             _sheet = sheet;
             _name = _sheet.Name;
             _sheet.NameChangeEventHandler += _sheet_NameChangeEventHandler;
+            SheetId = _sheet.Id;
             DisplayName = _name;
 
             _elements = new BindableCollection<ElementViewModel>();
@@ -29,7 +30,28 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
             _inspectorTool = inspectorTool;
 
-            var element1 = AddElement<Block>(100, 50);
+            _sheet.BlockSymbolsAddEventHandler += _sheet_BlockSymbolsAddEventHandler;
+
+            foreach (var blockSymbol in _sheet.BlockSymbols)
+            {
+                var block = AddBlock(blockSymbol);
+            }
+
+
+        }
+
+     
+        void _sheet_BlockSymbolsAddEventHandler(BlockSymbol newBlockSymbol)
+        {
+            AddBlock(newBlockSymbol);
+        }
+
+        private ElementViewModel AddBlock(BlockSymbol blockSymbol)
+        {
+            var block = new Block(blockSymbol);
+            _elements.Add(block);
+
+            return block;
         }
 
         void _sheet_NameChangeEventHandler(string NewName__)
@@ -56,13 +78,13 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             get { return _elements.Where(x => x.IsSelected); }
         }
 
-        public TElement AddElement<TElement>(double x, double y)
-            where TElement : ElementViewModel, new()
-        {
-            var element = new TElement { X = x, Y = y };
-            _elements.Add(element);
-            return element;
-        }
+        //public TElement AddElement<TElement>(BlockSymbol item)
+        //    where TElement : ElementViewModel, new()
+        //{
+        //    var element = new TElement { X = x, Y = y };
+        //    _elements.Add(element);
+        //    return element;
+        //}
 
         public ConnectionViewModel OnConnectionDragStarted(ConnectorViewModel sourceConnector, Point currentDragPoint)
         {
@@ -154,8 +176,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             }
         }
 
-        [Browsable(false)]
-        public int Id { get; set; }
+         public int SheetId { get; set; }
 
     }
 }

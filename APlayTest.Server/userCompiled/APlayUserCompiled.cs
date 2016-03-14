@@ -23,6 +23,61 @@ namespace APlayTest.Server
 }
 namespace APlayTest.Server
 {
+  public interface  IBlockSymbolImpl
+  {
+    int Id {get; set; }
+    double PositionX {get; set; }
+    double PositionY {get; set; }
+    APlayTest.Server.AplaySize Size {get; set; }
+    ulong APlayEntityId {get; }
+    bool RequiresInit ();
+    bool Release ();
+    void addOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
+    void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
+    bool isOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
+    void removeClientInterest (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IClientAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
+    void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
+    void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
+    void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
+    void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
+    void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  IBlockSymbolEvents
+  {
+    void onIdChange (int NewId__);
+    void onPositionXChange (double NewPositionX__);
+    void onPositionYChange (double NewPositionY__);
+    void onSizeChange (APlayTest.Server.AplaySize NewSize__);
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  IBlockSymbolSkeleton : APlayTest.Server.IBlockSymbolImpl, APlay.Generated.Intern.Server.__IBlockSymbolAPEvents, APlayTest.Server.IBlockSymbolEvents
+  {
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  IBlockSymbolFactory
+  {
+    APlayTest.Server.BlockSymbol CreateBlockSymbol ();
+  };
+}
+namespace APlayTest.Server
+{
   public interface  IClientImpl
   {
     bool IsAdmin {get; }
@@ -38,6 +93,7 @@ namespace APlayTest.Server
     void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     bool isOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     void removeClientInterest (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -45,6 +101,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -88,6 +145,7 @@ namespace APlayTest.Server
     void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     bool isOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     void removeClientInterest (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -95,6 +153,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -141,6 +200,7 @@ namespace APlayTest.Server
     void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     bool isOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     void removeClientInterest (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -148,6 +208,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -183,8 +244,9 @@ namespace APlayTest.Server
 {
   public interface  ISheetImpl
   {
-    int Id {get; }
     String Name {get; set; }
+    APlayTest.Server.BlockSymbolSet BlockSymbols {get; set; }
+    int Id {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
     bool Release ();
@@ -192,6 +254,7 @@ namespace APlayTest.Server
     void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     bool isOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     void removeClientInterest (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -199,6 +262,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -211,8 +275,14 @@ namespace APlayTest.Server
 {
   public interface  ISheetEvents
   {
-    void onIdChange (int NewId__);
     void onNameChange (String NewName__);
+    void onBlockSymbolsReplace (APlayTest.Server.BlockSymbolSet BlockSymbols__);
+    void onBlockSymbolsAdd (APlayTest.Server.BlockSymbol element);
+    void onBlockSymbolsRemove (APlayTest.Server.BlockSymbol element);
+    void onBlockSymbolsClear ();
+    void onIdChange (int NewId__);
+    APlayTest.Server.BlockSymbol onCreateBlockSymbol ();
+    void onAdd (APlayTest.Server.BlockSymbol blockSymbol__);
   };
 }
 namespace APlayTest.Server
@@ -240,6 +310,7 @@ namespace APlayTest.Server
     void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     bool isOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     void removeClientInterest (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -247,6 +318,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -288,6 +360,7 @@ namespace APlayTest.Server
     void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     bool isOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
     void removeClientInterest (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -295,6 +368,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
     void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
     void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
@@ -363,8 +437,15 @@ namespace APlayTest.Server
 }
 namespace APlayTest.Server
 {
-  public interface  IUserObjectFactory : APlayTest.Server.IClientUserFactory, APlayTest.Server.IProjectUserFactory, APlayTest.Server.IProjectManagerUserFactory, APlayTest.Server.ISheetUserFactory, APlayTest.Server.ISheetManagerUserFactory, APlayTest.Server.IUserUserFactory
+  public interface  IUserObjectFactory : APlayTest.Server.IBlockSymbolUserFactory, APlayTest.Server.IClientUserFactory, APlayTest.Server.IProjectUserFactory, APlayTest.Server.IProjectManagerUserFactory, APlayTest.Server.ISheetUserFactory, APlayTest.Server.ISheetManagerUserFactory, APlayTest.Server.IUserUserFactory
   {
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  IBlockSymbolUserFactory
+  {
+    APlayTest.Server.IBlockSymbolImpl CreateBlockSymbol ();
   };
 }
 namespace APlayTest.Server
@@ -623,6 +704,290 @@ namespace APlayTest.Server
 }
 namespace APlayTest.Server
 {
+  public abstract partial class BlockSymbolSkeleton : APlayTest.Server.IBlockSymbolSkeleton, APlay.Generated.Intern.Server.__IBlockSymbolAPEvents
+  {
+    public BlockSymbolSkeleton()
+    {
+      if(APlay.Common.APlayInitializer.GetInitializer()!=null)
+      {
+        this.setBlockSymbolObject(((APlay.Generated.Intern.Server.__IBlockSymbolAPImpl) (APlay.Common.APlayInitializer.GetInitializer())));
+      }
+      else
+      {
+        this.setBlockSymbolObject(APlayObjectFactory.CreateBlockSymbolImpl());
+      }
+      ((APlay.Generated.Intern.Server.__BlockSymbol) (this.getBlockSymbolObject())).BlockSymbolHandler = ((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (((APlayTest.Server.BlockSymbolSkeleton) (this))));
+    }
+    public virtual int Id
+    {
+      set
+      {
+        {
+          //int32
+          implBlockSymbol.Id = value;
+        }
+      }
+      get
+      {
+        {
+          return (implBlockSymbol.Id);
+        }
+      }
+    }
+    public virtual double PositionX
+    {
+      set
+      {
+        {
+          //float64
+          implBlockSymbol.PositionX = value;
+        }
+      }
+      get
+      {
+        {
+          return (implBlockSymbol.PositionX);
+        }
+      }
+    }
+    public virtual double PositionY
+    {
+      set
+      {
+        {
+          //float64
+          implBlockSymbol.PositionY = value;
+        }
+      }
+      get
+      {
+        {
+          return (implBlockSymbol.PositionY);
+        }
+      }
+    }
+    public virtual APlayTest.Server.AplaySize Size
+    {
+      set
+      {
+        {
+          //AplaySize
+          implBlockSymbol.Size = new APlay.Generated.Intern.Server.__AplaySize(value.Width, value.Height);
+        }
+      }
+      get
+      {
+        {
+          return (new APlayTest.Server.AplaySize(((float) (implBlockSymbol.Size.Width)), ((float) (implBlockSymbol.Size.Height))));
+        }
+      }
+    }
+    public virtual ulong APlayEntityId
+    {
+      get
+      {
+        {
+          return (implBlockSymbol.APlayEntityId);
+        }
+      }
+    }
+    public virtual void onIdChange(int NewId__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onIdChange received","Server.Designed");
+    }
+    public void onInternIdChange(int NewId__)
+    {
+      if(IdChangeEventHandler!=null)
+      {
+        IdChangeEventHandler(NewId__);
+      }
+      else
+      {
+        if(APlayTest.Server.BlockSymbolSkeleton.StaticIdChangeEventHandler!=null)
+        {
+          APlayTest.Server.BlockSymbolSkeleton.StaticIdChangeEventHandler(NewId__, ((APlayTest.Server.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onIdChange(NewId__);
+        }
+      }
+    }
+    public virtual void onPositionXChange(double NewPositionX__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onPositionXChange received","Server.Designed");
+    }
+    public void onInternPositionXChange(double NewPositionX__)
+    {
+      if(PositionXChangeEventHandler!=null)
+      {
+        PositionXChangeEventHandler(NewPositionX__);
+      }
+      else
+      {
+        if(APlayTest.Server.BlockSymbolSkeleton.StaticPositionXChangeEventHandler!=null)
+        {
+          APlayTest.Server.BlockSymbolSkeleton.StaticPositionXChangeEventHandler(NewPositionX__, ((APlayTest.Server.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onPositionXChange(NewPositionX__);
+        }
+      }
+    }
+    public virtual void onPositionYChange(double NewPositionY__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onPositionYChange received","Server.Designed");
+    }
+    public void onInternPositionYChange(double NewPositionY__)
+    {
+      if(PositionYChangeEventHandler!=null)
+      {
+        PositionYChangeEventHandler(NewPositionY__);
+      }
+      else
+      {
+        if(APlayTest.Server.BlockSymbolSkeleton.StaticPositionYChangeEventHandler!=null)
+        {
+          APlayTest.Server.BlockSymbolSkeleton.StaticPositionYChangeEventHandler(NewPositionY__, ((APlayTest.Server.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onPositionYChange(NewPositionY__);
+        }
+      }
+    }
+    public virtual void onSizeChange(APlayTest.Server.AplaySize NewSize__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSizeChange received","Server.Designed");
+    }
+    public void onInternSizeChange(APlay.Generated.Intern.Server.__AplaySize NewSize__)
+    {
+      if(SizeChangeEventHandler!=null)
+      {
+        SizeChangeEventHandler(new APlayTest.Server.AplaySize(((float) (NewSize__.Width)), ((float) (NewSize__.Height))));
+      }
+      else
+      {
+        if(APlayTest.Server.BlockSymbolSkeleton.StaticSizeChangeEventHandler!=null)
+        {
+          APlayTest.Server.BlockSymbolSkeleton.StaticSizeChangeEventHandler(new APlayTest.Server.AplaySize(((float) (NewSize__.Width)), ((float) (NewSize__.Height))), ((APlayTest.Server.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onSizeChange(new APlayTest.Server.AplaySize(((float) (NewSize__.Width)), ((float) (NewSize__.Height))));
+        }
+      }
+    }
+    public bool RequiresInit()
+    {
+      bool retu = implBlockSymbol.RequiresInit();
+      return (((bool) (retu)));
+    }
+    public bool Release()
+    {
+      bool retu = implBlockSymbol.Release();
+      return (((bool) (retu)));
+    }
+    public void addOwner(APlay.Generated.Intern.Server.__IClientAPEvents owner)
+    {
+      implBlockSymbol.addOwner(((APlay.Generated.Intern.Server.__IClientAPEvents) (owner)));
+    }
+    public void removeOwner(APlay.Generated.Intern.Server.__IClientAPEvents owner)
+    {
+      implBlockSymbol.removeOwner(((APlay.Generated.Intern.Server.__IClientAPEvents) (owner)));
+    }
+    public bool isOwner(APlay.Generated.Intern.Server.__IClientAPEvents owner)
+    {
+      bool retu = implBlockSymbol.isOwner(((APlay.Generated.Intern.Server.__IClientAPEvents) (owner)));
+      return (((bool) (retu)));
+    }
+    public void removeClientInterest(APlay.Generated.Intern.Server.__IClientAPEvents client)
+    {
+      implBlockSymbol.removeClientInterest(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implBlockSymbol.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IClientAPEvents ob)
+    {
+      implBlockSymbol.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IProjectAPEvents ob)
+    {
+      implBlockSymbol.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IProjectAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob)
+    {
+      implBlockSymbol.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IProjectManagerAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__ISheetAPEvents ob)
+    {
+      implBlockSymbol.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implBlockSymbol.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
+    {
+      implBlockSymbol.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByClient(APlay.Generated.Intern.Server.__IClientAPEvents client)
+    {
+      implBlockSymbol.removeClientInterestRecursiveByClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void SyncedWithBlockSymbol(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implBlockSymbol.SyncedWithBlockSymbol(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
+    }
+    public void SyncedWithClient(APlay.Generated.Intern.Server.__IClientAPEvents ob)
+    {
+      implBlockSymbol.SyncedWithClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
+    }
+    public void SyncedWithProject(APlay.Generated.Intern.Server.__IProjectAPEvents ob)
+    {
+      implBlockSymbol.SyncedWithProject(((APlay.Generated.Intern.Server.__IProjectAPEvents) (ob)));
+    }
+    public void SyncedWithProjectManager(APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob)
+    {
+      implBlockSymbol.SyncedWithProjectManager(((APlay.Generated.Intern.Server.__IProjectManagerAPEvents) (ob)));
+    }
+    public void SyncedWithSheet(APlay.Generated.Intern.Server.__ISheetAPEvents ob)
+    {
+      implBlockSymbol.SyncedWithSheet(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
+    }
+    public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implBlockSymbol.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
+    public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
+    {
+      implBlockSymbol.SyncedWithUser(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
+    }
+    public APlay.Generated.Intern.Server.__IBlockSymbolAPImpl getBlockSymbolObject()
+    {
+      return (implBlockSymbol);
+    }
+    public void setBlockSymbolObject(APlay.Generated.Intern.Server.__IBlockSymbolAPImpl impl)
+    {
+      implBlockSymbol = impl;
+    }
+    public event APlayTest.Server.Delegates.void_int32 IdChangeEventHandler;
+    static public event APlayTest.Server.Delegates.void_int32_BlockSymbol StaticIdChangeEventHandler;
+    public event APlayTest.Server.Delegates.void_float64 PositionXChangeEventHandler;
+    static public event APlayTest.Server.Delegates.void_float64_BlockSymbol StaticPositionXChangeEventHandler;
+    public event APlayTest.Server.Delegates.void_float64 PositionYChangeEventHandler;
+    static public event APlayTest.Server.Delegates.void_float64_BlockSymbol StaticPositionYChangeEventHandler;
+    public event APlayTest.Server.Delegates.void_AplaySize SizeChangeEventHandler;
+    static public event APlayTest.Server.Delegates.void_AplaySize_BlockSymbol StaticSizeChangeEventHandler;
+    private APlay.Generated.Intern.Server.__IBlockSymbolAPImpl implBlockSymbol;
+  }
+  
+}
+namespace APlayTest.Server
+{
   public abstract partial class ClientSkeleton : APlayTest.Server.IClientSkeleton, APlay.Generated.Intern.Server.__IClientAPEvents
   {
     public ClientSkeleton()
@@ -763,6 +1128,10 @@ namespace APlayTest.Server
     {
       implClient.removeClientInterest(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implClient.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
       implClient.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
@@ -790,6 +1159,10 @@ namespace APlayTest.Server
     public void removeClientInterestRecursiveByClient(APlay.Generated.Intern.Server.__IClientAPEvents client)
     {
       implClient.removeClientInterestRecursiveByClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void SyncedWithBlockSymbol(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implClient.SyncedWithBlockSymbol(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
     }
     public void SyncedWithClient(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
@@ -977,6 +1350,10 @@ namespace APlayTest.Server
     {
       implProject.removeClientInterest(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implProject.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
       implProject.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
@@ -1004,6 +1381,10 @@ namespace APlayTest.Server
     public void removeClientInterestRecursiveByClient(APlay.Generated.Intern.Server.__IClientAPEvents client)
     {
       implProject.removeClientInterestRecursiveByClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void SyncedWithBlockSymbol(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implProject.SyncedWithBlockSymbol(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
     }
     public void SyncedWithClient(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
@@ -1257,6 +1638,10 @@ namespace APlayTest.Server
     {
       implProjectManager.removeClientInterest(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implProjectManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
       implProjectManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
@@ -1284,6 +1669,10 @@ namespace APlayTest.Server
     public void removeClientInterestRecursiveByClient(APlay.Generated.Intern.Server.__IClientAPEvents client)
     {
       implProjectManager.removeClientInterestRecursiveByClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void SyncedWithBlockSymbol(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implProjectManager.SyncedWithBlockSymbol(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
     }
     public void SyncedWithClient(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
@@ -1345,15 +1734,6 @@ namespace APlayTest.Server
       }
       ((APlay.Generated.Intern.Server.__Sheet) (this.getSheetObject())).SheetHandler = ((APlay.Generated.Intern.Server.__ISheetAPEvents) (((APlayTest.Server.SheetSkeleton) (this))));
     }
-    public virtual int Id
-    {
-      get
-      {
-        {
-          return (implSheet.Id);
-        }
-      }
-    }
     public virtual String Name
     {
       set
@@ -1370,12 +1750,154 @@ namespace APlayTest.Server
         }
       }
     }
+    public virtual APlayTest.Server.BlockSymbolSet BlockSymbols
+    {
+      set
+      {
+        {
+          //BlockSymbol
+          implSheet.BlockSymbols = ((APlay.Generated.Intern.Server.IBlockSymbolSetEvents) (value));
+        }
+      }
+      get
+      {
+        {
+          return (((APlayTest.Server.BlockSymbolSet) (implSheet.BlockSymbols)));
+        }
+      }
+    }
+    public virtual int Id
+    {
+      set
+      {
+        {
+          //int32
+          implSheet.Id = value;
+        }
+      }
+      get
+      {
+        {
+          return (implSheet.Id);
+        }
+      }
+    }
     public virtual ulong APlayEntityId
     {
       get
       {
         {
           return (implSheet.APlayEntityId);
+        }
+      }
+    }
+    public virtual void onNameChange(String NewName__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onNameChange received","Server.Designed");
+    }
+    public void onInternNameChange(String NewName__)
+    {
+      if(NameChangeEventHandler!=null)
+      {
+        NameChangeEventHandler(NewName__);
+      }
+      else
+      {
+        if(APlayTest.Server.SheetSkeleton.StaticNameChangeEventHandler!=null)
+        {
+          APlayTest.Server.SheetSkeleton.StaticNameChangeEventHandler(NewName__, ((APlayTest.Server.Sheet) (this)));
+        }
+        else
+        {
+          this.onNameChange(NewName__);
+        }
+      }
+    }
+    public virtual void onBlockSymbolsReplace(APlayTest.Server.BlockSymbolSet BlockSymbols__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onBlockSymbolsReplace received","Server.Designed");
+    }
+    public void onInternBlockSymbolsReplace(APlay.Generated.Intern.Server.IBlockSymbolSetEvents BlockSymbols__)
+    {
+      if(BlockSymbolsReplaceEventHandler!=null)
+      {
+        BlockSymbolsReplaceEventHandler(((APlayTest.Server.BlockSymbolSet) (BlockSymbols__)));
+      }
+      else
+      {
+        if(APlayTest.Server.SheetSkeleton.StaticBlockSymbolsReplaceEventHandler!=null)
+        {
+          APlayTest.Server.SheetSkeleton.StaticBlockSymbolsReplaceEventHandler(((APlayTest.Server.BlockSymbolSet) (BlockSymbols__)), ((APlayTest.Server.Sheet) (this)));
+        }
+        else
+        {
+          this.onBlockSymbolsReplace(((APlayTest.Server.BlockSymbolSet) (BlockSymbols__)));
+        }
+      }
+    }
+    public virtual void onBlockSymbolsAdd(APlayTest.Server.BlockSymbol element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onBlockSymbolsAdd received","Server.Designed");
+    }
+    public void onInternBlockSymbolsAdd(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents element)
+    {
+      if(BlockSymbolsAddEventHandler!=null)
+      {
+        BlockSymbolsAddEventHandler(((APlayTest.Server.BlockSymbol) (element)));
+      }
+      else
+      {
+        if(APlayTest.Server.SheetSkeleton.StaticBlockSymbolsAddEventHandler!=null)
+        {
+          APlayTest.Server.SheetSkeleton.StaticBlockSymbolsAddEventHandler(((APlayTest.Server.BlockSymbol) (element)), ((APlayTest.Server.Sheet) (this)));
+        }
+        else
+        {
+          this.onBlockSymbolsAdd(((APlayTest.Server.BlockSymbol) (element)));
+        }
+      }
+    }
+    public virtual void onBlockSymbolsRemove(APlayTest.Server.BlockSymbol element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onBlockSymbolsRemove received","Server.Designed");
+    }
+    public void onInternBlockSymbolsRemove(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents element)
+    {
+      if(BlockSymbolsRemoveEventHandler!=null)
+      {
+        BlockSymbolsRemoveEventHandler(((APlayTest.Server.BlockSymbol) (element)));
+      }
+      else
+      {
+        if(APlayTest.Server.SheetSkeleton.StaticBlockSymbolsRemoveEventHandler!=null)
+        {
+          APlayTest.Server.SheetSkeleton.StaticBlockSymbolsRemoveEventHandler(((APlayTest.Server.BlockSymbol) (element)), ((APlayTest.Server.Sheet) (this)));
+        }
+        else
+        {
+          this.onBlockSymbolsRemove(((APlayTest.Server.BlockSymbol) (element)));
+        }
+      }
+    }
+    public virtual void onBlockSymbolsClear()
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onBlockSymbolsClear received","Server.Designed");
+    }
+    public void onInternBlockSymbolsClear()
+    {
+      if(BlockSymbolsClearEventHandler!=null)
+      {
+        BlockSymbolsClearEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Server.SheetSkeleton.StaticBlockSymbolsClearEventHandler!=null)
+        {
+          APlayTest.Server.SheetSkeleton.StaticBlockSymbolsClearEventHandler(((APlayTest.Server.Sheet) (this)));
+        }
+        else
+        {
+          this.onBlockSymbolsClear();
         }
       }
     }
@@ -1401,25 +1923,44 @@ namespace APlayTest.Server
         }
       }
     }
-    public virtual void onNameChange(String NewName__)
+    public abstract APlayTest.Server.BlockSymbol onCreateBlockSymbol();
+    public APlay.Generated.Intern.Server.__IBlockSymbolAPEvents onInternCreateBlockSymbol()
     {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onNameChange received","Server.Designed");
-    }
-    public void onInternNameChange(String NewName__)
-    {
-      if(NameChangeEventHandler!=null)
+      if(CreateBlockSymbolEventHandler!=null)
       {
-        NameChangeEventHandler(NewName__);
+        APlayTest.Server.BlockSymbol retu = CreateBlockSymbolEventHandler();
+        return (((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (retu)));
       }
       else
       {
-        if(APlayTest.Server.SheetSkeleton.StaticNameChangeEventHandler!=null)
+        if(APlayTest.Server.SheetSkeleton.StaticCreateBlockSymbolEventHandler!=null)
         {
-          APlayTest.Server.SheetSkeleton.StaticNameChangeEventHandler(NewName__, ((APlayTest.Server.Sheet) (this)));
+          APlayTest.Server.BlockSymbol retu = APlayTest.Server.SheetSkeleton.StaticCreateBlockSymbolEventHandler(((APlayTest.Server.Sheet) (this)));
+          return (((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (retu)));
         }
         else
         {
-          this.onNameChange(NewName__);
+          APlayTest.Server.BlockSymbol retu = this.onCreateBlockSymbol();
+          return (((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (retu)));
+        }
+      }
+    }
+    public abstract void onAdd(APlayTest.Server.BlockSymbol blockSymbol__);
+    public void onInternAdd(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents blockSymbol__)
+    {
+      if(AddEventHandler!=null)
+      {
+        AddEventHandler(((APlayTest.Server.BlockSymbol) (blockSymbol__)));
+      }
+      else
+      {
+        if(APlayTest.Server.SheetSkeleton.StaticAddEventHandler!=null)
+        {
+          APlayTest.Server.SheetSkeleton.StaticAddEventHandler(((APlayTest.Server.BlockSymbol) (blockSymbol__)), ((APlayTest.Server.Sheet) (this)));
+        }
+        else
+        {
+          this.onAdd(((APlayTest.Server.BlockSymbol) (blockSymbol__)));
         }
       }
     }
@@ -1450,6 +1991,10 @@ namespace APlayTest.Server
     {
       implSheet.removeClientInterest(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implSheet.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
       implSheet.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
@@ -1477,6 +2022,10 @@ namespace APlayTest.Server
     public void removeClientInterestRecursiveByClient(APlay.Generated.Intern.Server.__IClientAPEvents client)
     {
       implSheet.removeClientInterestRecursiveByClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void SyncedWithBlockSymbol(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implSheet.SyncedWithBlockSymbol(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
     }
     public void SyncedWithClient(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
@@ -1510,10 +2059,22 @@ namespace APlayTest.Server
     {
       implSheet = impl;
     }
-    public event APlayTest.Server.Delegates.void_int32 IdChangeEventHandler;
-    static public event APlayTest.Server.Delegates.void_int32_Sheet StaticIdChangeEventHandler;
     public event APlayTest.Server.Delegates.void_WString NameChangeEventHandler;
     static public event APlayTest.Server.Delegates.void_WString_Sheet StaticNameChangeEventHandler;
+    public event APlayTest.Server.Delegates.void_BlockSymbolSet BlockSymbolsReplaceEventHandler;
+    static public event APlayTest.Server.Delegates.void_BlockSymbolSet_Sheet StaticBlockSymbolsReplaceEventHandler;
+    public event APlayTest.Server.Delegates.void_BlockSymbol BlockSymbolsAddEventHandler;
+    static public event APlayTest.Server.Delegates.void_BlockSymbol_Sheet StaticBlockSymbolsAddEventHandler;
+    public event APlayTest.Server.Delegates.void_BlockSymbol BlockSymbolsRemoveEventHandler;
+    static public event APlayTest.Server.Delegates.void_BlockSymbol_Sheet StaticBlockSymbolsRemoveEventHandler;
+    public event APlayTest.Server.Delegates.void_ BlockSymbolsClearEventHandler;
+    static public event APlayTest.Server.Delegates.void_Sheet StaticBlockSymbolsClearEventHandler;
+    public event APlayTest.Server.Delegates.void_int32 IdChangeEventHandler;
+    static public event APlayTest.Server.Delegates.void_int32_Sheet StaticIdChangeEventHandler;
+    public event APlayTest.Server.Delegates.BlockSymbol_ CreateBlockSymbolEventHandler;
+    static public event APlayTest.Server.Delegates.BlockSymbol_Sheet StaticCreateBlockSymbolEventHandler;
+    public event APlayTest.Server.Delegates.void_BlockSymbol AddEventHandler;
+    static public event APlayTest.Server.Delegates.void_BlockSymbol_Sheet StaticAddEventHandler;
     private APlay.Generated.Intern.Server.__ISheetAPImpl implSheet;
   }
   
@@ -1627,6 +2188,10 @@ namespace APlayTest.Server
     {
       implSheetManager.removeClientInterest(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implSheetManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
       implSheetManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
@@ -1654,6 +2219,10 @@ namespace APlayTest.Server
     public void removeClientInterestRecursiveByClient(APlay.Generated.Intern.Server.__IClientAPEvents client)
     {
       implSheetManager.removeClientInterestRecursiveByClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void SyncedWithBlockSymbol(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implSheetManager.SyncedWithBlockSymbol(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
     }
     public void SyncedWithClient(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
@@ -1778,6 +2347,10 @@ namespace APlayTest.Server
     {
       implUser.removeClientInterest(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implUser.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
       implUser.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
@@ -1805,6 +2378,10 @@ namespace APlayTest.Server
     public void removeClientInterestRecursiveByClient(APlay.Generated.Intern.Server.__IClientAPEvents client)
     {
       implUser.removeClientInterestRecursiveByClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void SyncedWithBlockSymbol(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implUser.SyncedWithBlockSymbol(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
     }
     public void SyncedWithClient(APlay.Generated.Intern.Server.__IClientAPEvents ob)
     {
@@ -1843,6 +2420,100 @@ namespace APlayTest.Server
     private APlay.Generated.Intern.Server.__IUserAPImpl implUser;
   }
   
+}
+namespace APlayTest.Server
+{
+  public partial struct AplayPoint
+  {
+    public AplayPoint(float X__, float Y__)
+    {
+      X = X__;
+      Y = Y__;
+    }
+    public float X;
+    public float Y;
+    public static bool operator ==(AplayPoint a, AplayPoint b)
+    {
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return true&& (a.X==b.X)&& (a.Y==b.Y);
+    }
+    public override bool Equals(System.Object obj)
+    {
+      if (ReferenceEquals(null, obj))
+      {
+        return false;
+      }
+      if (obj.GetType() != typeof(AplayPoint))
+      {
+        return false;
+      }
+      AplayPoint a = this;
+      AplayPoint b = (AplayPoint)obj;
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return (a.X==b.X)&&(a.Y==b.Y);
+    }
+    public override int GetHashCode()
+    {
+      return X.GetHashCode() + Y.GetHashCode();
+    }
+    public static bool operator !=(AplayPoint a, AplayPoint b)
+    {
+      return !(a == b);
+    }
+    public override string ToString()
+    {
+      return "["+X.ToString()+"]" + "["+Y.ToString()+"]";
+    }
+  }
+}
+namespace APlayTest.Server
+{
+  public partial struct AplaySize
+  {
+    public AplaySize(float Width__, float Height__)
+    {
+      Width = Width__;
+      Height = Height__;
+    }
+    public float Width;
+    public float Height;
+    public static bool operator ==(AplaySize a, AplaySize b)
+    {
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return true&& (a.Width==b.Width)&& (a.Height==b.Height);
+    }
+    public override bool Equals(System.Object obj)
+    {
+      if (ReferenceEquals(null, obj))
+      {
+        return false;
+      }
+      if (obj.GetType() != typeof(AplaySize))
+      {
+        return false;
+      }
+      AplaySize a = this;
+      AplaySize b = (AplaySize)obj;
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return (a.Width==b.Width)&&(a.Height==b.Height);
+    }
+    public override int GetHashCode()
+    {
+      return Width.GetHashCode() + Height.GetHashCode();
+    }
+    public static bool operator !=(AplaySize a, AplaySize b)
+    {
+      return !(a == b);
+    }
+    public override string ToString()
+    {
+      return "["+Width.ToString()+"]" + "["+Height.ToString()+"]";
+    }
+  }
 }
 namespace APlayTest.Server
 {
@@ -2051,6 +2722,130 @@ namespace APlayTest.Server
 }
 namespace APlayTest.Server
 {
+  public partial class BlockSymbolSet : ICollection<APlayTest.Server.BlockSymbol>, APlay.Generated.Intern.Server.IBlockSymbolSetEvents
+  {
+    public BlockSymbolSet()
+    {
+      APlay.Generated.Intern.Server.IBlockSymbolSetImpl impl_=null;
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Server.BlockSymbolSet();
+      }
+    }
+    public BlockSymbolSet(APlay.Generated.Intern.Server.IBlockSymbolSetImpl impl_)
+    {
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Server.BlockSymbolSet();
+      }
+    }
+    public static APlayTest.Server.BlockSymbolSet CreateForAPlay(APlay.Generated.Intern.Server.IBlockSymbolSetImpl impl)
+    {
+      APlayTest.Server.BlockSymbolSet ob = new APlayTest.Server.BlockSymbolSet(impl);
+      return (ob);
+    }
+    public APlay.Generated.Intern.Server.IBlockSymbolSetImpl getBlockSymbolObject()
+    {
+      return (impl);
+    }
+    private APlay.Generated.Intern.Server.IBlockSymbolSetImpl impl;
+    
+public void Add(APlayTest.Server.BlockSymbol item)
+{
+    impl.add(item);
+}
+public void Clear()
+{
+    impl.clear();
+}
+
+public bool Contains(APlayTest.Server.BlockSymbol item)
+{
+    return impl.contains(item);
+}
+
+public void CopyTo(APlayTest.Server.BlockSymbol[] array, int arrayIndex)
+{
+    int i=arrayIndex;
+    foreach (APlayTest.Server.BlockSymbol item in this)
+    {
+        array[i++]=item;
+    }
+}
+
+public int Count
+{
+    get { return (int)impl.length(); }
+}
+
+public bool IsReadOnly
+{
+    get { return true; }
+}
+System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+{
+    return GetEnumerator();
+}
+public bool Remove(APlayTest.Server.BlockSymbol item)
+{
+    return impl.remove(item);
+}
+    public IEnumerator<APlayTest.Server.BlockSymbol> GetEnumerator()
+    {
+        return new BlockSymbolSetEnumerator(impl.GetEnumerator());
+    }
+    
+  }
+  
+}
+namespace APlayTest.Server
+{
+  public partial class BlockSymbolSetEnumerator : IEnumerator<APlayTest.Server.BlockSymbol>
+  {
+    
+        IEnumerator<APlay.Generated.Intern.Server.__BlockSymbol> intern;
+        public BlockSymbolSetEnumerator(IEnumerator<APlay.Generated.Intern.Server.__BlockSymbol> intern)
+        {
+            this.intern = intern;
+        }
+        public APlayTest.Server.BlockSymbol Current
+        {
+            get { APlay.Generated.Intern.Server.__BlockSymbol item = (APlay.Generated.Intern.Server.__BlockSymbol)intern.Current; return ((APlayTest.Server.BlockSymbol) ((item==null)?null:item.__GetExternBlockSymbol()));}
+        }
+
+        public void Dispose()
+        {
+            intern.Dispose();
+        }
+
+        object System.Collections.IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public bool MoveNext()
+        {
+            return intern.MoveNext();
+        }
+
+        public void Reset()
+        {
+            intern.Reset();
+        }
+
+  }
+  
+}
+namespace APlayTest.Server
+{
   public partial class SheetList : IList<APlayTest.Server.Sheet>, APlay.Generated.Intern.Server.ISheetListEvents
   {
     public SheetList()
@@ -2211,6 +3006,7 @@ namespace APlayTest.Server
   {
     public static void SetUserFactory(APlayTest.Server.IUserObjectFactory factory)
     {
+      BlockSymbol_ = factory;
       Client_ = factory;
       Project_ = factory;
       ProjectManager_ = factory;
@@ -2220,12 +3016,33 @@ namespace APlayTest.Server
     }
     public static void SetAPlayDefaultFactory()
     {
+      BlockSymbol_ = null;
       Client_ = null;
       Project_ = null;
       ProjectManager_ = null;
       Sheet_ = null;
       SheetManager_ = null;
       User_ = null;
+    }
+    public static void SetBlockSymbolUserFactory(APlayTest.Server.IBlockSymbolUserFactory factory)
+    {
+      BlockSymbol_ = factory;
+    }
+    public static void SetBlockSymbolAPlayDefaultFactory()
+    {
+      BlockSymbol_ = null;
+    }
+    public static APlay.Generated.Intern.Server.__IBlockSymbolAPImpl CreateBlockSymbolImpl()
+    {
+      if(BlockSymbol_!=null)
+      {
+        APlay.Common.Logging.Logger.LogDesigned(6,"event adapters are temporarily disabled","Server.Designed");
+        return (null);
+      }
+      else
+      {
+        return (APlay.Generated.Intern.Server.APlayInternalFactory.CreateBlockSymbol());
+      }
     }
     public static void SetClientUserFactory(APlayTest.Server.IClientUserFactory factory)
     {
@@ -2347,6 +3164,7 @@ namespace APlayTest.Server
         return (APlay.Generated.Intern.Server.APlayInternalFactory.CreateUser());
       }
     }
+    static private APlayTest.Server.IBlockSymbolUserFactory BlockSymbol_;
     static private APlayTest.Server.IClientUserFactory Client_;
     static private APlayTest.Server.IProjectUserFactory Project_;
     static private APlayTest.Server.IProjectManagerUserFactory ProjectManager_;
@@ -2360,6 +3178,13 @@ namespace APlayTest.Server
 {
   public partial class UserClassFactory : APlay.Generated.Intern.Server.IUserClassFactory
   {
+    public APlay.Generated.Intern.Server.__IBlockSymbolAPEvents CreateBlockSymbolEvents(APlay.Generated.Intern.Server.__IBlockSymbolAPImpl impl)
+    {
+      APlay.Common.APlayInitializer.SetInitializer(impl);
+      APlay.Generated.Intern.Server.__IBlockSymbolAPEvents retu__ = ((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (new APlayTest.Server.BlockSymbol()));
+      APlay.Common.APlayInitializer.SetInitializer(null);
+      return (retu__);
+    }
     public APlay.Generated.Intern.Server.__IClientAPEvents CreateClientEvents(APlay.Generated.Intern.Server.__IClientAPImpl impl)
     {
       APlay.Common.APlayInitializer.SetInitializer(impl);
@@ -2406,6 +3231,10 @@ namespace APlayTest.Server
     {
       return (((APlay.Generated.Intern.Server.IProjectListEvents) (APlayTest.Server.ProjectList.CreateForAPlay(impl))));
     }
+    public APlay.Generated.Intern.Server.IBlockSymbolSetEvents CreateBlockSymbolSetEvents(APlay.Generated.Intern.Server.IBlockSymbolSetImpl impl)
+    {
+      return (((APlay.Generated.Intern.Server.IBlockSymbolSetEvents) (APlayTest.Server.BlockSymbolSet.CreateForAPlay(impl))));
+    }
     public APlay.Generated.Intern.Server.ISheetListEvents CreateSheetListEvents(APlay.Generated.Intern.Server.ISheetListImpl impl)
     {
       return (((APlay.Generated.Intern.Server.ISheetListEvents) (APlayTest.Server.SheetList.CreateForAPlay(impl))));
@@ -2430,9 +3259,14 @@ namespace APlayTest.Server
 {
   public partial class Delegates
   {
+    public delegate void void_int32(int NewId__);
+    public delegate void void_int32_BlockSymbol(int NewId__, APlayTest.Server.BlockSymbol this_);
+    public delegate void void_float64(double NewPositionX__);
+    public delegate void void_float64_BlockSymbol(double NewPositionX__, APlayTest.Server.BlockSymbol this_);
+    public delegate void void_AplaySize(APlayTest.Server.AplaySize NewSize__);
+    public delegate void void_AplaySize_BlockSymbol(APlayTest.Server.AplaySize NewSize__, APlayTest.Server.BlockSymbol this_);
     public delegate void void_User(APlayTest.Server.User NewCurrentUser__);
     public delegate void void_User_Client(APlayTest.Server.User NewCurrentUser__, APlayTest.Server.Client this_);
-    public delegate void void_int32(int NewId__);
     public delegate void void_int32_Project(int NewId__, APlayTest.Server.Project this_);
     public delegate void void_ProjectDetail(APlayTest.Server.ProjectDetail NewProjectDetail__);
     public delegate void void_ProjectDetail_Project(APlayTest.Server.ProjectDetail NewProjectDetail__, APlayTest.Server.Project this_);
@@ -2443,16 +3277,22 @@ namespace APlayTest.Server
     public delegate void void_WString(String searchString__);
     public delegate void void_WString_ProjectManager(String searchString__, APlayTest.Server.ProjectManager this_);
     public delegate void void_int32_ProjectManager(int projectId__, APlayTest.Server.ProjectManager this_);
-    public delegate void void_int32_Sheet(int NewId__, APlayTest.Server.Sheet this_);
     public delegate void void_WString_Sheet(String NewName__, APlayTest.Server.Sheet this_);
+    public delegate void void_BlockSymbolSet(APlayTest.Server.BlockSymbolSet BlockSymbols__);
+    public delegate void void_BlockSymbolSet_Sheet(APlayTest.Server.BlockSymbolSet BlockSymbols__, APlayTest.Server.Sheet this_);
+    public delegate void void_BlockSymbol(APlayTest.Server.BlockSymbol element);
+    public delegate void void_BlockSymbol_Sheet(APlayTest.Server.BlockSymbol element, APlayTest.Server.Sheet this_);
+    public delegate void void_();
+    public delegate void void_Sheet(APlayTest.Server.Sheet this_);
+    public delegate void void_int32_Sheet(int NewId__, APlayTest.Server.Sheet this_);
+    public delegate APlayTest.Server.BlockSymbol BlockSymbol_();
+    public delegate APlayTest.Server.BlockSymbol BlockSymbol_Sheet(APlayTest.Server.Sheet this_);
     public delegate APlayTest.Server.Sheet Sheet_();
     public delegate APlayTest.Server.Sheet Sheet_SheetManager(APlayTest.Server.SheetManager this_);
-    public delegate void void_Sheet(APlayTest.Server.Sheet sheet__);
     public delegate void void_Sheet_SheetManager(APlayTest.Server.Sheet sheet__, APlayTest.Server.SheetManager this_);
     public delegate void void_WString_User(String NewName__, APlayTest.Server.User this_);
     public delegate void void_Client(APlayTest.Server.Client client);
     public delegate void void_Client_APlayServerSkeleton(APlayTest.Server.Client client, APlayTest.Server.APlayServerSkeleton this_);
-    public delegate void void_();
     public delegate void void_APlayServerSkeleton(APlayTest.Server.APlayServerSkeleton this_);
     public delegate void void_String(String reason);
     public delegate void void_String_APlayServerSkeleton(String reason, APlayTest.Server.APlayServerSkeleton this_);
