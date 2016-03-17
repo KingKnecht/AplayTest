@@ -55,6 +55,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DynamicData.4.4.0.1110-beta\lib\net45\DynamicData.dll</HintPath>
     </Reference>
+    <Reference Include="Gemini">
+      <HintPath>..\packages\GeminiWpf.0.6.2\lib\net45\Gemini.dll</HintPath>
+    </Reference>
+    <Reference Include="Gemini.Modules.Inspector">
+      <HintPath>..\packages\Gemini.Modules.Inspector.0.6.2\lib\net45\Gemini.Modules.Inspector.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MahApps.Metro.1.0.0.0\lib\net45\MahApps.Metro.dll</HintPath>
@@ -118,6 +124,9 @@
     <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2013">
+      <HintPath>..\packages\GeminiWpf.0.6.2\lib\net45\Xceed.Wpf.AvalonDock.Themes.VS2013.dll</HintPath>
     </Reference>
     <Reference Include="Xceed.Wpf.DataGrid, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
