@@ -1,0 +1,37 @@
+<CompileConfig>
+  <Profiles>
+    <Profile>
+      <Name>Default config</Name>
+      <ApclPath>project.apcl</ApclPath>
+      <Project>0</Project>
+      <TargetBasePath>.</TargetBasePath>
+      <ServiceVersion>trunk</ServiceVersion>
+      <CompilerProfile>
+        <Name>Undo</Name>
+        <APlayVersion>2.0.2.1</APlayVersion>
+        <WithPersistence>true</WithPersistence>
+        <SolutionName>Undo</SolutionName>
+        <Targets>
+          <Target>
+            <Role>Server</Role>
+            <Language>CSharpDotnet</Language>
+            <TargetPath>../UndoTest.Server/lib/</TargetPath>
+            <LibPath>../UndoTest.Server/lib/</LibPath>
+            <UserCompiledPath>../UndoTest.Server/userCompiled/</UserCompiledPath>
+            <StubPath>../UndoTest.Server/stubs/</StubPath>
+            <Settings/>
+          </Target>
+          <Target>
+            <Role>Client</Role>
+            <Language>CSharpDotnet</Language>
+            <TargetPath>Lib/lib/</TargetPath>
+            <LibPath>Lib/lib/</LibPath>
+            <UserCompiledPath>Lib/userCompiled/</UserCompiledPath>
+            <StubPath>Lib/stubs/</StubPath>
+            <Settings/>
+          </Target>
+        </Targets>
+      </CompilerProfile>
+    </Profile>
+  </Profiles>
+</CompileConfig>

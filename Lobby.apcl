@@ -1,0 +1,55 @@
+<apcl:apcl version="2.1" xmlns:apcl="http://www.aplaypowered.com/apcl">
+  <role name="Server" roleType="Server"/>
+  <role name="Client" roleType="Client" remoteObject="Client"/>
+  <target role="Server" language="C# .Net" userCompiledPath="Lobby.Server/userCompiled/" libPath="Lobby.Server/lib/" stubPath="Lobby.Server/stubs/" active="true" targetPath="" baseNamespace="Lobby.Server"/>
+  <target role="Client" language="C# .Net" userCompiledPath="Lobby.Client/userCompiled/" libPath="Lobby.Client/lib/" stubPath="Lobby.Client/stubs/" active="true" targetPath="" baseNamespace="Lobby.Client"/>
+  <namespace>
+    <class name="Client">
+      <code><![CDATA[[ Client -> Server ]
+
+void JoinProject(Client sender, int32 projectId);
+void CreateProject(Client sender, WString name);
+void SearchProjects(WString searchString);
+void SelectProject(int32 projectId);
+User CurrentUser;
+
+[Server -> Client]
+boolean CanJoinProject;
+boolean CanCreateProject;
+List<Project> Projects;
+
+[Server -> Client]
+Project SelectedProject;
+void JoinedProject(Project project);
+Client DataClient;
+
+
+
+
+]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </class>
+    <class name="Project">
+      <code><![CDATA[//TODO: Your class based communication here:
+[ Client -> Server ]
+
+int32 Id;]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </class>
+    <struct name="ProjectDetail">
+      <code><![CDATA[WString Name;
+WString CreatedBy;
+Date CreationDate;
+]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </struct>
+    <class name="User">
+      <code><![CDATA[//TODO: Your class based communication here:
+[ Client -> Server ]
+
+WString Name;]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </class>
+    <__designerPresentation>null</__designerPresentation>
+  </namespace>
+</apcl:apcl>

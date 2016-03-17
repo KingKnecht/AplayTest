@@ -5,24 +5,27 @@
 
 using System;
 using System.Collections.Generic;
+using APlay;
 using APlay.Common;
 using APlay.Common.Utils;
 using APlay.Common.DataTypes;
 using APlayTest.Server;
 namespace APlayTest.Server
 {
-  public class BlockSymbol : APlayTest.Server.BlockSymbolSkeleton
-  {
-    /// <summary>
-    /// Use this constructor to create instances in your code.
-    /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
-    ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
-    /// </summary>
-    
-    public BlockSymbol()
+    public class BlockSymbol : APlayTest.Server.BlockSymbolSkeleton
     {
-      /// TODO: add your code here
+        /// <summary>
+        /// Use this constructor to create instances in your code.
+        /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
+        ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
+        /// </summary>
+
+        public BlockSymbol()
+        {
+            
+        }
+
+      
     }
-  }
-  
+
 }

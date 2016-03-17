@@ -31,7 +31,7 @@ namespace APlayTest.Server
             /// TODO: add your code here
 
             this.InitAsSingle();
-
+            
         }
         /// <summary>
         /// a client connected
