@@ -276,11 +276,11 @@ namespace sbardos.UndoFramework.Annotations
   /// with the target attribute to implement or inherit specific type or types.
   /// </summary>
   /// <example><code>
-  /// [BaseTypeRequired(typeof(IComponent)] // Specify requirement
+  /// [BaseTypeRequired(typeof(IUndoable)] // Specify requirement
   /// class ComponentAttribute : Attribute { }
   /// 
-  /// [Component] // ComponentAttribute requires implementing IComponent interface
-  /// class MyComponent : IComponent { }
+  /// [Component] // ComponentAttribute requires implementing IUndoable interface
+  /// class MyComponent : IUndoable { }
   /// </code></example>
   [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
   [BaseTypeRequired(typeof(Attribute))]

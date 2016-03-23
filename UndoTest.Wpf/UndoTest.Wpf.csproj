@@ -76,6 +76,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="HistoryVm.cs" />
+    <Compile Include="MainWindowVm.cs" />
     <Compile Include="TaskManagerVm.cs" />
     <Compile Include="TaskVm.cs" />
     <Page Include="Controls\History.xaml">

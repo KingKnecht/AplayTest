@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using sbardos.UndoFramework;
 
 namespace UndoTest.Server
 {
@@ -11,8 +12,9 @@ namespace UndoTest.Server
     {
         static void Main(string[] args)
         {
-           
-            var myServer = new MyServer();
+            var undoService = new UndoServiceFactory().Create();
+            var myServer = new MyServer(undoService);
+
             myServer.Run();
         }
     }

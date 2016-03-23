@@ -89,6 +89,10 @@
       <Project>{CAFE7692-24AB-4E1B-98C2-1F2E2C985C46}</Project>
       <Name>APlayTest.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\sbardos.UndoFramework\sbardos.UndoFramework.csproj">
+      <Project>{168D777A-BAA6-4694-810C-B028A811318D}</Project>
+      <Name>sbardos.UndoFramework</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

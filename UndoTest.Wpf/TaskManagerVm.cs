@@ -29,7 +29,7 @@ namespace UndoTest.Wpf
         }
 
 
-        
+
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

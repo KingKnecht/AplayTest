@@ -6,6 +6,15 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-            <TextBlock>History</TextBlock>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock FontSize="25"
+                       Margin="4">History:</TextBlock>
+            <ListBox Grid.Row="1" Name="HistoryList" ItemsSource="{Binding History}" SelectedIndex="{Binding SelectedIndex}"/>
+        </Grid>
     </Grid>
 </UserControl>

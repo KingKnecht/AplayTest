@@ -23,9 +23,11 @@ namespace UndoTest.Wpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private APlayClient _client;
+        private bool _canUndo;
+        private bool _canRedo;
 
         public MainWindow()
         {
@@ -38,7 +40,7 @@ namespace UndoTest.Wpf
             _client = new APlayClient();
             _client.Start("127.0.0.1:55555");
             _client.ConnectEventHandler += _client_ConnectEventHandler;
-
+            
 
         }
 
@@ -46,9 +48,14 @@ namespace UndoTest.Wpf
         {
 
             DataClient = NewDataClient__;
-
+            
             Dispatcher.BeginInvoke(
-                new ThreadStart(() => DataContext = new MainWindowVm(DataClient)));
+                new ThreadStart(() =>
+                {
+                    Title = "Undo Redo Test [ClientId: " + NewDataClient__.Id + "]";
+                    DataContext = new MainWindowVm(DataClient);
+                }));
+
 
         }
 
@@ -63,43 +70,28 @@ namespace UndoTest.Wpf
         {
 
         }
-    }
 
-    internal class MainWindowVm : INotifyPropertyChanged
-    {
-        private readonly Client _client;
-        private TaskManagerVm _taskManagerVm;
-        private HistoryVm _historyVm;
-
-        public MainWindowVm(Client client)
+        private void Redo_OnClick(object sender, RoutedEventArgs e)
         {
-            _client = client;
-            TaskManagerVm = new TaskManagerVm(_client.TaskManager, _client);
+            ((MainWindowVm) DataContext).Redo();
         }
 
-        public TaskManagerVm TaskManagerVm
+        private void Undo_OnClick(object sender, RoutedEventArgs e)
         {
-            get { return _taskManagerVm; }
-            set
-            {
-                if (Equals(value, _taskManagerVm)) return;
-                _taskManagerVm = value;
-                OnPropertyChanged();
-            }
+            ((MainWindowVm)DataContext).Undo();
         }
 
-        public HistoryVm HistoryVm
+        private void StartTransaction_OnClick(object sender, RoutedEventArgs e)
         {
-            get { return _historyVm; }
-            set
-            {
-                if (Equals(value, _historyVm)) return;
-                _historyVm = value;
-                OnPropertyChanged();
-            }
+            ((MainWindowVm)DataContext).StartTransaction();
         }
 
+        private void EndTransaction_OnClick(object sender, RoutedEventArgs e)
+        {
+            ((MainWindowVm)DataContext).EndTransaction();
+        }
 
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -110,8 +102,5 @@ namespace UndoTest.Wpf
         }
     }
 
-    public class HistoryVm
-    {
-
-    }
+  
 }

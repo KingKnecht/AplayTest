@@ -16,8 +16,8 @@ namespace UndoTest.Wpf
         {
             _task = task;
             _client = client;
-            IsDone = task.IsDone;
-            Description = task.Description;
+            _isDone = task.IsDone;
+            _description = task.Description;
             Id = task.Id;
             task.DescriptionChangeEventHandler += description => Description = description;
             task.IsDoneChangeEventHandler += done => IsDone = done;
@@ -44,7 +44,7 @@ namespace UndoTest.Wpf
             {
                 if (value == _description) return;
                 _description = value;
-                _task.SetTaskDescription(_description);
+                _task.SetTaskDescription(_description, _client);
                 OnPropertyChanged();
             }
         }

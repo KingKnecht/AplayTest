@@ -28,7 +28,7 @@ namespace Undo.Server
     bool IsAdmin {get; }
     String RemoteAddress {get; }
     ulong APlayClientId {get; }
-    int Id {get; }
+    int Id {get; set; }
     Undo.Server.TaskManager TaskManager {get; set; }
     Undo.Server.UndoManager UndoManager {get; set; }
     ulong APlayEntityId {get; }
@@ -54,7 +54,6 @@ namespace Undo.Server
 {
   public interface  IClientEvents
   {
-    void onIdChange (int NewId__);
   };
 }
 namespace Undo.Server
@@ -101,7 +100,7 @@ namespace Undo.Server
   {
     void onIdChange (int NewId__);
     void onSetDone (bool done__, Undo.Server.Client client__);
-    void onSetTaskDescription (String description__);
+    void onSetTaskDescription (String description__, Undo.Server.Client client__);
   };
 }
 namespace Undo.Server
@@ -170,6 +169,7 @@ namespace Undo.Server
     bool CanUndo {get; set; }
     bool CanRedo {get; set; }
     Undo.Server.HistoryEntryList History {get; set; }
+    int ActiveHistoryEntryId {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
     bool Release ();
@@ -202,9 +202,12 @@ namespace Undo.Server
     void onHistoryInsertAt (int pos, Undo.Server.HistoryEntry element);
     void onHistorySetAt (int pos, Undo.Server.HistoryEntry element);
     void onHistoryRemoveAt (int pos, Undo.Server.HistoryEntry element);
+    void onActiveHistoryEntryIdChange (int NewActiveHistoryEntryId__);
     void onStartTransaction ();
     void onEndTransaction ();
     void onCancelTransaction ();
+    void onExecuteUndo ();
+    void onExecuteRedo ();
   };
 }
 namespace Undo.Server
@@ -549,6 +552,13 @@ namespace Undo.Server
     }
     public virtual int Id
     {
+      set
+      {
+        {
+          //int32
+          implClient.Id = value;
+        }
+      }
       get
       {
         {
@@ -594,28 +604,6 @@ namespace Undo.Server
       {
         {
           return (implClient.APlayEntityId);
-        }
-      }
-    }
-    public virtual void onIdChange(int NewId__)
-    {
-      APlay.Common.Logging.Logger.LogDesigned(2,"onIdChange received","Server.Designed");
-    }
-    public void onInternIdChange(int NewId__)
-    {
-      if(IdChangeEventHandler!=null)
-      {
-        IdChangeEventHandler(NewId__);
-      }
-      else
-      {
-        if(Undo.Server.ClientSkeleton.StaticIdChangeEventHandler!=null)
-        {
-          Undo.Server.ClientSkeleton.StaticIdChangeEventHandler(NewId__, ((Undo.Server.Client) (this)));
-        }
-        else
-        {
-          this.onIdChange(NewId__);
         }
       }
     }
@@ -694,8 +682,6 @@ namespace Undo.Server
     {
       implClient = impl;
     }
-    public event Undo.Server.Delegates.void_int32 IdChangeEventHandler;
-    static public event Undo.Server.Delegates.void_int32_Client StaticIdChangeEventHandler;
     private APlay.Generated.Intern.Server.__IClientAPImpl implClient;
   }
   
@@ -814,22 +800,22 @@ namespace Undo.Server
         }
       }
     }
-    public abstract void onSetTaskDescription(String description__);
-    public void onInternSetTaskDescription(String description__)
+    public abstract void onSetTaskDescription(String description__, Undo.Server.Client client__);
+    public void onInternSetTaskDescription(String description__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
     {
       if(SetTaskDescriptionEventHandler!=null)
       {
-        SetTaskDescriptionEventHandler(description__);
+        SetTaskDescriptionEventHandler(description__, ((Undo.Server.Client) (client__)));
       }
       else
       {
         if(Undo.Server.TaskSkeleton.StaticSetTaskDescriptionEventHandler!=null)
         {
-          Undo.Server.TaskSkeleton.StaticSetTaskDescriptionEventHandler(description__, ((Undo.Server.Task) (this)));
+          Undo.Server.TaskSkeleton.StaticSetTaskDescriptionEventHandler(description__, ((Undo.Server.Client) (client__)), ((Undo.Server.Task) (this)));
         }
         else
         {
-          this.onSetTaskDescription(description__);
+          this.onSetTaskDescription(description__, ((Undo.Server.Client) (client__)));
         }
       }
     }
@@ -908,8 +894,8 @@ namespace Undo.Server
     static public event Undo.Server.Delegates.void_int32_Task StaticIdChangeEventHandler;
     public event Undo.Server.Delegates.void_boolean_Client SetDoneEventHandler;
     static public event Undo.Server.Delegates.void_boolean_Client_Task StaticSetDoneEventHandler;
-    public event Undo.Server.Delegates.void_WString SetTaskDescriptionEventHandler;
-    static public event Undo.Server.Delegates.void_WString_Task StaticSetTaskDescriptionEventHandler;
+    public event Undo.Server.Delegates.void_WString_Client SetTaskDescriptionEventHandler;
+    static public event Undo.Server.Delegates.void_WString_Client_Task StaticSetTaskDescriptionEventHandler;
     private APlay.Generated.Intern.Server.__ITaskAPImpl implTask;
   }
   
@@ -1176,6 +1162,22 @@ namespace Undo.Server
         }
       }
     }
+    public virtual int ActiveHistoryEntryId
+    {
+      set
+      {
+        {
+          //int32
+          implUndoManager.ActiveHistoryEntryId = value;
+        }
+      }
+      get
+      {
+        {
+          return (implUndoManager.ActiveHistoryEntryId);
+        }
+      }
+    }
     public virtual ulong APlayEntityId
     {
       get
@@ -1405,6 +1407,28 @@ namespace Undo.Server
         }
       }
     }
+    public virtual void onActiveHistoryEntryIdChange(int NewActiveHistoryEntryId__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onActiveHistoryEntryIdChange received","Server.Designed");
+    }
+    public void onInternActiveHistoryEntryIdChange(int NewActiveHistoryEntryId__)
+    {
+      if(ActiveHistoryEntryIdChangeEventHandler!=null)
+      {
+        ActiveHistoryEntryIdChangeEventHandler(NewActiveHistoryEntryId__);
+      }
+      else
+      {
+        if(Undo.Server.UndoManagerSkeleton.StaticActiveHistoryEntryIdChangeEventHandler!=null)
+        {
+          Undo.Server.UndoManagerSkeleton.StaticActiveHistoryEntryIdChangeEventHandler(NewActiveHistoryEntryId__, ((Undo.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onActiveHistoryEntryIdChange(NewActiveHistoryEntryId__);
+        }
+      }
+    }
     public abstract void onStartTransaction();
     public void onInternStartTransaction()
     {
@@ -1459,6 +1483,44 @@ namespace Undo.Server
         else
         {
           this.onCancelTransaction();
+        }
+      }
+    }
+    public abstract void onExecuteUndo();
+    public void onInternExecuteUndo()
+    {
+      if(ExecuteUndoEventHandler!=null)
+      {
+        ExecuteUndoEventHandler();
+      }
+      else
+      {
+        if(Undo.Server.UndoManagerSkeleton.StaticExecuteUndoEventHandler!=null)
+        {
+          Undo.Server.UndoManagerSkeleton.StaticExecuteUndoEventHandler(((Undo.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onExecuteUndo();
+        }
+      }
+    }
+    public abstract void onExecuteRedo();
+    public void onInternExecuteRedo()
+    {
+      if(ExecuteRedoEventHandler!=null)
+      {
+        ExecuteRedoEventHandler();
+      }
+      else
+      {
+        if(Undo.Server.UndoManagerSkeleton.StaticExecuteRedoEventHandler!=null)
+        {
+          Undo.Server.UndoManagerSkeleton.StaticExecuteRedoEventHandler(((Undo.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onExecuteRedo();
         }
       }
     }
@@ -1553,12 +1615,18 @@ namespace Undo.Server
     static public event Undo.Server.Delegates.void_int32_HistoryEntry_UndoManager StaticHistorySetAtEventHandler;
     public event Undo.Server.Delegates.void_int32_HistoryEntry HistoryRemoveAtEventHandler;
     static public event Undo.Server.Delegates.void_int32_HistoryEntry_UndoManager StaticHistoryRemoveAtEventHandler;
+    public event Undo.Server.Delegates.void_int32 ActiveHistoryEntryIdChangeEventHandler;
+    static public event Undo.Server.Delegates.void_int32_UndoManager StaticActiveHistoryEntryIdChangeEventHandler;
     public event Undo.Server.Delegates.void_ StartTransactionEventHandler;
     static public event Undo.Server.Delegates.void_UndoManager StaticStartTransactionEventHandler;
     public event Undo.Server.Delegates.void_ EndTransactionEventHandler;
     static public event Undo.Server.Delegates.void_UndoManager StaticEndTransactionEventHandler;
     public event Undo.Server.Delegates.void_ CancelTransactionEventHandler;
     static public event Undo.Server.Delegates.void_UndoManager StaticCancelTransactionEventHandler;
+    public event Undo.Server.Delegates.void_ ExecuteUndoEventHandler;
+    static public event Undo.Server.Delegates.void_UndoManager StaticExecuteUndoEventHandler;
+    public event Undo.Server.Delegates.void_ ExecuteRedoEventHandler;
+    static public event Undo.Server.Delegates.void_UndoManager StaticExecuteRedoEventHandler;
     private APlay.Generated.Intern.Server.__IUndoManagerAPImpl implUndoManager;
   }
   
@@ -2088,16 +2156,16 @@ namespace Undo.Server
   public partial class Delegates
   {
     public delegate void void_int32(int NewId__);
-    public delegate void void_int32_Client(int NewId__, Undo.Server.Client this_);
     public delegate void void_int32_Task(int NewId__, Undo.Server.Task this_);
     public delegate void void_boolean_Client(bool done__, Undo.Server.Client client__);
     public delegate void void_boolean_Client_Task(bool done__, Undo.Server.Client client__, Undo.Server.Task this_);
-    public delegate void void_WString(String description__);
-    public delegate void void_WString_Task(String description__, Undo.Server.Task this_);
+    public delegate void void_WString_Client(String description__, Undo.Server.Client client__);
+    public delegate void void_WString_Client_Task(String description__, Undo.Server.Client client__, Undo.Server.Task this_);
     public delegate Undo.Server.Task Task_Client(Undo.Server.Client client__);
     public delegate Undo.Server.Task Task_Client_TaskManager(Undo.Server.Client client__, Undo.Server.TaskManager this_);
     public delegate void void_Task_Client(Undo.Server.Task task__, Undo.Server.Client client__);
     public delegate void void_Task_Client_TaskManager(Undo.Server.Task task__, Undo.Server.Client client__, Undo.Server.TaskManager this_);
+    public delegate void void_int32_Client(int id__, Undo.Server.Client client__);
     public delegate void void_int32_Client_TaskManager(int id__, Undo.Server.Client client__, Undo.Server.TaskManager this_);
     public delegate void void_Client(Undo.Server.Client NewDataClient__);
     public delegate void void_Client_UndoManager(Undo.Server.Client NewDataClient__, Undo.Server.UndoManager this_);
@@ -2111,6 +2179,7 @@ namespace Undo.Server
     public delegate void void_UndoManager(Undo.Server.UndoManager this_);
     public delegate void void_int32_HistoryEntry(int pos, Undo.Server.HistoryEntry element);
     public delegate void void_int32_HistoryEntry_UndoManager(int pos, Undo.Server.HistoryEntry element, Undo.Server.UndoManager this_);
+    public delegate void void_int32_UndoManager(int NewActiveHistoryEntryId__, Undo.Server.UndoManager this_);
     public delegate void void_Client_APlayServerSkeleton(Undo.Server.Client client, Undo.Server.APlayServerSkeleton this_);
     public delegate void void_APlayServerSkeleton(Undo.Server.APlayServerSkeleton this_);
     public delegate void void_String(String reason);

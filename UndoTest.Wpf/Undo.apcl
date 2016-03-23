@@ -6,12 +6,11 @@
   <namespace>
     <class name="Client">
       <code><![CDATA[//TODO: Your class based communication here:
-[ Client -> Server ]
+//[ Client -> Server ]
 
-int32 Id;
 
 [Server -> Client]
-
+int32 Id;
 TaskManager TaskManager;
 UndoManager UndoManager;]]></code>
       <__designerPresentation>null</__designerPresentation>
@@ -28,7 +27,7 @@ WString Description;]]></code>
 [ Client -> Server ]
 
 void SetDone(boolean done, Client client);
-void SetTaskDescription(WString description);
+void SetTaskDescription(WString description, Client client);
 [Server -> Client]
 boolean IsDone;
 WString Description;
@@ -57,6 +56,8 @@ void RemoveTask(int32 id,Client client);
 void StartTransaction();
 void EndTransaction();
 void CancelTransaction();
+void ExecuteUndo();
+void ExecuteRedo();
 
 [Server -> All]
 Client DataClient;
@@ -64,6 +65,7 @@ boolean CanUndo;
 boolean CanRedo;
 
 List<HistoryEntry> History;
+int32 ActiveHistoryEntryId;
 ]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>

@@ -2,19 +2,13 @@
   <namespace>
     <role name="Server" roleType="Server" namespace="[Language=csharp]:Undo.Server" className="APlayServer"/>
     <role name="Client" roleType="Client" namespace="[Language=csharp]:Undo.Client" className="APlayClient" remoteObject="Client"/>
-    <permissionGroup name="ClientToServer">
-      <access role="Server" read="true" write="false"/>
-      <access role="Client" read="false" write="true"/>
-    </permissionGroup>
     <permissionGroup name="ServerToClient">
       <access role="Server" read="false" write="true"/>
       <access role="Client" read="true" write="false"/>
     </permissionGroup>
     <communicationObject name="Client" persistable="false">
-      <permissionGroup baseType="ClientToServer">
-        <data type="int32" name="Id" persistable="false"/>
-      </permissionGroup>
       <permissionGroup baseType="ServerToClient">
+        <data type="int32" name="Id" persistable="false"/>
         <data type="TaskManager" name="TaskManager" persistable="false"/>
         <data type="UndoManager" name="UndoManager" persistable="false"/>
       </permissionGroup>
@@ -23,6 +17,10 @@
       <data type="int32" name="Id" persistable="false"/>
       <data type="WString" name="Description" persistable="false"/>
     </primitive>
+    <permissionGroup name="ClientToServer">
+      <access role="Server" read="true" write="false"/>
+      <access role="Client" read="false" write="true"/>
+    </permissionGroup>
     <permissionGroup name="ServerToAll">
       <access role="Server" read="true" write="true"/>
       <access role="Client" read="true" write="false"/>
@@ -35,6 +33,7 @@
         </event>
         <event name="SetTaskDescription">
           <data type="WString" name="description" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
         </event>
       </permissionGroup>
       <permissionGroup baseType="ServerToClient">
@@ -68,12 +67,15 @@
         <event name="StartTransaction"/>
         <event name="EndTransaction"/>
         <event name="CancelTransaction"/>
+        <event name="ExecuteUndo"/>
+        <event name="ExecuteRedo"/>
       </permissionGroup>
       <permissionGroup baseType="ServerToAll">
         <data type="Client" name="DataClient" persistable="false"/>
         <data type="boolean" name="CanUndo" persistable="false"/>
         <data type="boolean" name="CanRedo" persistable="false"/>
         <list type="HistoryEntry" name="History" persistable="false"/>
+        <data type="int32" name="ActiveHistoryEntryId" persistable="false"/>
       </permissionGroup>
     </communicationObject>
   </namespace>

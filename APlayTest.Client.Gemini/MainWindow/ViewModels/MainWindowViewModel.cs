@@ -31,7 +31,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
         [ImportingConstructor]
         public MainWindowViewModel(IAplayClientFactory aplayClientFactory)
         {
-            Title = "APlayTest [not connected]";
+            Title = "APlayTest [not joined to project]";
             _aplayClientFactory = aplayClientFactory;
             _serverAddress = Properties.Settings.Default.ServerAddress;
             StartNewClient();

@@ -32,9 +32,18 @@
                     Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     Margin="0 4 0 0">
-            <Button Margin="4 0 4 0">Start Transaction</Button>
-            <Button Margin="4 0 4 0">End Transaction</Button>
-            <Button Margin="4 0 4 0">Cancel Transaction</Button>
+            <Button Margin="4 0 4 0" Name="StartTransaction" Click="StartTransaction_OnClick">Start Transaction</Button>
+            <Button Margin="4 0 4 0" Name="EndTransaction" Click="EndTransaction_OnClick">End Transaction</Button>
+            <Button Margin="4 0 4 0" Name="CancelTransaction">Cancel Transaction</Button>
+            <Button Margin="4 0 4 0"
+                    Name="Undo"
+                    Click="Undo_OnClick"
+                    IsEnabled="{Binding CanUndo}">Undo</Button>
+            
+            <Button Margin="4 0 4 0"
+                    Name="Redo"
+                    Click="Redo_OnClick"
+                    IsEnabled="{Binding CanRedo}">Redo</Button>
         </StackPanel>
 
         <Grid Grid.Row="2"

@@ -203,7 +203,12 @@ namespace APlayTest.Server
             aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 3 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
 
              aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol(){Id = IdGenerator.GetNextId()});
+             aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId(), PositionX = 200, PositionY = 0});
+             aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId(), PositionX = 200, PositionY = 200 });
+
              aplayProject.SheetManager.Sheets[1].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId() });
+             aplayProject.SheetManager.Sheets[1].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId(),PositionX = 200, PositionY = 200 });
+
              aplayProject.SheetManager.Sheets[2].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId() });
 
             return aplayProject;
