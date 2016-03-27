@@ -22,7 +22,7 @@ namespace sbardos.UndoFramework.Tests
         public void Transaction_not_started_Test()
         {
             _transactionManager.Add(
-                new Change(ChangeReason.Add, 1, new TestObject())
+                new Change(ChangeReason.InsertAt, 1, new TestObject())
                 , 100);
         }
 
@@ -36,7 +36,7 @@ namespace sbardos.UndoFramework.Tests
             _transactionManager.StartTransaction(clientId);
             
             _transactionManager.Add(
-                new Change(ChangeReason.Add, 1, new TestObject())
+                new Change(ChangeReason.InsertAt, 1, new TestObject())
                 , clientId);
 
             Assert.AreEqual(0, undoStack.UndoStackCount);
@@ -54,7 +54,7 @@ namespace sbardos.UndoFramework.Tests
             _transactionManager.StartTransaction(clientId);
 
             _transactionManager.Add(
-                new Change(ChangeReason.Add, 1, new TestObject())
+                new Change(ChangeReason.InsertAt, 1, new TestObject())
                 , clientId);
 
             _transactionManager.EndTransaction(clientId);

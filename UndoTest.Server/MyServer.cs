@@ -40,7 +40,7 @@ namespace UndoTest.Server
             //for (int i = 0; i < 10; i++)
             //{
             //    var id = IdGenerator.GetNextId();
-            //    _taskManager.Tasks.Add(new Undo.Server.Task("Do something [" + id + "]", _undoService)
+            //    _taskManager.Tasks.InsertAt(new Undo.Server.Task("Do something [" + id + "]", _undoService)
             //    {
             //        Id = id
             //    });

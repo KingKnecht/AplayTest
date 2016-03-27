@@ -25,7 +25,21 @@ namespace UndoTest.Wpf
             _client = client;
             _taskManager.TasksAddEventHandler += _taskManager_TasksAddEventHandler;
             _taskManager.TasksRemoveEventHandler += _taskManager_TasksRemoveEventHandler;
+            _taskManager.TasksInsertAtEventHandler += _taskManager_TasksInsertAtEventHandler;
+            _taskManager.TasksRemoveAtEventHandler += TaskManagerOnTasksRemoveAtEventHandler;
             Tasks = new ObservableCollection<TaskVm>(_taskManager.Tasks.Select(t => new TaskVm(t, _client)));
+        }
+
+        private void TaskManagerOnTasksRemoveAtEventHandler(int index, Task @this)
+        {
+            Application.Current.Dispatcher.BeginInvoke(
+               new ThreadStart(() => Tasks.RemoveAt(index)));
+        }
+
+        void _taskManager_TasksInsertAtEventHandler(int index, Task task)
+        {
+            Application.Current.Dispatcher.BeginInvoke(
+               new ThreadStart(() => Tasks.Insert(index,new TaskVm(task, _client))));
         }
 
 
@@ -83,6 +97,7 @@ namespace UndoTest.Wpf
         public void AddNewTask()
         {
             _taskManager.CreateTask(_client, OnTaskCreated);
+
         }
 
         private void OnTaskCreated(Task newTask)

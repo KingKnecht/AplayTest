@@ -32,7 +32,7 @@ namespace sbardos.UndoFramework.Tests
             _transactionManager.StartTransaction(clientId);
 
             _transactionManager.Add(
-                new Change(ChangeReason.Add, 1, new TestObject())
+                new Change(ChangeReason.InsertAt, 1, new TestObject())
                 , clientId);
             
 
@@ -56,7 +56,7 @@ namespace sbardos.UndoFramework.Tests
             _transactionManager.StartTransaction(clientId);
 
             _transactionManager.Add(
-                new Change(ChangeReason.Add, 1, new TestObject())
+                new Change(ChangeReason.InsertAt, 1, new TestObject())
                 , clientId);
 
             _transactionManager.EndTransaction(clientId);

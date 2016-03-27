@@ -29,7 +29,7 @@ namespace Undo.Server
         }
 
 
-        public Task(int id, string description, IUndoService undoService, int createdByClientId)
+        public Task(int id, string description, IUndoService undoService)
             : base()
         {
             Id = id;
@@ -37,7 +37,7 @@ namespace Undo.Server
             _undoService.ActiveStateChanged += _undoService_ActiveStateChanged;
             Description = description;
 
-            //_undoService.Add(new Change(ChangeReason.Add, id, new UndoObject(id, false, description)), createdByClientId);
+            //_undoService.InsertAt(new Change(ChangeReason.InsertAt, id, new UndoObject(id, false, description)), createdByClientId);
         }
 
         void _undoService_ActiveStateChanged(object sender, ActiveStateChangedEventArgs e)
@@ -91,7 +91,12 @@ namespace Undo.Server
             Description = description__;
         }
 
-        private struct UndoObject : IUndoable
+        internal IUndoable CreateUndoObject()
+        {
+            return new UndoObject(Id, IsDone, Description);
+        }
+
+        internal struct UndoObject : IUndoable
         {
             public UndoObject(int id, bool isDone, string description)
                 : this()
@@ -112,6 +117,8 @@ namespace Undo.Server
 
 
         }
+
+       
     }
 
 }

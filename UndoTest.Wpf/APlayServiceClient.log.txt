@@ -1,10 +1,10 @@
-23.03.2016 19:52:18 
-23.03.2016 19:52:18 APlay Sevice Client Version 2.0.1
-23.03.2016 19:52:18 Using WebService URL https://service.aplaypowered.com/vtrunk/APlayService/CompileService.svc
-23.03.2016 19:52:25 Processed 0 includes
-23.03.2016 19:52:25 Validation
-23.03.2016 19:52:39 APCL Version: 2.0.2.1
-23.03.2016 19:52:39 Validation passed.
-23.03.2016 19:52:39 Building targets
-23.03.2016 19:53:33 Received 2 targets
-23.03.2016 19:53:33 Total duration: 74s
+24.03.2016 16:20:28 
+24.03.2016 16:20:28 APlay Sevice Client Version 2.0.1
+24.03.2016 16:20:28 Using WebService URL https://service.aplaypowered.com/vtrunk/APlayService/CompileService.svc
+24.03.2016 16:23:14 Processed 0 includes
+24.03.2016 16:23:14 Validation
+24.03.2016 16:23:15 APCL Version: 2.0.2.1
+24.03.2016 16:23:15 Validation passed.
+24.03.2016 16:23:15 Building targets
+24.03.2016 16:23:46 Received 2 targets
+24.03.2016 16:23:46 Total duration: 198s

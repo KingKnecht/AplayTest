@@ -97,6 +97,7 @@ namespace Undo.Client
   public interface  ITaskManagerImpl
   {
     Undo.Client.TaskList Tasks {get; }
+    int Id {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
     Undo.Client.Task CreateTask (Undo.Client.Client client__);
@@ -116,6 +117,7 @@ namespace Undo.Client
     void onTasksInsertAt (int pos, Undo.Client.Task element);
     void onTasksSetAt (int pos, Undo.Client.Task element);
     void onTasksRemoveAt (int pos, Undo.Client.Task element);
+    void onIdChange (int NewId__);
   };
 }
 namespace Undo.Client
@@ -589,6 +591,15 @@ namespace Undo.Client
         }
       }
     }
+    public virtual int Id
+    {
+      get
+      {
+        {
+          return (implTaskManager.Id);
+        }
+      }
+    }
     public virtual ulong APlayEntityId
     {
       get
@@ -752,6 +763,28 @@ namespace Undo.Client
         }
       }
     }
+    public virtual void onIdChange(int NewId__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onIdChange received","Client.Designed");
+    }
+    public void onInternIdChange(int NewId__)
+    {
+      if(IdChangeEventHandler!=null)
+      {
+        IdChangeEventHandler(NewId__);
+      }
+      else
+      {
+        if(Undo.Client.TaskManagerSkeleton.StaticIdChangeEventHandler!=null)
+        {
+          Undo.Client.TaskManagerSkeleton.StaticIdChangeEventHandler(NewId__, ((Undo.Client.TaskManager) (this)));
+        }
+        else
+        {
+          this.onIdChange(NewId__);
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implTaskManager.RequiresInit();
@@ -801,6 +834,8 @@ namespace Undo.Client
     static public event Undo.Client.Delegates.void_int32_Task_TaskManager StaticTasksSetAtEventHandler;
     public event Undo.Client.Delegates.void_int32_Task TasksRemoveAtEventHandler;
     static public event Undo.Client.Delegates.void_int32_Task_TaskManager StaticTasksRemoveAtEventHandler;
+    public event Undo.Client.Delegates.void_int32 IdChangeEventHandler;
+    static public event Undo.Client.Delegates.void_int32_TaskManager StaticIdChangeEventHandler;
     private APlay.Generated.Intern.Client.__ITaskManagerAPImpl implTaskManager;
   }
   
@@ -1885,6 +1920,7 @@ namespace Undo.Client
     public delegate void void_Task_TaskManager(Undo.Client.Task element, Undo.Client.TaskManager this_);
     public delegate void void_();
     public delegate void void_int32_Task_TaskManager(int pos, Undo.Client.Task element, Undo.Client.TaskManager this_);
+    public delegate void void_int32_TaskManager(int NewId__, Undo.Client.TaskManager this_);
     public delegate void void_Client(Undo.Client.Client NewDataClient__);
     public delegate void void_Client_UndoManager(Undo.Client.Client NewDataClient__, Undo.Client.UndoManager this_);
     public delegate void void_boolean_UndoManager(bool NewCanUndo__, Undo.Client.UndoManager this_);

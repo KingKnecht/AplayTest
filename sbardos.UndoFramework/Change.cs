@@ -35,22 +35,21 @@ namespace sbardos.UndoFramework
 
     }
 
-
-
+   
     public interface IChange
     {
         ChangeReason ChangeReason { get; }
         int OwnerId { get; }
         IUndoable UndoObjectState { get; set; }
         IUndoable RedoObjectState { get; set; }
-
+        int IndexAt { get; set; }
         string Dump();
     }
 
     public struct Change : IChange
     {
         private readonly IUndoable _newObjectState;
-
+        
         /// <summary>
         /// Ctor for update.
         /// </summary>
@@ -69,15 +68,16 @@ namespace sbardos.UndoFramework
         }
 
         /// <summary>
-        /// Ctor for Add or Remove
+        /// Ctor for InsertAt or Remove
         /// </summary>
         /// <param name="changeReason"></param>
         /// <param name="ownerId"></param>
         /// <param name="objectState"></param>
-        public Change(ChangeReason changeReason, int ownerId, IUndoable objectState)
+        /// <param name="indexAt">Index where the object should be inserted or removed from.</param>
+        public Change(ChangeReason changeReason, int ownerId, IUndoable objectState, int indexAt)
             : this()
         {
-            if (changeReason == ChangeReason.Add)
+            if (changeReason == ChangeReason.InsertAt)
             {
                 UndoObjectState = new Optional();
                 RedoObjectState = objectState;
@@ -89,10 +89,12 @@ namespace sbardos.UndoFramework
             }
                 ChangeReason = changeReason;
             OwnerId = ownerId;
+            IndexAt = indexAt;
         }
 
         public ChangeReason ChangeReason { get; private set; }
         public int OwnerId { get; private set; }
+        public int IndexAt { get; set; }
         public IUndoable UndoObjectState { get; set; }
         public IUndoable RedoObjectState { get; set; }
 
@@ -124,7 +126,7 @@ namespace sbardos.UndoFramework
         /// <summary>
         ///  An item has been added
         /// </summary>
-        Add,
+        InsertAt,
 
         /// <summary>
         ///  An item has been updated

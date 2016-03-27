@@ -46,7 +46,9 @@ List<Task> Tasks;
 Task CreateTask(Client client);
 void AddTask(Task task,Client client);
 void RemoveTask(int32 id,Client client);
-]]></code>
+
+[Server -> All]
+int32 Id;]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
     <class name="UndoManager">

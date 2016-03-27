@@ -61,6 +61,9 @@
           <data type="Client" name="client" persistable="false"/>
         </event>
       </permissionGroup>
+      <permissionGroup baseType="ServerToAll">
+        <data type="int32" name="Id" persistable="false"/>
+      </permissionGroup>
     </communicationObject>
     <communicationObject name="UndoManager" persistable="false">
       <permissionGroup baseType="ClientToServer">

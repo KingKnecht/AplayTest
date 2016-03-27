@@ -39,8 +39,8 @@ namespace sbardos.UndoFramework
             {
                 switch (change.ChangeReason)
                 {
-                    case ChangeReason.Add:
-
+                    case ChangeReason.InsertAt:
+                        _changes.Add(change.OwnerId,change);
                         break;
 
                     case ChangeReason.Remove:

@@ -53,7 +53,7 @@ namespace sbardos.UndoFramework
             //Empty ChangeSet = Initial state when nothing ever happend.
             var initialChangeSet = new ChangeSet(_clientId, 0)
             {
-                new Change(ChangeReason.Add, _clientId, new Empty())
+                new Change(ChangeReason.InsertAt, _clientId, new Empty(), 0)
             };
 
             _undoStack.Add(initialChangeSet);
