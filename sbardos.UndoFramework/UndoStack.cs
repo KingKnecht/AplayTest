@@ -66,9 +66,10 @@ namespace sbardos.UndoFramework
 
         public void Push(ChangeSet changeSet)
         {
-            var historyChanges = new List<HistoryChanges>();
             if (changeSet.Count == 0)
                 return; //do not push empty changes.
+
+            var historyChanges = new List<HistoryChanges>();
 
             if (RedoStackCount > 0)
             {
@@ -88,7 +89,7 @@ namespace sbardos.UndoFramework
 #if DEBUG
             DumpStack();
 #endif
-                       
+
             OnStackChanged(new StackChangedEventArgs(historyChanges, _undoStack.Last.Id, _clientId));
         }
 
@@ -101,7 +102,7 @@ namespace sbardos.UndoFramework
 #if DEBUG
                 DumpStack();
 #endif
-                OnActiveChangeSetChanged(new ActiveStateChangedEventArgs(_redoStack.Last, StateChangeDirection.Undo, _clientId));
+                OnActiveChangeSetChanged(new ActiveStateChangedEventArgs(_redoStack.Last.ToReversed(), StateChangeDirection.Undo, _clientId));
                 OnStackChanged(new StackChangedEventArgs(new List<HistoryChanges>(), _undoStack.Last.Id, _clientId));
             }
         }
@@ -118,7 +119,7 @@ namespace sbardos.UndoFramework
 #endif
 
                 OnActiveChangeSetChanged(new ActiveStateChangedEventArgs(_undoStack.Last, StateChangeDirection.Redo, _clientId));
-                OnStackChanged(new StackChangedEventArgs(new List<HistoryChanges>(), _undoStack.Last.Id,_clientId));
+                OnStackChanged(new StackChangedEventArgs(new List<HistoryChanges>(), _undoStack.Last.Id, _clientId));
             }
         }
 
@@ -190,7 +191,7 @@ namespace sbardos.UndoFramework
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((HistoryChanges) obj);
+            return Equals((HistoryChanges)obj);
         }
 
         public override int GetHashCode()
@@ -198,7 +199,7 @@ namespace sbardos.UndoFramework
             return HistoryEntry.GetHashCode();
         }
 
-        public HistoryEntry HistoryEntry { get;private set; }
+        public HistoryEntry HistoryEntry { get; private set; }
         public HistoryEntryChangeType ChangeType { get; private set; }
 
         public HistoryChanges(HistoryEntry historyEntry, HistoryEntryChangeType changeType)

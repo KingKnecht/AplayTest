@@ -13,8 +13,8 @@ namespace sbardos.UndoFramework.Tests
             
             var changeSet = new ChangeSet(0, 1)
             {
-                new Change(ChangeReason.Update, obj.Id, obj),
-                new Change(ChangeReason.Update, obj.Id, obj) //Same object added again. No Change.
+                new Change(obj.Id, obj),
+                new Change(ChangeReason.ObjectUpdate, obj.Id, obj) //Same object added again. No Change.
             };
 
             Assert.AreEqual(1, changeSet.Count);
@@ -29,8 +29,8 @@ namespace sbardos.UndoFramework.Tests
 
             var changeSet = new ChangeSet(0, 1)
             {
-                new Change(ChangeReason.Update, obj1.Id, obj1),
-                new Change(ChangeReason.Update, obj2.Id, obj2)
+                new Change(ChangeReason.ObjectUpdate, obj1.Id, obj1),
+                new Change(ChangeReason.ObjectUpdate, obj2.Id, obj2)
             };
 
             Assert.AreEqual(2, changeSet.Count);
@@ -45,9 +45,9 @@ namespace sbardos.UndoFramework.Tests
 
             var changeSet = new ChangeSet(0, 1)
             {
-                new Change(ChangeReason.Update, obj1.Id, obj1),
-                new Change(ChangeReason.Update, obj2.Id, obj2),
-                new Change(ChangeReason.Update, obj1.Id, obj1), //This does not update the position of the change!
+                new Change(ChangeReason.ObjectUpdate, obj1.Id, obj1),
+                new Change(ChangeReason.ObjectUpdate, obj2.Id, obj2),
+                new Change(ChangeReason.ObjectUpdate, obj1.Id, obj1), //This does not update the position of the change!
             };
 
             Assert.AreEqual(2, changeSet.Count);

@@ -35,7 +35,7 @@ namespace sbardos.UndoFramework
 
     }
 
-   
+
     public interface IChange
     {
         ChangeReason ChangeReason { get; }
@@ -46,48 +46,50 @@ namespace sbardos.UndoFramework
         string Dump();
     }
 
-    public struct Change : IChange
+    public class Change : IChange
     {
         private readonly IUndoable _newObjectState;
-        
+
         /// <summary>
         /// Ctor for update.
         /// </summary>
         /// <param name="changeReason"></param>
         /// <param name="ownerId"></param>
         /// <param name="undoObjectState"></param>
-        /// <param name="objectState"></param>
-        public Change(ChangeReason changeReason, int ownerId, IUndoable undoObjectState, IUndoable objectState)
-            : this()
+        /// <param name="redoObjectState"></param>
+        public Change(int ownerId, IUndoable undoObjectState, IUndoable redoObjectState)
         {
-
             UndoObjectState = undoObjectState;
-            RedoObjectState = objectState;
-            ChangeReason = changeReason;
+            RedoObjectState = redoObjectState;
+            ChangeReason = ChangeReason.Update;
             OwnerId = ownerId;
         }
 
         /// <summary>
-        /// Ctor for InsertAt or Remove
+        /// Ctor for InsertAt or RemoveAt
         /// </summary>
         /// <param name="changeReason"></param>
         /// <param name="ownerId"></param>
         /// <param name="objectState"></param>
         /// <param name="indexAt">Index where the object should be inserted or removed from.</param>
         public Change(ChangeReason changeReason, int ownerId, IUndoable objectState, int indexAt)
-            : this()
-        {
+           {
             if (changeReason == ChangeReason.InsertAt)
             {
-                UndoObjectState = new Optional();
+                UndoObjectState = objectState;
                 RedoObjectState = objectState;
             }
-            else if (changeReason == ChangeReason.Remove)
+            else if (changeReason == ChangeReason.RemoveAt)
             {
                 UndoObjectState = objectState;
-                RedoObjectState = new Optional(); 
+                RedoObjectState = objectState;
             }
-                ChangeReason = changeReason;
+            else
+            {
+                throw new InvalidOperationException("Only " + ChangeReason.InsertAt + " and " + ChangeReason.RemoveAt +
+                                                    " allowed for this constructor.");
+            }
+            ChangeReason = changeReason;
             OwnerId = ownerId;
             IndexAt = indexAt;
         }
@@ -100,7 +102,8 @@ namespace sbardos.UndoFramework
 
         public string Dump()
         {
-            var dump = "ChangeReason: " + ChangeReason.ToString() + " , OwnerId: " + OwnerId + "\n";
+            var dump = "Change:\n";
+            dump += "\tChangeReason: " + ChangeReason.ToString() + " , OwnerId: " + OwnerId + "\n";
             dump += "\tOldState: " + UndoObjectState.Dump() + "\n";
             dump += "\tNewState: " + RedoObjectState.Dump() + "\n";
             return dump;
@@ -136,13 +139,7 @@ namespace sbardos.UndoFramework
         /// <summary>
         ///  An item has removed
         /// </summary>
-        Remove,
-
-        /// <summary>
-        /// An item has been moved in a sorted collection
-        /// </summary>
-        Moved,
-
+        RemoveAt,
     }
 }
 

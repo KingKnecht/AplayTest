@@ -37,7 +37,7 @@
     //                return;
 
     //            _booleanValue = value; 
-    //            _transactionManager.InsertAt(new Change(ChangeReason.Update, Id,this.UndoClone()),_clientId);
+    //            _transactionManager.InsertAt(new Change(ChangeReason.ObjectUpdate, Id,this.UndoClone()),_clientId);
     //        }
     //    }
 
