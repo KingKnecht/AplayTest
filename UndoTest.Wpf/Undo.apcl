@@ -55,7 +55,7 @@ int32 Id;]]></code>
       <code><![CDATA[//TODO: Your class based communication here:
 [ Client -> Server ]
 
-void StartTransaction();
+void StartTransaction(WString description);
 void EndTransaction();
 void CancelTransaction();
 void ExecuteUndo();

@@ -67,7 +67,9 @@
     </communicationObject>
     <communicationObject name="UndoManager" persistable="false">
       <permissionGroup baseType="ClientToServer">
-        <event name="StartTransaction"/>
+        <event name="StartTransaction">
+          <data type="WString" name="description" persistable="false"/>
+        </event>
         <event name="EndTransaction"/>
         <event name="CancelTransaction"/>
         <event name="ExecuteUndo"/>

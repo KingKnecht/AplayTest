@@ -12,6 +12,7 @@ namespace UndoTest.Wpf
         private HistoryVm _historyVm;
         private bool _canUndo;
         private bool _canRedo;
+        private string _transactionDescription;
 
         public MainWindowVm(Client client)
         {
@@ -22,6 +23,8 @@ namespace UndoTest.Wpf
 
             TaskManagerVm = new TaskManagerVm(_client.TaskManager, _client);
             HistoryVm = new HistoryVm(_client.UndoManager, _client);
+
+            _transactionDescription = "Description...";
         }
 
         public TaskManagerVm TaskManagerVm
@@ -31,6 +34,17 @@ namespace UndoTest.Wpf
             {
                 if (Equals(value, _taskManagerVm)) return;
                 _taskManagerVm = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string TransactionDescription
+        {
+            get { return _transactionDescription; }
+            set
+            {
+                if (value == _transactionDescription) return;
+                _transactionDescription = value;
                 OnPropertyChanged();
             }
         }
@@ -95,7 +109,7 @@ namespace UndoTest.Wpf
 
         public void StartTransaction()
         {
-            _client.UndoManager.StartTransaction();
+            _client.UndoManager.StartTransaction(TransactionDescription == string.Empty ? "Unknown" : TransactionDescription);
         }
 
         public void EndTransaction()

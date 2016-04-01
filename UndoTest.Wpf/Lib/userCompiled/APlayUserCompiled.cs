@@ -144,7 +144,7 @@ namespace Undo.Client
     int ActiveHistoryEntryId {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
-    void StartTransaction ();
+    void StartTransaction (String description__);
     void EndTransaction ();
     void CancelTransaction ();
     void ExecuteUndo ();
@@ -1157,9 +1157,9 @@ namespace Undo.Client
       bool retu = implUndoManager.RequiresInit();
       return (((bool) (retu)));
     }
-    public void StartTransaction()
+    public void StartTransaction(String description__)
     {
-      implUndoManager.StartTransaction();
+      implUndoManager.StartTransaction(description__);
     }
     public void EndTransaction()
     {

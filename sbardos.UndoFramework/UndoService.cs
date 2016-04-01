@@ -7,9 +7,12 @@ namespace sbardos.UndoFramework
     /// </summary>
     public interface IUndoService
     {
-        Transaction StartTransaction(int clientId);
+        Transaction StartTransaction(int clientId, string description);
         void EndTransaction(int clientId);
-        void Add(Change change, int clientId);
+        //void Add(Change change, int clientId);
+        void AddUpdate(IUndoable oldState, IUndoable newState,string description, int clientId);
+        void AddInsert(int collectionOwnerId, IUndoable insertedObjectState, int indexAt, string description, int clientId);
+        void AddRemove(int collectionOwnerId, IUndoable removedObjectState, int indexAt, string description, int clientId);
       
         event EventHandler<ActiveStateChangedEventArgs> ActiveStateChanged;
         event EventHandler<StackChangedEventArgs> StackChanged;
@@ -21,12 +24,12 @@ namespace sbardos.UndoFramework
 
     public class UndoService : IUndoService
     {
-        private readonly ITransactionManager _transactionManager;
+        private readonly ITransactionService _transactionService;
         private readonly IUndoStackManager _undoStackManager;
 
-        public UndoService(ITransactionManager transactionManager, IUndoStackManager undoStackManager)
+        public UndoService(ITransactionService transactionService, IUndoStackManager undoStackManager)
         {
-            _transactionManager = transactionManager;
+            _transactionService = transactionService;
             _undoStackManager = undoStackManager;
             _undoStackManager.ActiveStateChanged += _undoStackManager_ActiveStateChanged;
             _undoStackManager.StackChanged += UndoStackManagerOnStackChanged;
@@ -42,22 +45,40 @@ namespace sbardos.UndoFramework
             OnActiveStateChanged(e);
         }
 
-        public Transaction StartTransaction(int clientId)
+        public Transaction StartTransaction(int clientId, string description)
         {
             _undoStackManager.CreateStackForClient(clientId);
-            return _transactionManager.StartTransaction(clientId);
+            return _transactionService.StartTransaction(clientId, description);
         }
 
         public void EndTransaction(int clientId)
         {
-            _transactionManager.EndTransaction(clientId);
+            _transactionService.EndTransaction(clientId);
         }
 
-        public void Add(Change change, int clientId)
+        public void AddUpdate(IUndoable oldState, IUndoable newState,string description, int clientId)
         {
-            _transactionManager.Add(change, clientId);
+            var updateChange = new Change(oldState.Id, oldState, newState);
+            
+            _transactionService.Add(updateChange,clientId,description);
         }
 
+        public void AddInsert(int collectionOwnerId, IUndoable insertedObjectState, int indexAt,string description, int clientId)
+        {
+            var insertChange = new Change(ChangeReason.InsertAt, collectionOwnerId, insertedObjectState.Id,
+                insertedObjectState, indexAt);
+
+            _transactionService.Add(insertChange, clientId,description);
+        }
+
+        public void AddRemove(int collectionOwnerId, IUndoable removedObjectState, int indexAt,string description, int clientId)
+        {
+            var removeChange = new Change(ChangeReason.RemoveAt, collectionOwnerId, removedObjectState.Id,
+                removedObjectState, indexAt);
+            
+            _transactionService.Add(removeChange, clientId,description);
+        }
+        
         public event EventHandler<ActiveStateChangedEventArgs> ActiveStateChanged;
         public event EventHandler<StackChangedEventArgs> StackChanged;
 
@@ -97,17 +118,17 @@ namespace sbardos.UndoFramework
 
     public class UndoServiceFactory
     {
-        private readonly ITransactionManager _transactionManager;
+        private readonly ITransactionService _transactionService;
         private readonly IUndoStackManager _undoStackManager;
 
         public UndoServiceFactory()
         {
             _undoStackManager = new UndoStackManager();
-            _transactionManager = new TransactionManager(_undoStackManager);
+            _transactionService = new TransactionService(_undoStackManager);
         }
         public IUndoService Create()
         {
-            return new UndoService(_transactionManager, _undoStackManager);
+            return new UndoService(_transactionService, _undoStackManager);
         }
     }
 }

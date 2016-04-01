@@ -205,7 +205,7 @@ namespace Undo.Server
     void onHistorySetAt (int pos, Undo.Server.HistoryEntry element);
     void onHistoryRemoveAt (int pos, Undo.Server.HistoryEntry element);
     void onActiveHistoryEntryIdChange (int NewActiveHistoryEntryId__);
-    void onStartTransaction ();
+    void onStartTransaction (String description__);
     void onEndTransaction ();
     void onCancelTransaction ();
     void onExecuteUndo ();
@@ -1471,22 +1471,22 @@ namespace Undo.Server
         }
       }
     }
-    public abstract void onStartTransaction();
-    public void onInternStartTransaction()
+    public abstract void onStartTransaction(String description__);
+    public void onInternStartTransaction(String description__)
     {
       if(StartTransactionEventHandler!=null)
       {
-        StartTransactionEventHandler();
+        StartTransactionEventHandler(description__);
       }
       else
       {
         if(Undo.Server.UndoManagerSkeleton.StaticStartTransactionEventHandler!=null)
         {
-          Undo.Server.UndoManagerSkeleton.StaticStartTransactionEventHandler(((Undo.Server.UndoManager) (this)));
+          Undo.Server.UndoManagerSkeleton.StaticStartTransactionEventHandler(description__, ((Undo.Server.UndoManager) (this)));
         }
         else
         {
-          this.onStartTransaction();
+          this.onStartTransaction(description__);
         }
       }
     }
@@ -1659,8 +1659,8 @@ namespace Undo.Server
     static public event Undo.Server.Delegates.void_int32_HistoryEntry_UndoManager StaticHistoryRemoveAtEventHandler;
     public event Undo.Server.Delegates.void_int32 ActiveHistoryEntryIdChangeEventHandler;
     static public event Undo.Server.Delegates.void_int32_UndoManager StaticActiveHistoryEntryIdChangeEventHandler;
-    public event Undo.Server.Delegates.void_ StartTransactionEventHandler;
-    static public event Undo.Server.Delegates.void_UndoManager StaticStartTransactionEventHandler;
+    public event Undo.Server.Delegates.void_WString StartTransactionEventHandler;
+    static public event Undo.Server.Delegates.void_WString_UndoManager StaticStartTransactionEventHandler;
     public event Undo.Server.Delegates.void_ EndTransactionEventHandler;
     static public event Undo.Server.Delegates.void_UndoManager StaticEndTransactionEventHandler;
     public event Undo.Server.Delegates.void_ CancelTransactionEventHandler;
@@ -2223,6 +2223,8 @@ namespace Undo.Server
     public delegate void void_int32_HistoryEntry(int pos, Undo.Server.HistoryEntry element);
     public delegate void void_int32_HistoryEntry_UndoManager(int pos, Undo.Server.HistoryEntry element, Undo.Server.UndoManager this_);
     public delegate void void_int32_UndoManager(int NewActiveHistoryEntryId__, Undo.Server.UndoManager this_);
+    public delegate void void_WString(String description__);
+    public delegate void void_WString_UndoManager(String description__, Undo.Server.UndoManager this_);
     public delegate void void_Client_APlayServerSkeleton(Undo.Server.Client client, Undo.Server.APlayServerSkeleton this_);
     public delegate void void_APlayServerSkeleton(Undo.Server.APlayServerSkeleton this_);
     public delegate void void_String(String reason);

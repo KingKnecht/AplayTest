@@ -5,25 +5,25 @@ using System.Threading;
 
 namespace sbardos.UndoFramework
 {
-    public interface ITransactionManager
+    public interface ITransactionService
     {
-        Transaction StartTransaction(int clientId);
+        Transaction StartTransaction(int clientId, string description);
         void EndTransaction(int clientId);
-        void Add(Change change, int clientId);
+        void Add(Change change, int clientId, string description);
 
     }
 
-    public class TransactionManager : ITransactionManager
+    public class TransactionService : ITransactionService
     {
         private readonly IUndoStackManager _undoStackManager;
         private readonly Dictionary<int, Transaction> _currentTransactions = new Dictionary<int, Transaction>();
         private static int _changeSetId;
-        public TransactionManager(IUndoStackManager undoStackManager)
+        public TransactionService(IUndoStackManager undoStackManager)
         {
             _undoStackManager = undoStackManager;
         }
 
-        public Transaction StartTransaction(int clientId)
+        public Transaction StartTransaction(int clientId, string description)
         {
             Transaction currentTransaction;
             if (_currentTransactions.TryGetValue(clientId, out currentTransaction))
@@ -33,9 +33,10 @@ namespace sbardos.UndoFramework
                     return currentTransaction;
                 }
             }
+
             Interlocked.Increment(ref _changeSetId);
 
-            currentTransaction = new Transaction(clientId, new ChangeSet(clientId, _changeSetId));
+            currentTransaction = new Transaction(clientId, new ChangeSet(clientId, _changeSetId, description));
             _currentTransactions[clientId] = currentTransaction;
 
             return currentTransaction;
@@ -59,7 +60,7 @@ namespace sbardos.UndoFramework
             }
         }
 
-        public void Add(Change change, int clientId)
+        public void Add(Change change, int clientId, string description)
         {
             Transaction currentTransaction;
             if (_currentTransactions.TryGetValue(clientId, out currentTransaction))
@@ -71,7 +72,7 @@ namespace sbardos.UndoFramework
                 }
             }
 
-            var transaction = StartTransaction(clientId);
+            var transaction = StartTransaction(clientId, description);
             transaction.ChangeSet.Add(change);
             EndTransaction(clientId);
         }

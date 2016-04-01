@@ -40,6 +40,7 @@ namespace sbardos.UndoFramework
     {
         ChangeReason ChangeReason { get; }
         int OwnerId { get; }
+        int ItemId { get; }
         IUndoable UndoObjectState { get; set; }
         IUndoable RedoObjectState { get; set; }
         int IndexAt { get; set; }
@@ -63,6 +64,7 @@ namespace sbardos.UndoFramework
             RedoObjectState = redoObjectState;
             ChangeReason = ChangeReason.Update;
             OwnerId = ownerId;
+            ItemId = ownerId;
         }
 
         /// <summary>
@@ -72,7 +74,7 @@ namespace sbardos.UndoFramework
         /// <param name="ownerId"></param>
         /// <param name="objectState"></param>
         /// <param name="indexAt">Index where the object should be inserted or removed from.</param>
-        public Change(ChangeReason changeReason, int ownerId, IUndoable objectState, int indexAt)
+        public Change(ChangeReason changeReason, int ownerId,int itemId, IUndoable objectState, int indexAt)
            {
             if (changeReason == ChangeReason.InsertAt)
             {
@@ -91,11 +93,13 @@ namespace sbardos.UndoFramework
             }
             ChangeReason = changeReason;
             OwnerId = ownerId;
+            ItemId = itemId;
             IndexAt = indexAt;
         }
 
         public ChangeReason ChangeReason { get; private set; }
         public int OwnerId { get; private set; }
+        public int ItemId { get;private set; }
         public int IndexAt { get; set; }
         public IUndoable UndoObjectState { get; set; }
         public IUndoable RedoObjectState { get; set; }

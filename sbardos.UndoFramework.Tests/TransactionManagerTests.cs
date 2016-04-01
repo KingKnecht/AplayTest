@@ -7,13 +7,13 @@ namespace sbardos.UndoFramework.Tests
     public class TransactionManagerTests
     {
         private IUndoStackManager _undoStackManager;
-        private ITransactionManager _transactionManager;
+        private ITransactionService _transactionService;
 
         [TestInitialize]
         public void Init()
         {
             _undoStackManager = new UndoStackManager();
-            _transactionManager = new TransactionManager(_undoStackManager);
+            _transactionService = new TransactionService(_undoStackManager);
                 
         }
 
@@ -21,7 +21,7 @@ namespace sbardos.UndoFramework.Tests
         [ExpectedException(typeof(InvalidOperationException))]
         public void Transaction_not_started_Test()
         {
-            _transactionManager.Add(
+            _transactionService.Add(
                 new Change(ChangeReason.InsertAt, 1, new TestObject())
                 , 100);
         }
@@ -33,9 +33,9 @@ namespace sbardos.UndoFramework.Tests
 
             _undoStackManager.CreateStackForClient(clientId);
             var undoStack = _undoStackManager.GetStackOfClient(clientId);
-            _transactionManager.StartTransaction(clientId);
+            _transactionService.StartTransaction(clientId);
             
-            _transactionManager.Add(
+            _transactionService.Add(
                 new Change(ChangeReason.InsertAt, 1, new TestObject())
                 , clientId);
 
@@ -51,13 +51,13 @@ namespace sbardos.UndoFramework.Tests
             _undoStackManager.CreateStackForClient(clientId);
             var undoStack = _undoStackManager.GetStackOfClient(clientId);
 
-            _transactionManager.StartTransaction(clientId);
+            _transactionService.StartTransaction(clientId);
 
-            _transactionManager.Add(
+            _transactionService.Add(
                 new Change(ChangeReason.InsertAt, 1, new TestObject())
                 , clientId);
 
-            _transactionManager.EndTransaction(clientId);
+            _transactionService.EndTransaction(clientId);
 
             Assert.AreEqual(1, undoStack.UndoStackCount);
 

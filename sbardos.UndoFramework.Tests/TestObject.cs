@@ -5,10 +5,10 @@
     //{
     //     private static int _nextId = 10000;
     //    private bool _booleanValue;
-    //    private readonly ITransactionManager _transactionManager;
+    //    private readonly ITransactionService _transactionManager;
     //    private readonly int _clientId;
 
-    //    public TestObject2(ITransactionManager transactionManager, int clientId)
+    //    public TestObject2(ITransactionService transactionManager, int clientId)
     //    {
     //        _transactionManager = transactionManager;
     //        _clientId = clientId;

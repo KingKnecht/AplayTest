@@ -51,9 +51,9 @@ namespace sbardos.UndoFramework
             };
 
             //Empty ChangeSet = Initial state when nothing ever happend.
-            var initialChangeSet = new ChangeSet(_clientId, 0)
+            var initialChangeSet = new ChangeSet(_clientId, 0, "Initial")
             {
-                new Change(ChangeReason.InsertAt, _clientId, new Empty(), 0)
+                new Change(ChangeReason.InsertAt,0, _clientId, new Empty(), 0)
             };
 
             _undoStack.Add(initialChangeSet);
@@ -76,13 +76,13 @@ namespace sbardos.UndoFramework
                 historyChanges.AddRange(
                     _redoStack.Select(
                         changeSetOnRedoStack =>
-                            new HistoryChanges(new HistoryEntry(changeSetOnRedoStack.Id, "Description..."),
+                            new HistoryChanges(new HistoryEntry(changeSetOnRedoStack.Id, changeSet.Description),
                                 HistoryEntryChangeType.Removed)));
 
                 _redoStack.Clear();
             }
 
-            historyChanges.Add(new HistoryChanges(new HistoryEntry(changeSet.Id, "Description..."), HistoryEntryChangeType.Added));
+            historyChanges.Add(new HistoryChanges(new HistoryEntry(changeSet.Id, changeSet.Description), HistoryEntryChangeType.Added));
 
             _undoStack.Push(changeSet);
 
@@ -102,7 +102,7 @@ namespace sbardos.UndoFramework
 #if DEBUG
                 DumpStack();
 #endif
-                OnActiveChangeSetChanged(new ActiveStateChangedEventArgs(_redoStack.Last.ToReversed(), StateChangeDirection.Undo, _clientId));
+                OnActiveChangeSetChanged(new ActiveStateChangedEventArgs(_redoStack.Last.AsReversed(), StateChangeDirection.Undo, _clientId));
                 OnStackChanged(new StackChangedEventArgs(new List<HistoryChanges>(), _undoStack.Last.Id, _clientId));
             }
         }

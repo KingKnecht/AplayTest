@@ -6,13 +6,13 @@ namespace sbardos.UndoFramework.Tests
     public class UndoRedoEventsTests
     {
         private IUndoStackManager _undoStackManager;
-        private ITransactionManager _transactionManager;
+        private ITransactionService _transactionService;
 
         [TestInitialize]
         public void Init()
         {
             _undoStackManager = new UndoStackManager();
-            _transactionManager = new TransactionManager(_undoStackManager);
+            _transactionService = new TransactionService(_undoStackManager);
         }
 
         [TestMethod]
@@ -29,9 +29,9 @@ namespace sbardos.UndoFramework.Tests
                 eventsRaised++;
             };
 
-            _transactionManager.StartTransaction(clientId);
+            _transactionService.StartTransaction(clientId);
 
-            _transactionManager.Add(
+            _transactionService.Add(
                 new Change(ChangeReason.InsertAt, 1, new TestObject())
                 , clientId);
             
@@ -53,13 +53,13 @@ namespace sbardos.UndoFramework.Tests
                 eventsRaised++;
             };
 
-            _transactionManager.StartTransaction(clientId);
+            _transactionService.StartTransaction(clientId);
 
-            _transactionManager.Add(
+            _transactionService.Add(
                 new Change(ChangeReason.InsertAt, 1, new TestObject())
                 , clientId);
 
-            _transactionManager.EndTransaction(clientId);
+            _transactionService.EndTransaction(clientId);
 
             Assert.AreEqual(1, eventsRaised);
         }

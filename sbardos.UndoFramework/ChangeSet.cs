@@ -13,15 +13,15 @@ namespace sbardos.UndoFramework
         private readonly int _changeSetId;
         private readonly List<IChange> _changes = new List<IChange>();
 
-        public ChangeSet(int clientId, int changeSetId, IEnumerable<IChange> changes)
-            : this(clientId, changeSetId)
+        internal ChangeSet(int clientId, int changeSetId, IEnumerable<IChange> changes, string description)
+            : this(clientId, changeSetId, description)
         {
             _changes = new List<IChange>(changes);
         }
 
-        public ChangeSet(int clientId, int changeSetId)
+        public ChangeSet(int clientId, int changeSetId, string description)
         {
-            Description = "Description...";
+            Description = description;
             _clientId = clientId;
             _changeSetId = changeSetId;
         }
@@ -37,67 +37,16 @@ namespace sbardos.UndoFramework
 
             if (foundChange == null)
             {
-                switch (change.ChangeReason)
-                {
-                    case ChangeReason.InsertAt:
-                        _changes.Add(change);
-                        break;
-                    case ChangeReason.Update:
-                        //Check if the updated object is part of a list change.
-                        var insertionChange =
-                            _changes.FirstOrDefault(
-                                c => c.ChangeReason == ChangeReason.InsertAt && c.RedoObjectState.Id == change.OwnerId);
-
-                        if (insertionChange != null)
-                        {
-                            //If yes, update the list insert-change instead. So the inserted object will have the correct state when undo/redo.
-                            insertionChange.RedoObjectState = change.RedoObjectState;
-                            insertionChange.UndoObjectState = change.UndoObjectState;
-                        }
-                        else
-                        {
-                            _changes.Add(change);
-                        }
-
-                        break;
-                    case ChangeReason.RemoveAt:
-                        //Check if there was already an update-change of the to be removed object.
-                        var updateChange =
-                            _changes.FirstOrDefault(
-                                c => c.ChangeReason == ChangeReason.Update && c.UndoObjectState.Id == change.UndoObjectState.Id);
-
-                        if (updateChange != null)
-                        {
-                            //If yes, ignore the updated state. Instead use the undo state as state of the undo/redo objects.
-                            //Then remove the update-change and add it to the remove-change instead.
-                            //So the object will have the correct state when undo/redo.
-                            change.UndoObjectState = updateChange.UndoObjectState;
-                            change.RedoObjectState = updateChange.UndoObjectState;
-                            _changes.Remove(updateChange);    
-                        }
-                        
-                        _changes.Add(change);
-
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException("Unknown change reason: " + change.ChangeReason);
-                }
-
+                _changes.Add(change);
             }
             else
             {
                 switch (change.ChangeReason)
                 {
                     case ChangeReason.InsertAt:
-                        _changes.Add(change);
-                        break;
-
                     case ChangeReason.RemoveAt:
-
-
                         _changes.Add(change);
                         break;
-
                     case ChangeReason.Update:
                         foundChange.RedoObjectState = change.RedoObjectState;
                         break;
@@ -128,11 +77,14 @@ namespace sbardos.UndoFramework
             return GetEnumerator();
         }
 
-        private IEnumerable<IChange> Reverse()
+        private IEnumerable<IChange> AsReverse()
         {
             return new Stack<IChange>(_changes);
         }
-
+        public ChangeSet AsReversed()
+        {
+            return new ChangeSet(_clientId, Id, AsReverse(), Description);
+        }
 
         public IChange this[int i]
         {
@@ -151,9 +103,6 @@ namespace sbardos.UndoFramework
             return dump;
         }
 
-        public ChangeSet ToReversed()
-        {
-            return new ChangeSet(_clientId, Id, Reverse());
-        }
+       
     }
 }

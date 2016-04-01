@@ -52,7 +52,7 @@
     <Compile Include="UndoStackManager.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TransactionManager.cs" />
+    <Compile Include="TransactionService.cs" />
     <Compile Include="UndoStack.cs" />
   </ItemGroup>
   <ItemGroup>
