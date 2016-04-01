@@ -28,9 +28,13 @@ WString Description;]]></code>
 
 void SetDone(boolean done, Client client);
 void SetTaskDescription(WString description, Client client);
+void AddSubTask(Task task, Client client);
+void RemoveSubTask(int32 taskId, Client client);
+
 [Server -> Client]
 boolean IsDone;
 WString Description;
+List<Task> SubTasks;
 
 [Server -> All]
 int32 Id;]]></code>

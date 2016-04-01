@@ -102,6 +102,16 @@ namespace Undo.Server
             Description = description__;
         }
 
+        public override void onAddSubTask(Task task__, Client client__)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void onRemoveSubTask(int taskId__, Client client__)
+        {
+            throw new NotImplementedException();
+        }
+
         internal IUndoable CreateUndoObject()
         {
             return new UndoObject(Id, IsDone, Description);

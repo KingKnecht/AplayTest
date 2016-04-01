@@ -20,6 +20,7 @@ namespace sbardos.UndoFramework
         bool CanRedo(int clientId);
         void Undo(int clientId);
         void Redo(int clientId);
+        void CancelTransaction(int clientId);
     }
 
     public class UndoService : IUndoService
@@ -101,6 +102,11 @@ namespace sbardos.UndoFramework
         public void Redo(int clientId)
         {
             _undoStackManager.GetStackOfClient(clientId).Redo();
+        }
+
+        public void CancelTransaction(int clientId)
+        {
+            _transactionService.CancelTransaction(clientId);
         }
 
         protected virtual void OnActiveStateChanged(ActiveStateChangedEventArgs e)

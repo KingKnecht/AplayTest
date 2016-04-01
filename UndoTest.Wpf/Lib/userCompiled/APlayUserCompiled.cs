@@ -63,11 +63,14 @@ namespace Undo.Client
   {
     bool IsDone {get; }
     String Description {get; }
+    Undo.Client.TaskList SubTasks {get; }
     int Id {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
     void SetDone (bool done__, Undo.Client.Client client__);
     void SetTaskDescription (String description__, Undo.Client.Client client__);
+    void AddSubTask (Undo.Client.Task task__, Undo.Client.Client client__);
+    void RemoveSubTask (int taskId__, Undo.Client.Client client__);
   };
 }
 namespace Undo.Client
@@ -76,6 +79,13 @@ namespace Undo.Client
   {
     void onIsDoneChange (bool NewIsDone__);
     void onDescriptionChange (String NewDescription__);
+    void onSubTasksReplace (Undo.Client.TaskList SubTasks__);
+    void onSubTasksAdd (Undo.Client.Task element);
+    void onSubTasksRemove (Undo.Client.Task element);
+    void onSubTasksClear ();
+    void onSubTasksInsertAt (int pos, Undo.Client.Task element);
+    void onSubTasksSetAt (int pos, Undo.Client.Task element);
+    void onSubTasksRemoveAt (int pos, Undo.Client.Task element);
     void onIdChange (int NewId__);
   };
 }
@@ -451,6 +461,15 @@ namespace Undo.Client
         }
       }
     }
+    public virtual Undo.Client.TaskList SubTasks
+    {
+      get
+      {
+        {
+          return (((Undo.Client.TaskList) (implTask.SubTasks)));
+        }
+      }
+    }
     public virtual int Id
     {
       get
@@ -513,6 +532,160 @@ namespace Undo.Client
         }
       }
     }
+    public virtual void onSubTasksReplace(Undo.Client.TaskList SubTasks__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSubTasksReplace received","Client.Designed");
+    }
+    public void onInternSubTasksReplace(APlay.Generated.Intern.Client.ITaskListEvents SubTasks__)
+    {
+      if(SubTasksReplaceEventHandler!=null)
+      {
+        SubTasksReplaceEventHandler(((Undo.Client.TaskList) (SubTasks__)));
+      }
+      else
+      {
+        if(Undo.Client.TaskSkeleton.StaticSubTasksReplaceEventHandler!=null)
+        {
+          Undo.Client.TaskSkeleton.StaticSubTasksReplaceEventHandler(((Undo.Client.TaskList) (SubTasks__)), ((Undo.Client.Task) (this)));
+        }
+        else
+        {
+          this.onSubTasksReplace(((Undo.Client.TaskList) (SubTasks__)));
+        }
+      }
+    }
+    public virtual void onSubTasksAdd(Undo.Client.Task element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSubTasksAdd received","Client.Designed");
+    }
+    public void onInternSubTasksAdd(APlay.Generated.Intern.Client.__ITaskAPEvents element)
+    {
+      if(SubTasksAddEventHandler!=null)
+      {
+        SubTasksAddEventHandler(((Undo.Client.Task) (element)));
+      }
+      else
+      {
+        if(Undo.Client.TaskSkeleton.StaticSubTasksAddEventHandler!=null)
+        {
+          Undo.Client.TaskSkeleton.StaticSubTasksAddEventHandler(((Undo.Client.Task) (element)), ((Undo.Client.Task) (this)));
+        }
+        else
+        {
+          this.onSubTasksAdd(((Undo.Client.Task) (element)));
+        }
+      }
+    }
+    public virtual void onSubTasksRemove(Undo.Client.Task element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSubTasksRemove received","Client.Designed");
+    }
+    public void onInternSubTasksRemove(APlay.Generated.Intern.Client.__ITaskAPEvents element)
+    {
+      if(SubTasksRemoveEventHandler!=null)
+      {
+        SubTasksRemoveEventHandler(((Undo.Client.Task) (element)));
+      }
+      else
+      {
+        if(Undo.Client.TaskSkeleton.StaticSubTasksRemoveEventHandler!=null)
+        {
+          Undo.Client.TaskSkeleton.StaticSubTasksRemoveEventHandler(((Undo.Client.Task) (element)), ((Undo.Client.Task) (this)));
+        }
+        else
+        {
+          this.onSubTasksRemove(((Undo.Client.Task) (element)));
+        }
+      }
+    }
+    public virtual void onSubTasksClear()
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSubTasksClear received","Client.Designed");
+    }
+    public void onInternSubTasksClear()
+    {
+      if(SubTasksClearEventHandler!=null)
+      {
+        SubTasksClearEventHandler();
+      }
+      else
+      {
+        if(Undo.Client.TaskSkeleton.StaticSubTasksClearEventHandler!=null)
+        {
+          Undo.Client.TaskSkeleton.StaticSubTasksClearEventHandler(((Undo.Client.Task) (this)));
+        }
+        else
+        {
+          this.onSubTasksClear();
+        }
+      }
+    }
+    public virtual void onSubTasksInsertAt(int pos, Undo.Client.Task element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSubTasksInsertAt received","Client.Designed");
+    }
+    public void onInternSubTasksInsertAt(int pos, APlay.Generated.Intern.Client.__ITaskAPEvents element)
+    {
+      if(SubTasksInsertAtEventHandler!=null)
+      {
+        SubTasksInsertAtEventHandler(pos, ((Undo.Client.Task) (element)));
+      }
+      else
+      {
+        if(Undo.Client.TaskSkeleton.StaticSubTasksInsertAtEventHandler!=null)
+        {
+          Undo.Client.TaskSkeleton.StaticSubTasksInsertAtEventHandler(pos, ((Undo.Client.Task) (element)), ((Undo.Client.Task) (this)));
+        }
+        else
+        {
+          this.onSubTasksInsertAt(pos, ((Undo.Client.Task) (element)));
+        }
+      }
+    }
+    public virtual void onSubTasksSetAt(int pos, Undo.Client.Task element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSubTasksSetAt received","Client.Designed");
+    }
+    public void onInternSubTasksSetAt(int pos, APlay.Generated.Intern.Client.__ITaskAPEvents element)
+    {
+      if(SubTasksSetAtEventHandler!=null)
+      {
+        SubTasksSetAtEventHandler(pos, ((Undo.Client.Task) (element)));
+      }
+      else
+      {
+        if(Undo.Client.TaskSkeleton.StaticSubTasksSetAtEventHandler!=null)
+        {
+          Undo.Client.TaskSkeleton.StaticSubTasksSetAtEventHandler(pos, ((Undo.Client.Task) (element)), ((Undo.Client.Task) (this)));
+        }
+        else
+        {
+          this.onSubTasksSetAt(pos, ((Undo.Client.Task) (element)));
+        }
+      }
+    }
+    public virtual void onSubTasksRemoveAt(int pos, Undo.Client.Task element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSubTasksRemoveAt received","Client.Designed");
+    }
+    public void onInternSubTasksRemoveAt(int pos, APlay.Generated.Intern.Client.__ITaskAPEvents element)
+    {
+      if(SubTasksRemoveAtEventHandler!=null)
+      {
+        SubTasksRemoveAtEventHandler(pos, ((Undo.Client.Task) (element)));
+      }
+      else
+      {
+        if(Undo.Client.TaskSkeleton.StaticSubTasksRemoveAtEventHandler!=null)
+        {
+          Undo.Client.TaskSkeleton.StaticSubTasksRemoveAtEventHandler(pos, ((Undo.Client.Task) (element)), ((Undo.Client.Task) (this)));
+        }
+        else
+        {
+          this.onSubTasksRemoveAt(pos, ((Undo.Client.Task) (element)));
+        }
+      }
+    }
     public virtual void onIdChange(int NewId__)
     {
       APlay.Common.Logging.Logger.LogDesigned(2,"onIdChange received","Client.Designed");
@@ -548,6 +721,14 @@ namespace Undo.Client
     {
       implTask.SetTaskDescription(description__, ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
     }
+    public void AddSubTask(Undo.Client.Task task__, Undo.Client.Client client__)
+    {
+      implTask.AddSubTask(((APlay.Generated.Intern.Client.__ITaskAPEvents) (task__)), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
+    public void RemoveSubTask(int taskId__, Undo.Client.Client client__)
+    {
+      implTask.RemoveSubTask(taskId__, ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
     public APlay.Generated.Intern.Client.__ITaskAPImpl getTaskObject()
     {
       return (implTask);
@@ -560,6 +741,20 @@ namespace Undo.Client
     static public event Undo.Client.Delegates.void_boolean_Task StaticIsDoneChangeEventHandler;
     public event Undo.Client.Delegates.void_WString DescriptionChangeEventHandler;
     static public event Undo.Client.Delegates.void_WString_Task StaticDescriptionChangeEventHandler;
+    public event Undo.Client.Delegates.void_TaskList SubTasksReplaceEventHandler;
+    static public event Undo.Client.Delegates.void_TaskList_Task StaticSubTasksReplaceEventHandler;
+    public event Undo.Client.Delegates.void_Task SubTasksAddEventHandler;
+    static public event Undo.Client.Delegates.void_Task_Task StaticSubTasksAddEventHandler;
+    public event Undo.Client.Delegates.void_Task SubTasksRemoveEventHandler;
+    static public event Undo.Client.Delegates.void_Task_Task StaticSubTasksRemoveEventHandler;
+    public event Undo.Client.Delegates.void_ SubTasksClearEventHandler;
+    static public event Undo.Client.Delegates.void_Task StaticSubTasksClearEventHandler;
+    public event Undo.Client.Delegates.void_int32_Task SubTasksInsertAtEventHandler;
+    static public event Undo.Client.Delegates.void_int32_Task_Task StaticSubTasksInsertAtEventHandler;
+    public event Undo.Client.Delegates.void_int32_Task SubTasksSetAtEventHandler;
+    static public event Undo.Client.Delegates.void_int32_Task_Task StaticSubTasksSetAtEventHandler;
+    public event Undo.Client.Delegates.void_int32_Task SubTasksRemoveAtEventHandler;
+    static public event Undo.Client.Delegates.void_int32_Task_Task StaticSubTasksRemoveAtEventHandler;
     public event Undo.Client.Delegates.void_int32 IdChangeEventHandler;
     static public event Undo.Client.Delegates.void_int32_Task StaticIdChangeEventHandler;
     private APlay.Generated.Intern.Client.__ITaskAPImpl implTask;
@@ -1913,12 +2108,15 @@ namespace Undo.Client
     public delegate void void_boolean_Task(bool NewIsDone__, Undo.Client.Task this_);
     public delegate void void_WString(String NewDescription__);
     public delegate void void_WString_Task(String NewDescription__, Undo.Client.Task this_);
-    public delegate void void_int32_Task(int NewId__, Undo.Client.Task this_);
-    public delegate void void_Task(Undo.Client.Task returnValue);
-    public delegate void void_TaskList(Undo.Client.TaskList Tasks__);
+    public delegate void void_TaskList(Undo.Client.TaskList SubTasks__);
+    public delegate void void_TaskList_Task(Undo.Client.TaskList SubTasks__, Undo.Client.Task this_);
+    public delegate void void_Task(Undo.Client.Task element);
+    public delegate void void_Task_Task(Undo.Client.Task element, Undo.Client.Task this_);
+    public delegate void void_();
+    public delegate void void_int32_Task(int pos, Undo.Client.Task element);
+    public delegate void void_int32_Task_Task(int pos, Undo.Client.Task element, Undo.Client.Task this_);
     public delegate void void_TaskList_TaskManager(Undo.Client.TaskList Tasks__, Undo.Client.TaskManager this_);
     public delegate void void_Task_TaskManager(Undo.Client.Task element, Undo.Client.TaskManager this_);
-    public delegate void void_();
     public delegate void void_int32_Task_TaskManager(int pos, Undo.Client.Task element, Undo.Client.TaskManager this_);
     public delegate void void_int32_TaskManager(int NewId__, Undo.Client.TaskManager this_);
     public delegate void void_Client(Undo.Client.Client NewDataClient__);

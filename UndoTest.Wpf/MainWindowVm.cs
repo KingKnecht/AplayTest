@@ -116,5 +116,10 @@ namespace UndoTest.Wpf
         {
             _client.UndoManager.EndTransaction();
         }
+
+        public void CancelTransaction()
+        {
+            _client.UndoManager.CancelTransaction();
+        }
     }
 }

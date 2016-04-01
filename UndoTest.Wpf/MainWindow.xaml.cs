@@ -100,6 +100,11 @@ namespace UndoTest.Wpf
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        private void CancelTransaction_OnClick(object sender, RoutedEventArgs e)
+        {
+            ((MainWindowVm)DataContext).CancelTransaction();
+        }
     }
 
   

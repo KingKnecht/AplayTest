@@ -11,6 +11,7 @@ namespace sbardos.UndoFramework
         void EndTransaction(int clientId);
         void Add(Change change, int clientId, string description);
 
+        void CancelTransaction(int clientId);
     }
 
     public class TransactionService : ITransactionService
@@ -77,6 +78,19 @@ namespace sbardos.UndoFramework
             EndTransaction(clientId);
         }
 
+        public void CancelTransaction(int clientId)
+        {
+            Transaction currentTransaction;
+            if (_currentTransactions.TryGetValue(clientId, out currentTransaction))
+            {
+                if (currentTransaction.IsActive)
+                {
+                    _undoStackManager.Cancel(currentTransaction.ChangeSet, clientId);
+                    currentTransaction.IsActive = false;
+                }
+            }
 
+
+        }
     }
 }

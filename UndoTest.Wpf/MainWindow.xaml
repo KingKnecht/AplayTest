@@ -43,7 +43,8 @@
                     Click="EndTransaction_OnClick">End Transaction</Button>
             <Button Margin="4 0 4 0"
                     VerticalAlignment="Top"
-                    Name="CancelTransaction">Cancel Transaction</Button>
+                    Name="CancelTransaction"
+                    Click="CancelTransaction_OnClick">Cancel Transaction</Button>
             <Button Margin="4 0 4 0"
                     VerticalAlignment="Top"
                     Name="Undo"

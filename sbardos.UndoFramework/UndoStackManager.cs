@@ -12,6 +12,7 @@ namespace sbardos.UndoFramework
         IUndoStack GetStackOfClient(int clientId);
         event EventHandler<ActiveStateChangedEventArgs> ActiveStateChanged;
         event EventHandler<StackChangedEventArgs> StackChanged;
+        void Cancel(ChangeSet changeSet, int clientId);
     }
 
     public class UndoStackManager : IUndoStackManager
@@ -28,6 +29,11 @@ namespace sbardos.UndoFramework
             CreateStackForClient(clientId);
             _undoStacks[clientId].Push(changeSet);
         }
+        public void Cancel(ChangeSet changeSet, int clientId)
+        {
+            OnActiveStateChanged(new ActiveStateChangedEventArgs(changeSet.AsReversed(),StateChangeDirection.Undo, clientId));
+        }
+
 
         public void CreateStackForClient(int clientId)
         {
@@ -60,7 +66,7 @@ namespace sbardos.UndoFramework
 
         public event EventHandler<ActiveStateChangedEventArgs> ActiveStateChanged;
         public event EventHandler<StackChangedEventArgs> StackChanged;
-
+       
         public IUndoStack GetStackOfClient(int clientId)
         {
             CreateStackForClient(clientId);

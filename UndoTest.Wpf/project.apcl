@@ -35,10 +35,19 @@
           <data type="WString" name="description" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
         </event>
+        <event name="AddSubTask">
+          <data type="Task" name="task" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="RemoveSubTask">
+          <data type="int32" name="taskId" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
       </permissionGroup>
       <permissionGroup baseType="ServerToClient">
         <data type="boolean" name="IsDone" persistable="false"/>
         <data type="WString" name="Description" persistable="false"/>
+        <list type="Task" name="SubTasks" persistable="false"/>
       </permissionGroup>
       <permissionGroup baseType="ServerToAll">
         <data type="int32" name="Id" persistable="false"/>
