@@ -3,11 +3,11 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
+using APlayTest.Client.Modules.Inspector;
 using APlayTest.Client.Modules.SheetTree.ViewModels.Elements;
 using Caliburn.Micro;
 using Gemini.Framework;
-using Gemini.Modules.Inspector;
-using Gemini.Modules.UndoRedo;
+
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {

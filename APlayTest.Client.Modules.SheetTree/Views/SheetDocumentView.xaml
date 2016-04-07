@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:controls="clr-namespace:Gemini.Modules.GraphEditor.Controls;assembly=Gemini.Modules.GraphEditor"
-             xmlns:converters="clr-namespace:Gemini.Modules.GraphEditor.Converters;assembly=Gemini.Modules.GraphEditor"
              xmlns:vm="clr-namespace:APlayTest.Client.Modules.SheetTree.ViewModels"
+             xmlns:converters="clr-namespace:APlayTest.Client.Modules.GraphEditor.Converters;assembly=APlayTest.Client.Modules.GraphEditor"
+             xmlns:controls="clr-namespace:APlayTest.Client.Modules.GraphEditor.Controls;assembly=APlayTest.Client.Modules.GraphEditor"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>

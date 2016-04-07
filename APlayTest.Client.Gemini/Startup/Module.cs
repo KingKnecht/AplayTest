@@ -6,10 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using APlayTest.Client.Gemini.Properties;
+using APlayTest.Client.Modules.Inspector;
 using Gemini.Framework;
 using Gemini.Framework.Menus;
-using Gemini.Modules.Inspector;
-using Gemini.Modules.UndoRedo;
 
 namespace APlayTest.Client.Gemini.Startup
 {

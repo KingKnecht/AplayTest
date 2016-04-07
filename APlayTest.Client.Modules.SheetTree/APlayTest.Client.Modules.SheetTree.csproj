@@ -41,15 +41,6 @@
     <Reference Include="Caliburn.Micro.Platform">
       <HintPath>..\packages\Caliburn.Micro.2.0.2\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
     </Reference>
-    <Reference Include="Gemini">
-      <HintPath>..\packages\GeminiWpf.0.6.2\lib\net45\Gemini.dll</HintPath>
-    </Reference>
-    <Reference Include="Gemini.Modules.GraphEditor">
-      <HintPath>..\packages\Gemini.Modules.GraphEditor.0.6.2\lib\net45\Gemini.Modules.GraphEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="Gemini.Modules.Inspector">
-      <HintPath>..\packages\Gemini.Modules.Inspector.0.6.2\lib\net45\Gemini.Modules.Inspector.dll</HintPath>
-    </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>..\packages\MahApps.Metro.1.0.0.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -81,9 +72,6 @@
     </Reference>
     <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
       <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2013">
-      <HintPath>..\packages\GeminiWpf.0.6.2\lib\net45\Xceed.Wpf.AvalonDock.Themes.VS2013.dll</HintPath>
     </Reference>
     <Reference Include="Xceed.Wpf.DataGrid">
       <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
@@ -122,9 +110,21 @@
       <Project>{10354DA0-686D-47C3-864D-E57F17182654}</Project>
       <Name>APlayTest.Client.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\APlayTest.Client.Modules.GraphEditor\APlayTest.Client.Modules.GraphEditor.csproj">
+      <Project>{F8204886-1F61-4247-B7B2-EA5E518162F3}</Project>
+      <Name>APlayTest.Client.Modules.GraphEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\APlayTest.Client.Modules.Inspector\APlayTest.Client.Modules.Inspector.csproj">
+      <Project>{0F8463BD-C1B0-4F2B-855D-49B6963B3337}</Project>
+      <Name>APlayTest.Client.Modules.Inspector</Name>
+    </ProjectReference>
     <ProjectReference Include="..\APlayTest.Client\APlayTest.Client.csproj">
       <Project>{D2B47293-0448-467B-AA20-63F8AF6C9B13}</Project>
       <Name>APlayTest.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Gemini.Core\Gemini.csproj">
+      <Project>{13dbfc87-c152-4a86-94b0-d9944beef647}</Project>
+      <Name>Gemini</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

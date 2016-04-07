@@ -6,11 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using APlayTest.Client.Contracts;
+using APlayTest.Client.Modules.Inspector;
+using APlayTest.Client.Modules.Inspector.Inspectors;
 using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Framework.Services;
-using Gemini.Modules.Inspector;
-using Gemini.Modules.Inspector.Inspectors;
+
 using Gemini.Modules.UndoRedo;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels

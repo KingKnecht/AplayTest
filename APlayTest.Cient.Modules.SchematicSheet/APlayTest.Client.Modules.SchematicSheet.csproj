@@ -7,8 +7,8 @@
     <ProjectGuid>{4273345B-D9F4-432A-A20F-2880B1198B5A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>APlayTest.Cient.Modules.SchematicSheet</RootNamespace>
-    <AssemblyName>APlayTest.Cient.Modules.SchematicSheet</AssemblyName>
+    <RootNamespace>APlayTest.Client.Modules.SchematicSheet</RootNamespace>
+    <AssemblyName>APlayTest.Client.Modules.SchematicSheet</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

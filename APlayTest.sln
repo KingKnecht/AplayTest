@@ -26,8 +26,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APlayTest.Client.Modules.Sh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APlayTest.Client.Contracts", "APlayTest.Client.Contracts\APlayTest.Client.Contracts.csproj", "{10354DA0-686D-47C3-864D-E57F17182654}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APlayTest.Cient.Modules.SchematicSheet", "APlayTest.Cient.Modules.SchematicSheet\APlayTest.Cient.Modules.SchematicSheet.csproj", "{4273345B-D9F4-432A-A20F-2880B1198B5A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sbardos.UndoFramework", "sbardos.UndoFramework\sbardos.UndoFramework.csproj", "{168D777A-BAA6-4694-810C-B028A811318D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gemini", "Gemini.Core\Gemini.csproj", "{13DBFC87-C152-4A86-94B0-D9944BEEF647}"
@@ -39,6 +37,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UndoTest", "UndoTest", "{132A61DF-101C-42E8-AE8C-A7E4F6FD2A72}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sbardos.UndoFramework.Tests", "sbardos.UndoFramework.Tests\sbardos.UndoFramework.Tests.csproj", "{D9D41A18-3B9F-49E6-9171-F2660C0484F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APlayTest.Client.Modules.Inspector", "APlayTest.Client.Modules.Inspector\APlayTest.Client.Modules.Inspector.csproj", "{0F8463BD-C1B0-4F2B-855D-49B6963B3337}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APlayTest.Client.Modules.GraphEditor", "APlayTest.Client.Modules.GraphEditor\APlayTest.Client.Modules.GraphEditor.csproj", "{F8204886-1F61-4247-B7B2-EA5E518162F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,10 +76,6 @@ Global
 		{10354DA0-686D-47C3-864D-E57F17182654}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10354DA0-686D-47C3-864D-E57F17182654}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10354DA0-686D-47C3-864D-E57F17182654}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4273345B-D9F4-432A-A20F-2880B1198B5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4273345B-D9F4-432A-A20F-2880B1198B5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4273345B-D9F4-432A-A20F-2880B1198B5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4273345B-D9F4-432A-A20F-2880B1198B5A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{168D777A-BAA6-4694-810C-B028A811318D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{168D777A-BAA6-4694-810C-B028A811318D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{168D777A-BAA6-4694-810C-B028A811318D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -98,6 +96,14 @@ Global
 		{D9D41A18-3B9F-49E6-9171-F2660C0484F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9D41A18-3B9F-49E6-9171-F2660C0484F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9D41A18-3B9F-49E6-9171-F2660C0484F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F8463BD-C1B0-4F2B-855D-49B6963B3337}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F8463BD-C1B0-4F2B-855D-49B6963B3337}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F8463BD-C1B0-4F2B-855D-49B6963B3337}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F8463BD-C1B0-4F2B-855D-49B6963B3337}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8204886-1F61-4247-B7B2-EA5E518162F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8204886-1F61-4247-B7B2-EA5E518162F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8204886-1F61-4247-B7B2-EA5E518162F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8204886-1F61-4247-B7B2-EA5E518162F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,8 +112,9 @@ Global
 		{E82CD289-1D65-42A5-9410-82477873B9E7} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
 		{AA6D9942-571F-42B7-9D63-FD0446B2D458} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
 		{10354DA0-686D-47C3-864D-E57F17182654} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
-		{4273345B-D9F4-432A-A20F-2880B1198B5A} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
 		{D234C4E4-25CB-4A91-9A9A-1BBD130875C0} = {132A61DF-101C-42E8-AE8C-A7E4F6FD2A72}
 		{6A10D51F-1497-49D2-8553-48F990888827} = {132A61DF-101C-42E8-AE8C-A7E4F6FD2A72}
+		{0F8463BD-C1B0-4F2B-855D-49B6963B3337} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
+		{F8204886-1F61-4247-B7B2-EA5E518162F3} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
 	EndGlobalSection
 EndGlobal
