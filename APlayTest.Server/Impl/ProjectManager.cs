@@ -20,6 +20,8 @@ using APlayTest.Services;
 using APlayTest.Services.Infracstructure;
 using DynamicData;
 using Reactive.Bindings.Extensions;
+using sbardos.UndoFramework;
+using ChangeReason = DynamicData.ChangeReason;
 
 namespace APlayTest.Server
 {
@@ -27,6 +29,7 @@ namespace APlayTest.Server
     {
         private readonly IProjectManagerService _projectManagerService;
         private readonly IAplayProjectsCache _aplayProjectsCache;
+        private readonly IUndoService _undoService;
         private string _searchString = String.Empty;
         private CompositeDisposable _cleanUp = new CompositeDisposable();
         /// <summary>
@@ -43,10 +46,12 @@ namespace APlayTest.Server
         /// </summary>
         /// <param name="projectManagerService">Gets projects from some source i.e. DB</param>
         /// <param name="aplayProjectsCache">A cache of transformed projects. Contains Aplay-Projects. These projects must be the same over all ProjectManagers.</param>
-        public ProjectManager(IProjectManagerService projectManagerService, IAplayProjectsCache aplayProjectsCache)
+        /// <param name="undoService">A service for undo/redo. Same for all clients.</param>
+        public ProjectManager(IProjectManagerService projectManagerService, IAplayProjectsCache aplayProjectsCache, IUndoService undoService)
         {
             _projectManagerService = projectManagerService;
             _aplayProjectsCache = aplayProjectsCache;
+            _undoService = undoService;
 
 
             //Subscribe for newly added, deleted projects from the service.
@@ -91,6 +96,8 @@ namespace APlayTest.Server
                     if (_aplayProjectsCache.TryGetProject(projectId__, out joinedProject))
                     {
                         sender.CurrentProject = joinedProject;
+
+                        //sender.UndoManager = new UndoManager(_undoService, sender.Id);
 
                         JoinedProject(joinedProject);
 
@@ -198,18 +205,18 @@ namespace APlayTest.Server
                 SheetManager = new SheetManager()
             };
 
-            aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 1 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId()});
+            aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 1 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
             aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 2 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
             aplayProject.SheetManager.Sheets.Add(new Sheet() { Name = "Sheet 3 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
 
-             aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol(){Id = IdGenerator.GetNextId()});
-             aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId(), PositionX = 200, PositionY = 0});
-             aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId(), PositionX = 200, PositionY = 200 });
+            aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId() });
+            aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId(), PositionX = 200, PositionY = 0 });
+            aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId(), PositionX = 200, PositionY = 200 });
 
-             aplayProject.SheetManager.Sheets[1].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId() });
-             aplayProject.SheetManager.Sheets[1].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId(),PositionX = 200, PositionY = 200 });
+            aplayProject.SheetManager.Sheets[1].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId() });
+            aplayProject.SheetManager.Sheets[1].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId(), PositionX = 200, PositionY = 200 });
 
-             aplayProject.SheetManager.Sheets[2].BlockSymbols.Add(new BlockSymbol() { Id = IdGenerator.GetNextId() });
+            aplayProject.SheetManager.Sheets[2].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId() });
 
             return aplayProject;
         }

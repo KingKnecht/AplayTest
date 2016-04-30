@@ -10,7 +10,8 @@ namespace Gemini.Framework
 	{
 		private readonly Guid _id = Guid.NewGuid();
 		
-		public abstract ICommand CloseCommand { get; }
+        public abstract ICommand UndoCommand { get; }
+        //public abstract ICommand RedoCommand { get; }
 
         [Browsable(false)]
 		public Guid Id

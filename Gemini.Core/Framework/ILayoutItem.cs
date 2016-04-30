@@ -9,7 +9,8 @@ namespace Gemini.Framework
     {
         Guid Id { get; }
         string ContentId { get; }
-        ICommand CloseCommand { get; }
+        ICommand UndoCommand { get; }
+        //ICommand RedoCommand { get; }
         Uri IconSource { get; }
         bool IsSelected { get; set; }
         bool ShouldReopenOnStart { get; }

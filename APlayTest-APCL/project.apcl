@@ -1,0 +1,152 @@
+<apcl:apcl version="2.0" xmlns:apcl="http://www.aplaypowered.com/apcl">
+  <namespace>
+    <role name="Client" roleType="Client" namespace="[Language=csharp]:APlayTest.Client" className="APlayClient" remoteObject="Client"/>
+    <role name="Server" roleType="Server" namespace="[Language=csharp]:APlayTest.Server" className="APlayServer"/>
+    <primitive name="AplayPoint" persistable="true">
+      <data type="float64" name="X" persistable="false"/>
+      <data type="float64" name="Y" persistable="false"/>
+    </primitive>
+    <primitive name="AplaySize" persistable="true">
+      <data type="float32" name="Width" persistable="false"/>
+      <data type="float32" name="Height" persistable="false"/>
+    </primitive>
+    <permissionGroup name="ServerToAll">
+      <access role="Client" read="true" write="false"/>
+      <access role="Server" read="true" write="true"/>
+    </permissionGroup>
+    <permissionGroup name="ClientToServer">
+      <access role="Client" read="false" write="true"/>
+      <access role="Server" read="true" write="false"/>
+    </permissionGroup>
+    <communicationObject name="BlockSymbol" userCreated="servers" persistable="false">
+      <permissionGroup baseType="ServerToAll">
+        <data type="int32" name="Id" persistable="false"/>
+        <data type="float64" name="PositionX" persistable="false"/>
+        <data type="float64" name="PositionY" persistable="false"/>
+        <data type="AplaySize" name="Size" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="ClientToServer">
+        <event name="SetPosition">
+          <data type="AplayPoint" name="position" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+      </permissionGroup>
+    </communicationObject>
+    <permissionGroup name="ServerToClient">
+      <access role="Client" read="true" write="false"/>
+      <access role="Server" read="false" write="true"/>
+    </permissionGroup>
+    <communicationObject name="Client" persistable="false">
+      <permissionGroup baseType="ServerToClient">
+        <data type="int32" name="Id" persistable="false"/>
+        <data type="Project" name="CurrentProject" persistable="false"/>
+        <data type="ProjectManager" name="ProjectManager" persistable="false"/>
+        <data type="UndoManager" name="UndoManager" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="ClientToServer">
+        <data type="User" name="CurrentUser" persistable="false"/>
+      </permissionGroup>
+    </communicationObject>
+    <primitive name="HistoryEntry" persistable="true">
+      <data type="int32" name="Id" persistable="false"/>
+      <data type="WString" name="Description" persistable="false"/>
+    </primitive>
+    <communicationObject name="Project" userCreated="servers" persistable="false">
+      <permissionGroup baseType="ServerToAll">
+        <data type="int32" name="Id" persistable="false"/>
+        <data type="ProjectDetail" name="ProjectDetail" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="ServerToClient">
+        <data type="SheetManager" name="SheetManager" persistable="false"/>
+      </permissionGroup>
+    </communicationObject>
+    <primitive name="ProjectDetail" persistable="true">
+      <data type="WString" name="Name" persistable="false"/>
+      <data type="WString" name="CreatedBy" persistable="false"/>
+      <data type="Date" name="CreationDate" persistable="false"/>
+    </primitive>
+    <communicationObject name="ProjectManager" persistable="false">
+      <permissionGroup baseType="ClientToServer">
+        <event name="JoinProject">
+          <data type="Client" name="sender" persistable="false"/>
+          <data type="int32" name="projectId" persistable="false"/>
+        </event>
+        <event name="CreateProject">
+          <data type="Client" name="sender" persistable="false"/>
+          <data type="WString" name="name" persistable="false"/>
+        </event>
+        <event name="SearchProjects">
+          <data type="WString" name="searchString" persistable="false"/>
+        </event>
+        <event name="SelectProject">
+          <data type="int32" name="projectId" persistable="false"/>
+        </event>
+      </permissionGroup>
+      <permissionGroup baseType="ServerToClient">
+        <data type="boolean" name="CanJoinProject" persistable="false"/>
+        <data type="boolean" name="CanCreateProject" persistable="false"/>
+        <list type="Project" name="Projects" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="ServerToClient">
+        <data type="Project" name="SelectedProject" persistable="false"/>
+        <event name="JoinedProject">
+          <data type="Project" name="project" persistable="false"/>
+        </event>
+        <data type="Client" name="DataClient" persistable="false"/>
+      </permissionGroup>
+    </communicationObject>
+    <permissionGroup name="Server_AND_ClientToAll">
+      <access role="Client" read="true" write="true"/>
+      <access role="Server" read="true" write="true"/>
+    </permissionGroup>
+    <communicationObject name="Sheet" userCreated="servers" persistable="false">
+      <permissionGroup baseType="ClientToServer">
+        <event name="CreateBlockSymbol" returnType="BlockSymbol"/>
+        <event name="Add">
+          <data type="BlockSymbol" name="blockSymbol" persistable="false"/>
+        </event>
+      </permissionGroup>
+      <permissionGroup baseType="Server_AND_ClientToAll">
+        <data type="WString" name="Name" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="ServerToAll">
+        <set type="BlockSymbol" name="BlockSymbols" persistable="false"/>
+        <data type="int32" name="Id" persistable="false"/>
+      </permissionGroup>
+    </communicationObject>
+    <communicationObject name="SheetManager" userCreated="servers" persistable="false">
+      <permissionGroup baseType="ServerToClient">
+        <list type="Sheet" name="Sheets" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="ClientToServer">
+        <event name="CreateSheet" returnType="Sheet"/>
+        <event name="AddSheet">
+          <data type="Sheet" name="sheet" persistable="false"/>
+        </event>
+      </permissionGroup>
+    </communicationObject>
+    <communicationObject name="UndoManager" persistable="false">
+      <permissionGroup baseType="ClientToServer">
+        <event name="StartTransaction">
+          <data type="WString" name="description" persistable="false"/>
+        </event>
+        <event name="EndTransaction"/>
+        <event name="CancelTransaction"/>
+        <event name="ExecuteUndo"/>
+        <event name="ExecuteRedo"/>
+      </permissionGroup>
+      <permissionGroup baseType="ServerToAll">
+        <data type="Client" name="DataClient" persistable="false"/>
+        <data type="boolean" name="CanUndo" persistable="false"/>
+        <data type="boolean" name="CanRedo" persistable="false"/>
+        <list type="HistoryEntry" name="History" persistable="false"/>
+        <data type="int32" name="ActiveHistoryEntryId" persistable="false"/>
+      </permissionGroup>
+    </communicationObject>
+    <communicationObject name="User" persistable="false">
+      <permissionGroup baseType="ClientToServer">
+        <data type="WString" name="Name" persistable="false"/>
+      </permissionGroup>
+    </communicationObject>
+  </namespace>
+</apcl:apcl>

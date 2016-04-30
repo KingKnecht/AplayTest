@@ -85,6 +85,7 @@
     <Compile Include="Impl\APlayClient.cs" />
     <Compile Include="Impl\Client.cs" />
     <Compile Include="Impl\ProjectManager.cs" />
+    <Compile Include="Impl\UndoManager.cs" />
     <Compile Include="Impl\User.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

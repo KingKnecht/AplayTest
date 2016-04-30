@@ -107,6 +107,7 @@
     <Compile Include="Impl\ProjectManager.cs" />
     <Compile Include="Impl\Sheet.cs" />
     <Compile Include="Impl\SheetManager.cs" />
+    <Compile Include="Impl\UndoManager.cs" />
     <Compile Include="Impl\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="userCompiled\APlayUserCompiled.cs" />
@@ -115,6 +116,10 @@
     <ProjectReference Include="..\APlayTest.Services\APlayTest.Services.csproj">
       <Project>{CAFE7692-24AB-4E1B-98C2-1F2E2C985C46}</Project>
       <Name>APlayTest.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sbardos.UndoFramework\sbardos.UndoFramework.csproj">
+      <Project>{168D777A-BAA6-4694-810C-B028A811318D}</Project>
+      <Name>sbardos.UndoFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

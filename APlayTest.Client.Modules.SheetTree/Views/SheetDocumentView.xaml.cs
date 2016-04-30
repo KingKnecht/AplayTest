@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace APlayTest.Client.Modules.SheetTree.Views
 
         private SheetDocumentViewModel ViewModel
         {
-            get { return (SheetDocumentViewModel) DataContext; }
+            get { return (SheetDocumentViewModel)DataContext; }
         }
 
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
@@ -102,6 +103,7 @@ namespace APlayTest.Client.Modules.SheetTree.Views
 
         private void OnGraphControlConnectionDragging(object sender, ConnectionDraggingEventArgs e)
         {
+            
             var currentDragPoint = Mouse.GetPosition(GraphControl);
             var connection = (ConnectionViewModel)e.Connection;
             ViewModel.OnConnectionDragging(currentDragPoint, connection);
@@ -136,5 +138,44 @@ namespace APlayTest.Client.Modules.SheetTree.Views
             }
         }
 
+        private void OnElementItemDragStarted(object sender, ElementItemDragStartedEventArgs e)
+        {
+            var dataContext = ((ElementItem)e.OriginalSource).DataContext;
+            var itemViewModel = (ElementViewModel)dataContext;
+            var currentDragPoint = Mouse.GetPosition(GraphControl);
+            
+            ViewModel.OnElementItemDragStarted(itemViewModel, currentDragPoint);
+        }
+
+        private void OnElementItemDragCompleted(object sender, ElementItemDragCompletedEventArgs e)
+        {
+            var dataContext = ((ElementItem)e.OriginalSource).DataContext;
+            var itemViewModel = (ElementViewModel)dataContext;
+            var currentDragPoint = Mouse.GetPosition(GraphControl);
+
+            ViewModel.OnElementItemDragCompleted(itemViewModel, currentDragPoint);
+        }
+
+        private void OnElementItemDragging(object sender, ElementItemDraggingEventArgs e)
+        {
+            var dataContext = ((ElementItem)e.OriginalSource).DataContext;
+            var itemViewModel = (ElementViewModel)dataContext;
+
+            //var scaledPosition = GetContentPoint(new Point(e.PositionX, e.PositionY), ZoomAndPanControl.ContentScale);
+            var scaledDelta = GetContentPoint(new Point(e.HorizontalChange, e.VerticalChange), ZoomAndPanControl.ContentScale);
+
+            //Console.WriteLine(scaledDelta);
+
+            //ViewModel.OnElementItemDragging(itemViewModel, scaledDelta.X,
+            //    scaledDelta.Y, e.PositionX + scaledDelta.X, e.PositionY + scaledDelta.Y);
+
+            ViewModel.OnElementItemDragging(itemViewModel, e.HorizontalChange,
+               e.VerticalChange, e.PositionX, e.PositionY);
+        }
+
+        private Point GetContentPoint(Point zoomAndPanPoint, double scale)
+        {
+            return new Point(zoomAndPanPoint.X * (1.0 / scale), zoomAndPanPoint.Y * (1.0 / scale));
+        }
     }
 }

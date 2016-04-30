@@ -35,4 +35,6 @@ namespace Gemini.Modules.UndoRedo.Commands
         [Export]
         public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<UndoCommandDefinition>(new KeyGesture(Key.Z, ModifierKeys.Control));
     }
+
+
 }

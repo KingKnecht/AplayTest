@@ -1,0 +1,37 @@
+<CompileConfig>
+  <Profiles>
+    <Profile>
+      <Name>Default config</Name>
+      <ApclPath>project.apcl</ApclPath>
+      <Project>0</Project>
+      <TargetBasePath>.</TargetBasePath>
+      <ServiceVersion>trunk</ServiceVersion>
+      <CompilerProfile>
+        <Name>APlayTest</Name>
+        <APlayVersion>2.0.2.1</APlayVersion>
+        <WithPersistence>true</WithPersistence>
+        <SolutionName>APlayTest</SolutionName>
+        <Targets>
+          <Target>
+            <Role>Server</Role>
+            <Language>CSharpDotnet</Language>
+            <TargetPath>../APlayTest.Server/lib/</TargetPath>
+            <LibPath>../APlayTest.Server/lib/</LibPath>
+            <UserCompiledPath>../APlayTest.Server/userCompiled/</UserCompiledPath>
+            <StubPath>../APlayTest.Server/stubs/</StubPath>
+            <Settings/>
+          </Target>
+          <Target>
+            <Role>Client</Role>
+            <Language>CSharpDotnet</Language>
+            <TargetPath>../APlayTest.Client/lib/</TargetPath>
+            <LibPath>../APlayTest.Client/lib/</LibPath>
+            <UserCompiledPath>../APlayTest.Client/userCompiled/</UserCompiledPath>
+            <StubPath>../APlayTest.Client/stubs/</StubPath>
+            <Settings/>
+          </Target>
+        </Targets>
+      </CompilerProfile>
+    </Profile>
+  </Profiles>
+</CompileConfig>

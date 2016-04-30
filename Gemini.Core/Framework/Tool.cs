@@ -10,7 +10,7 @@ namespace Gemini.Framework
 	public abstract class Tool : LayoutItemBase, ITool
 	{
 		private ICommand _closeCommand;
-		public override ICommand CloseCommand
+		public override ICommand UndoCommand
 		{
 			get { return _closeCommand ?? (_closeCommand = new RelayCommand(p => IsVisible = false, p => true)); }
 		}

@@ -42,6 +42,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
@@ -50,6 +51,7 @@ namespace APlayTest.Server
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void SyncedWithUndoManager (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
   };
 }
@@ -61,6 +63,7 @@ namespace APlayTest.Server
     void onPositionXChange (double NewPositionX__);
     void onPositionYChange (double NewPositionY__);
     void onSizeChange (APlayTest.Server.AplaySize NewSize__);
+    void onSetPosition (APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__);
   };
 }
 namespace APlayTest.Server
@@ -83,8 +86,10 @@ namespace APlayTest.Server
     bool IsAdmin {get; }
     String RemoteAddress {get; }
     ulong APlayClientId {get; }
+    int Id {get; set; }
     APlayTest.Server.Project CurrentProject {get; set; }
     APlayTest.Server.ProjectManager ProjectManager {get; set; }
+    APlayTest.Server.UndoManager UndoManager {get; set; }
     APlayTest.Server.User CurrentUser {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
@@ -99,6 +104,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
@@ -107,6 +113,7 @@ namespace APlayTest.Server
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void SyncedWithUndoManager (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void forceClientDisconnect (String reason);
   };
@@ -151,6 +158,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
@@ -159,6 +167,7 @@ namespace APlayTest.Server
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void SyncedWithUndoManager (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
   };
 }
@@ -206,6 +215,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
@@ -214,6 +224,7 @@ namespace APlayTest.Server
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void SyncedWithUndoManager (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
   };
 }
@@ -260,6 +271,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
@@ -268,6 +280,7 @@ namespace APlayTest.Server
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void SyncedWithUndoManager (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
   };
 }
@@ -316,6 +329,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
@@ -324,6 +338,7 @@ namespace APlayTest.Server
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void SyncedWithUndoManager (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
   };
 }
@@ -350,6 +365,76 @@ namespace APlayTest.Server
 }
 namespace APlayTest.Server
 {
+  public interface  IUndoManagerImpl
+  {
+    APlayTest.Server.Client DataClient {get; set; }
+    bool CanUndo {get; set; }
+    bool CanRedo {get; set; }
+    APlayTest.Server.HistoryEntryList History {get; set; }
+    int ActiveHistoryEntryId {get; set; }
+    ulong APlayEntityId {get; }
+    bool RequiresInit ();
+    bool Release ();
+    void addOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
+    void removeOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
+    bool isOwner (APlay.Generated.Intern.Server.__IClientAPEvents owner);
+    void removeClientInterest (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IClientAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
+    void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
+    void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
+    void SyncedWithClient (APlay.Generated.Intern.Server.__IClientAPEvents ob);
+    void SyncedWithProject (APlay.Generated.Intern.Server.__IProjectAPEvents ob);
+    void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
+    void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
+    void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void SyncedWithUndoManager (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
+    void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  IUndoManagerEvents
+  {
+    void onDataClientChange (APlayTest.Server.Client NewDataClient__);
+    void onCanUndoChange (bool NewCanUndo__);
+    void onCanRedoChange (bool NewCanRedo__);
+    void onHistoryReplace (APlayTest.Server.HistoryEntryList History__);
+    void onHistoryAdd (APlayTest.Server.HistoryEntry element);
+    void onHistoryRemove (APlayTest.Server.HistoryEntry element);
+    void onHistoryClear ();
+    void onHistoryInsertAt (int pos, APlayTest.Server.HistoryEntry element);
+    void onHistorySetAt (int pos, APlayTest.Server.HistoryEntry element);
+    void onHistoryRemoveAt (int pos, APlayTest.Server.HistoryEntry element);
+    void onActiveHistoryEntryIdChange (int NewActiveHistoryEntryId__);
+    void onStartTransaction (String description__);
+    void onEndTransaction ();
+    void onCancelTransaction ();
+    void onExecuteUndo ();
+    void onExecuteRedo ();
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  IUndoManagerSkeleton : APlayTest.Server.IUndoManagerImpl, APlay.Generated.Intern.Server.__IUndoManagerAPEvents, APlayTest.Server.IUndoManagerEvents
+  {
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  IUndoManagerFactory
+  {
+    APlayTest.Server.UndoManager CreateUndoManager ();
+  };
+}
+namespace APlayTest.Server
+{
   public interface  IUserImpl
   {
     String Name {get; }
@@ -366,6 +451,7 @@ namespace APlayTest.Server
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void removeClientInterestRecursiveByObjectOwners (APlay.Generated.Intern.Server.__IUserAPEvents ob);
     void removeClientInterestRecursiveByClient (APlay.Generated.Intern.Server.__IClientAPEvents client);
     void SyncedWithBlockSymbol (APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob);
@@ -374,6 +460,7 @@ namespace APlayTest.Server
     void SyncedWithProjectManager (APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob);
     void SyncedWithSheet (APlay.Generated.Intern.Server.__ISheetAPEvents ob);
     void SyncedWithSheetManager (APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob);
+    void SyncedWithUndoManager (APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob);
     void SyncedWithUser (APlay.Generated.Intern.Server.__IUserAPEvents ob);
   };
 }
@@ -437,7 +524,7 @@ namespace APlayTest.Server
 }
 namespace APlayTest.Server
 {
-  public interface  IUserObjectFactory : APlayTest.Server.IBlockSymbolUserFactory, APlayTest.Server.IClientUserFactory, APlayTest.Server.IProjectUserFactory, APlayTest.Server.IProjectManagerUserFactory, APlayTest.Server.ISheetUserFactory, APlayTest.Server.ISheetManagerUserFactory, APlayTest.Server.IUserUserFactory
+  public interface  IUserObjectFactory : APlayTest.Server.IBlockSymbolUserFactory, APlayTest.Server.IClientUserFactory, APlayTest.Server.IProjectUserFactory, APlayTest.Server.IProjectManagerUserFactory, APlayTest.Server.ISheetUserFactory, APlayTest.Server.ISheetManagerUserFactory, APlayTest.Server.IUndoManagerUserFactory, APlayTest.Server.IUserUserFactory
   {
   };
 }
@@ -481,6 +568,13 @@ namespace APlayTest.Server
   public interface  ISheetManagerUserFactory
   {
     APlayTest.Server.ISheetManagerImpl CreateSheetManager ();
+  };
+}
+namespace APlayTest.Server
+{
+  public interface  IUndoManagerUserFactory
+  {
+    APlayTest.Server.IUndoManagerImpl CreateUndoManager ();
   };
 }
 namespace APlayTest.Server
@@ -879,6 +973,25 @@ namespace APlayTest.Server
         }
       }
     }
+    public abstract void onSetPosition(APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__);
+    public void onInternSetPosition(APlay.Generated.Intern.Server.__AplayPoint position__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
+    {
+      if(SetPositionEventHandler!=null)
+      {
+        SetPositionEventHandler(new APlayTest.Server.AplayPoint(((double) (position__.X)), ((double) (position__.Y))), ((APlayTest.Server.Client) (client__)));
+      }
+      else
+      {
+        if(APlayTest.Server.BlockSymbolSkeleton.StaticSetPositionEventHandler!=null)
+        {
+          APlayTest.Server.BlockSymbolSkeleton.StaticSetPositionEventHandler(new APlayTest.Server.AplayPoint(((double) (position__.X)), ((double) (position__.Y))), ((APlayTest.Server.Client) (client__)), ((APlayTest.Server.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onSetPosition(new APlayTest.Server.AplayPoint(((double) (position__.X)), ((double) (position__.Y))), ((APlayTest.Server.Client) (client__)));
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implBlockSymbol.RequiresInit();
@@ -930,6 +1043,10 @@ namespace APlayTest.Server
     {
       implBlockSymbol.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implBlockSymbol.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implBlockSymbol.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -962,6 +1079,10 @@ namespace APlayTest.Server
     {
       implBlockSymbol.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
+    public void SyncedWithUndoManager(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implBlockSymbol.SyncedWithUndoManager(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implBlockSymbol.SyncedWithUser(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -982,6 +1103,8 @@ namespace APlayTest.Server
     static public event APlayTest.Server.Delegates.void_float64_BlockSymbol StaticPositionYChangeEventHandler;
     public event APlayTest.Server.Delegates.void_AplaySize SizeChangeEventHandler;
     static public event APlayTest.Server.Delegates.void_AplaySize_BlockSymbol StaticSizeChangeEventHandler;
+    public event APlayTest.Server.Delegates.void_AplayPoint_Client SetPositionEventHandler;
+    static public event APlayTest.Server.Delegates.void_AplayPoint_Client_BlockSymbol StaticSetPositionEventHandler;
     private APlay.Generated.Intern.Server.__IBlockSymbolAPImpl implBlockSymbol;
   }
   
@@ -1029,6 +1152,22 @@ namespace APlayTest.Server
         }
       }
     }
+    public virtual int Id
+    {
+      set
+      {
+        {
+          //int32
+          implClient.Id = value;
+        }
+      }
+      get
+      {
+        {
+          return (implClient.Id);
+        }
+      }
+    }
     public virtual APlayTest.Server.Project CurrentProject
     {
       set
@@ -1058,6 +1197,22 @@ namespace APlayTest.Server
       {
         {
           return (((APlayTest.Server.ProjectManager) (implClient.ProjectManager)));
+        }
+      }
+    }
+    public virtual APlayTest.Server.UndoManager UndoManager
+    {
+      set
+      {
+        {
+          //UndoManager
+          implClient.UndoManager = ((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (value));
+        }
+      }
+      get
+      {
+        {
+          return (((APlayTest.Server.UndoManager) (implClient.UndoManager)));
         }
       }
     }
@@ -1152,6 +1307,10 @@ namespace APlayTest.Server
     {
       implClient.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implClient.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implClient.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -1183,6 +1342,10 @@ namespace APlayTest.Server
     public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
     {
       implClient.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
+    public void SyncedWithUndoManager(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implClient.SyncedWithUndoManager(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
     }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
@@ -1374,6 +1537,10 @@ namespace APlayTest.Server
     {
       implProject.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implProject.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implProject.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -1405,6 +1572,10 @@ namespace APlayTest.Server
     public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
     {
       implProject.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
+    public void SyncedWithUndoManager(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implProject.SyncedWithUndoManager(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
     }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
@@ -1662,6 +1833,10 @@ namespace APlayTest.Server
     {
       implProjectManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implProjectManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implProjectManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -1693,6 +1868,10 @@ namespace APlayTest.Server
     public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
     {
       implProjectManager.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
+    public void SyncedWithUndoManager(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implProjectManager.SyncedWithUndoManager(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
     }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
@@ -2015,6 +2194,10 @@ namespace APlayTest.Server
     {
       implSheet.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implSheet.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implSheet.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -2046,6 +2229,10 @@ namespace APlayTest.Server
     public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
     {
       implSheet.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
+    public void SyncedWithUndoManager(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implSheet.SyncedWithUndoManager(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
     }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
@@ -2212,6 +2399,10 @@ namespace APlayTest.Server
     {
       implSheetManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implSheetManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implSheetManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -2244,6 +2435,10 @@ namespace APlayTest.Server
     {
       implSheetManager.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
+    public void SyncedWithUndoManager(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implSheetManager.SyncedWithUndoManager(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implSheetManager.SyncedWithUser(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -2261,6 +2456,587 @@ namespace APlayTest.Server
     public event APlayTest.Server.Delegates.void_Sheet AddSheetEventHandler;
     static public event APlayTest.Server.Delegates.void_Sheet_SheetManager StaticAddSheetEventHandler;
     private APlay.Generated.Intern.Server.__ISheetManagerAPImpl implSheetManager;
+  }
+  
+}
+namespace APlayTest.Server
+{
+  public abstract partial class UndoManagerSkeleton : APlayTest.Server.IUndoManagerSkeleton, APlay.Generated.Intern.Server.__IUndoManagerAPEvents
+  {
+    public UndoManagerSkeleton()
+    {
+      if(APlay.Common.APlayInitializer.GetInitializer()!=null)
+      {
+        this.setUndoManagerObject(((APlay.Generated.Intern.Server.__IUndoManagerAPImpl) (APlay.Common.APlayInitializer.GetInitializer())));
+      }
+      else
+      {
+        this.setUndoManagerObject(APlayObjectFactory.CreateUndoManagerImpl());
+      }
+      ((APlay.Generated.Intern.Server.__UndoManager) (this.getUndoManagerObject())).UndoManagerHandler = ((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (((APlayTest.Server.UndoManagerSkeleton) (this))));
+    }
+    public virtual APlayTest.Server.Client DataClient
+    {
+      set
+      {
+        {
+          //Client
+          implUndoManager.DataClient = ((APlay.Generated.Intern.Server.__IClientAPEvents) (value));
+        }
+      }
+      get
+      {
+        {
+          return (((APlayTest.Server.Client) (implUndoManager.DataClient)));
+        }
+      }
+    }
+    public virtual bool CanUndo
+    {
+      set
+      {
+        {
+          //boolean
+          implUndoManager.CanUndo = value;
+        }
+      }
+      get
+      {
+        {
+          return (implUndoManager.CanUndo);
+        }
+      }
+    }
+    public virtual bool CanRedo
+    {
+      set
+      {
+        {
+          //boolean
+          implUndoManager.CanRedo = value;
+        }
+      }
+      get
+      {
+        {
+          return (implUndoManager.CanRedo);
+        }
+      }
+    }
+    public virtual APlayTest.Server.HistoryEntryList History
+    {
+      set
+      {
+        {
+          //HistoryEntry
+          implUndoManager.History = ((APlay.Generated.Intern.Server.IHistoryEntryListEvents) (value));
+        }
+      }
+      get
+      {
+        {
+          return (((APlayTest.Server.HistoryEntryList) (implUndoManager.History)));
+        }
+      }
+    }
+    public virtual int ActiveHistoryEntryId
+    {
+      set
+      {
+        {
+          //int32
+          implUndoManager.ActiveHistoryEntryId = value;
+        }
+      }
+      get
+      {
+        {
+          return (implUndoManager.ActiveHistoryEntryId);
+        }
+      }
+    }
+    public virtual ulong APlayEntityId
+    {
+      get
+      {
+        {
+          return (implUndoManager.APlayEntityId);
+        }
+      }
+    }
+    public virtual void onDataClientChange(APlayTest.Server.Client NewDataClient__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onDataClientChange received","Server.Designed");
+    }
+    public void onInternDataClientChange(APlay.Generated.Intern.Server.__IClientAPEvents NewDataClient__)
+    {
+      if(DataClientChangeEventHandler!=null)
+      {
+        DataClientChangeEventHandler(((APlayTest.Server.Client) (NewDataClient__)));
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticDataClientChangeEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticDataClientChangeEventHandler(((APlayTest.Server.Client) (NewDataClient__)), ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onDataClientChange(((APlayTest.Server.Client) (NewDataClient__)));
+        }
+      }
+    }
+    public virtual void onCanUndoChange(bool NewCanUndo__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onCanUndoChange received","Server.Designed");
+    }
+    public void onInternCanUndoChange(bool NewCanUndo__)
+    {
+      if(CanUndoChangeEventHandler!=null)
+      {
+        CanUndoChangeEventHandler(NewCanUndo__);
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticCanUndoChangeEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticCanUndoChangeEventHandler(NewCanUndo__, ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onCanUndoChange(NewCanUndo__);
+        }
+      }
+    }
+    public virtual void onCanRedoChange(bool NewCanRedo__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onCanRedoChange received","Server.Designed");
+    }
+    public void onInternCanRedoChange(bool NewCanRedo__)
+    {
+      if(CanRedoChangeEventHandler!=null)
+      {
+        CanRedoChangeEventHandler(NewCanRedo__);
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticCanRedoChangeEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticCanRedoChangeEventHandler(NewCanRedo__, ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onCanRedoChange(NewCanRedo__);
+        }
+      }
+    }
+    public virtual void onHistoryReplace(APlayTest.Server.HistoryEntryList History__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryReplace received","Server.Designed");
+    }
+    public void onInternHistoryReplace(APlay.Generated.Intern.Server.IHistoryEntryListEvents History__)
+    {
+      if(HistoryReplaceEventHandler!=null)
+      {
+        HistoryReplaceEventHandler(((APlayTest.Server.HistoryEntryList) (History__)));
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticHistoryReplaceEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticHistoryReplaceEventHandler(((APlayTest.Server.HistoryEntryList) (History__)), ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryReplace(((APlayTest.Server.HistoryEntryList) (History__)));
+        }
+      }
+    }
+    public virtual void onHistoryAdd(APlayTest.Server.HistoryEntry element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryAdd received","Server.Designed");
+    }
+    public void onInternHistoryAdd(APlay.Generated.Intern.Server.__HistoryEntry element)
+    {
+      if(HistoryAddEventHandler!=null)
+      {
+        HistoryAddEventHandler(new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticHistoryAddEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticHistoryAddEventHandler(new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))), ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryAdd(new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+        }
+      }
+    }
+    public virtual void onHistoryRemove(APlayTest.Server.HistoryEntry element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryRemove received","Server.Designed");
+    }
+    public void onInternHistoryRemove(APlay.Generated.Intern.Server.__HistoryEntry element)
+    {
+      if(HistoryRemoveEventHandler!=null)
+      {
+        HistoryRemoveEventHandler(new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticHistoryRemoveEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticHistoryRemoveEventHandler(new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))), ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryRemove(new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+        }
+      }
+    }
+    public virtual void onHistoryClear()
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryClear received","Server.Designed");
+    }
+    public void onInternHistoryClear()
+    {
+      if(HistoryClearEventHandler!=null)
+      {
+        HistoryClearEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticHistoryClearEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticHistoryClearEventHandler(((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryClear();
+        }
+      }
+    }
+    public virtual void onHistoryInsertAt(int pos, APlayTest.Server.HistoryEntry element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryInsertAt received","Server.Designed");
+    }
+    public void onInternHistoryInsertAt(int pos, APlay.Generated.Intern.Server.__HistoryEntry element)
+    {
+      if(HistoryInsertAtEventHandler!=null)
+      {
+        HistoryInsertAtEventHandler(pos, new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticHistoryInsertAtEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticHistoryInsertAtEventHandler(pos, new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))), ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryInsertAt(pos, new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+        }
+      }
+    }
+    public virtual void onHistorySetAt(int pos, APlayTest.Server.HistoryEntry element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistorySetAt received","Server.Designed");
+    }
+    public void onInternHistorySetAt(int pos, APlay.Generated.Intern.Server.__HistoryEntry element)
+    {
+      if(HistorySetAtEventHandler!=null)
+      {
+        HistorySetAtEventHandler(pos, new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticHistorySetAtEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticHistorySetAtEventHandler(pos, new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))), ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistorySetAt(pos, new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+        }
+      }
+    }
+    public virtual void onHistoryRemoveAt(int pos, APlayTest.Server.HistoryEntry element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryRemoveAt received","Server.Designed");
+    }
+    public void onInternHistoryRemoveAt(int pos, APlay.Generated.Intern.Server.__HistoryEntry element)
+    {
+      if(HistoryRemoveAtEventHandler!=null)
+      {
+        HistoryRemoveAtEventHandler(pos, new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticHistoryRemoveAtEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticHistoryRemoveAtEventHandler(pos, new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))), ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryRemoveAt(pos, new APlayTest.Server.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+        }
+      }
+    }
+    public virtual void onActiveHistoryEntryIdChange(int NewActiveHistoryEntryId__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onActiveHistoryEntryIdChange received","Server.Designed");
+    }
+    public void onInternActiveHistoryEntryIdChange(int NewActiveHistoryEntryId__)
+    {
+      if(ActiveHistoryEntryIdChangeEventHandler!=null)
+      {
+        ActiveHistoryEntryIdChangeEventHandler(NewActiveHistoryEntryId__);
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticActiveHistoryEntryIdChangeEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticActiveHistoryEntryIdChangeEventHandler(NewActiveHistoryEntryId__, ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onActiveHistoryEntryIdChange(NewActiveHistoryEntryId__);
+        }
+      }
+    }
+    public abstract void onStartTransaction(String description__);
+    public void onInternStartTransaction(String description__)
+    {
+      if(StartTransactionEventHandler!=null)
+      {
+        StartTransactionEventHandler(description__);
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticStartTransactionEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticStartTransactionEventHandler(description__, ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onStartTransaction(description__);
+        }
+      }
+    }
+    public abstract void onEndTransaction();
+    public void onInternEndTransaction()
+    {
+      if(EndTransactionEventHandler!=null)
+      {
+        EndTransactionEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticEndTransactionEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticEndTransactionEventHandler(((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onEndTransaction();
+        }
+      }
+    }
+    public abstract void onCancelTransaction();
+    public void onInternCancelTransaction()
+    {
+      if(CancelTransactionEventHandler!=null)
+      {
+        CancelTransactionEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticCancelTransactionEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticCancelTransactionEventHandler(((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onCancelTransaction();
+        }
+      }
+    }
+    public abstract void onExecuteUndo();
+    public void onInternExecuteUndo()
+    {
+      if(ExecuteUndoEventHandler!=null)
+      {
+        ExecuteUndoEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticExecuteUndoEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticExecuteUndoEventHandler(((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onExecuteUndo();
+        }
+      }
+    }
+    public abstract void onExecuteRedo();
+    public void onInternExecuteRedo()
+    {
+      if(ExecuteRedoEventHandler!=null)
+      {
+        ExecuteRedoEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticExecuteRedoEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticExecuteRedoEventHandler(((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onExecuteRedo();
+        }
+      }
+    }
+    public bool RequiresInit()
+    {
+      bool retu = implUndoManager.RequiresInit();
+      return (((bool) (retu)));
+    }
+    public bool Release()
+    {
+      bool retu = implUndoManager.Release();
+      return (((bool) (retu)));
+    }
+    public void addOwner(APlay.Generated.Intern.Server.__IClientAPEvents owner)
+    {
+      implUndoManager.addOwner(((APlay.Generated.Intern.Server.__IClientAPEvents) (owner)));
+    }
+    public void removeOwner(APlay.Generated.Intern.Server.__IClientAPEvents owner)
+    {
+      implUndoManager.removeOwner(((APlay.Generated.Intern.Server.__IClientAPEvents) (owner)));
+    }
+    public bool isOwner(APlay.Generated.Intern.Server.__IClientAPEvents owner)
+    {
+      bool retu = implUndoManager.isOwner(((APlay.Generated.Intern.Server.__IClientAPEvents) (owner)));
+      return (((bool) (retu)));
+    }
+    public void removeClientInterest(APlay.Generated.Intern.Server.__IClientAPEvents client)
+    {
+      implUndoManager.removeClientInterest(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implUndoManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IClientAPEvents ob)
+    {
+      implUndoManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IProjectAPEvents ob)
+    {
+      implUndoManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IProjectAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob)
+    {
+      implUndoManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IProjectManagerAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__ISheetAPEvents ob)
+    {
+      implUndoManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implUndoManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implUndoManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
+    {
+      implUndoManager.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
+    }
+    public void removeClientInterestRecursiveByClient(APlay.Generated.Intern.Server.__IClientAPEvents client)
+    {
+      implUndoManager.removeClientInterestRecursiveByClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (client)));
+    }
+    public void SyncedWithBlockSymbol(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents ob)
+    {
+      implUndoManager.SyncedWithBlockSymbol(((APlay.Generated.Intern.Server.__IBlockSymbolAPEvents) (ob)));
+    }
+    public void SyncedWithClient(APlay.Generated.Intern.Server.__IClientAPEvents ob)
+    {
+      implUndoManager.SyncedWithClient(((APlay.Generated.Intern.Server.__IClientAPEvents) (ob)));
+    }
+    public void SyncedWithProject(APlay.Generated.Intern.Server.__IProjectAPEvents ob)
+    {
+      implUndoManager.SyncedWithProject(((APlay.Generated.Intern.Server.__IProjectAPEvents) (ob)));
+    }
+    public void SyncedWithProjectManager(APlay.Generated.Intern.Server.__IProjectManagerAPEvents ob)
+    {
+      implUndoManager.SyncedWithProjectManager(((APlay.Generated.Intern.Server.__IProjectManagerAPEvents) (ob)));
+    }
+    public void SyncedWithSheet(APlay.Generated.Intern.Server.__ISheetAPEvents ob)
+    {
+      implUndoManager.SyncedWithSheet(((APlay.Generated.Intern.Server.__ISheetAPEvents) (ob)));
+    }
+    public void SyncedWithSheetManager(APlay.Generated.Intern.Server.__ISheetManagerAPEvents ob)
+    {
+      implUndoManager.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
+    }
+    public void SyncedWithUndoManager(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implUndoManager.SyncedWithUndoManager(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
+    public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
+    {
+      implUndoManager.SyncedWithUser(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
+    }
+    public APlay.Generated.Intern.Server.__IUndoManagerAPImpl getUndoManagerObject()
+    {
+      return (implUndoManager);
+    }
+    public void setUndoManagerObject(APlay.Generated.Intern.Server.__IUndoManagerAPImpl impl)
+    {
+      implUndoManager = impl;
+    }
+    public event APlayTest.Server.Delegates.void_Client DataClientChangeEventHandler;
+    static public event APlayTest.Server.Delegates.void_Client_UndoManager StaticDataClientChangeEventHandler;
+    public event APlayTest.Server.Delegates.void_boolean CanUndoChangeEventHandler;
+    static public event APlayTest.Server.Delegates.void_boolean_UndoManager StaticCanUndoChangeEventHandler;
+    public event APlayTest.Server.Delegates.void_boolean CanRedoChangeEventHandler;
+    static public event APlayTest.Server.Delegates.void_boolean_UndoManager StaticCanRedoChangeEventHandler;
+    public event APlayTest.Server.Delegates.void_HistoryEntryList HistoryReplaceEventHandler;
+    static public event APlayTest.Server.Delegates.void_HistoryEntryList_UndoManager StaticHistoryReplaceEventHandler;
+    public event APlayTest.Server.Delegates.void_HistoryEntry HistoryAddEventHandler;
+    static public event APlayTest.Server.Delegates.void_HistoryEntry_UndoManager StaticHistoryAddEventHandler;
+    public event APlayTest.Server.Delegates.void_HistoryEntry HistoryRemoveEventHandler;
+    static public event APlayTest.Server.Delegates.void_HistoryEntry_UndoManager StaticHistoryRemoveEventHandler;
+    public event APlayTest.Server.Delegates.void_ HistoryClearEventHandler;
+    static public event APlayTest.Server.Delegates.void_UndoManager StaticHistoryClearEventHandler;
+    public event APlayTest.Server.Delegates.void_int32_HistoryEntry HistoryInsertAtEventHandler;
+    static public event APlayTest.Server.Delegates.void_int32_HistoryEntry_UndoManager StaticHistoryInsertAtEventHandler;
+    public event APlayTest.Server.Delegates.void_int32_HistoryEntry HistorySetAtEventHandler;
+    static public event APlayTest.Server.Delegates.void_int32_HistoryEntry_UndoManager StaticHistorySetAtEventHandler;
+    public event APlayTest.Server.Delegates.void_int32_HistoryEntry HistoryRemoveAtEventHandler;
+    static public event APlayTest.Server.Delegates.void_int32_HistoryEntry_UndoManager StaticHistoryRemoveAtEventHandler;
+    public event APlayTest.Server.Delegates.void_int32 ActiveHistoryEntryIdChangeEventHandler;
+    static public event APlayTest.Server.Delegates.void_int32_UndoManager StaticActiveHistoryEntryIdChangeEventHandler;
+    public event APlayTest.Server.Delegates.void_WString StartTransactionEventHandler;
+    static public event APlayTest.Server.Delegates.void_WString_UndoManager StaticStartTransactionEventHandler;
+    public event APlayTest.Server.Delegates.void_ EndTransactionEventHandler;
+    static public event APlayTest.Server.Delegates.void_UndoManager StaticEndTransactionEventHandler;
+    public event APlayTest.Server.Delegates.void_ CancelTransactionEventHandler;
+    static public event APlayTest.Server.Delegates.void_UndoManager StaticCancelTransactionEventHandler;
+    public event APlayTest.Server.Delegates.void_ ExecuteUndoEventHandler;
+    static public event APlayTest.Server.Delegates.void_UndoManager StaticExecuteUndoEventHandler;
+    public event APlayTest.Server.Delegates.void_ ExecuteRedoEventHandler;
+    static public event APlayTest.Server.Delegates.void_UndoManager StaticExecuteRedoEventHandler;
+    private APlay.Generated.Intern.Server.__IUndoManagerAPImpl implUndoManager;
   }
   
 }
@@ -2371,6 +3147,10 @@ namespace APlayTest.Server
     {
       implUser.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
+    public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implUser.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
     public void removeClientInterestRecursiveByObjectOwners(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implUser.removeClientInterestRecursiveByObjectOwners(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -2403,6 +3183,10 @@ namespace APlayTest.Server
     {
       implUser.SyncedWithSheetManager(((APlay.Generated.Intern.Server.__ISheetManagerAPEvents) (ob)));
     }
+    public void SyncedWithUndoManager(APlay.Generated.Intern.Server.__IUndoManagerAPEvents ob)
+    {
+      implUser.SyncedWithUndoManager(((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (ob)));
+    }
     public void SyncedWithUser(APlay.Generated.Intern.Server.__IUserAPEvents ob)
     {
       implUser.SyncedWithUser(((APlay.Generated.Intern.Server.__IUserAPEvents) (ob)));
@@ -2425,13 +3209,13 @@ namespace APlayTest.Server
 {
   public partial struct AplayPoint
   {
-    public AplayPoint(float X__, float Y__)
+    public AplayPoint(double X__, double Y__)
     {
       X = X__;
       Y = Y__;
     }
-    public float X;
-    public float Y;
+    public double X;
+    public double Y;
     public static bool operator ==(AplayPoint a, AplayPoint b)
     {
       if (System.Object.ReferenceEquals(a, b)) return true;
@@ -2512,6 +3296,53 @@ namespace APlayTest.Server
     public override string ToString()
     {
       return "["+Width.ToString()+"]" + "["+Height.ToString()+"]";
+    }
+  }
+}
+namespace APlayTest.Server
+{
+  public partial struct HistoryEntry
+  {
+    public HistoryEntry(int Id__, String Description__)
+    {
+      Id = Id__;
+      Description = Description__;
+    }
+    public int Id;
+    public String Description;
+    public static bool operator ==(HistoryEntry a, HistoryEntry b)
+    {
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return true&& (a.Id==b.Id)&& (a.Description==b.Description);
+    }
+    public override bool Equals(System.Object obj)
+    {
+      if (ReferenceEquals(null, obj))
+      {
+        return false;
+      }
+      if (obj.GetType() != typeof(HistoryEntry))
+      {
+        return false;
+      }
+      HistoryEntry a = this;
+      HistoryEntry b = (HistoryEntry)obj;
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return (a.Id==b.Id)&&(a.Description==b.Description);
+    }
+    public override int GetHashCode()
+    {
+      return Id.GetHashCode() + Description.GetHashCode();
+    }
+    public static bool operator !=(HistoryEntry a, HistoryEntry b)
+    {
+      return !(a == b);
+    }
+    public override string ToString()
+    {
+      return "["+Id.ToString()+"]" + "["+Description.ToString()+"]";
     }
   }
 }
@@ -3002,6 +3833,162 @@ namespace APlayTest.Server
 }
 namespace APlayTest.Server
 {
+  public partial class HistoryEntryList : IList<APlayTest.Server.HistoryEntry>, APlay.Generated.Intern.Server.IHistoryEntryListEvents
+  {
+    public HistoryEntryList()
+    {
+      APlay.Generated.Intern.Server.IHistoryEntryListImpl impl_=null;
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Server.HistoryEntryList();
+      }
+    }
+    public HistoryEntryList(APlay.Generated.Intern.Server.IHistoryEntryListImpl impl_)
+    {
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Server.HistoryEntryList();
+      }
+    }
+    public static APlayTest.Server.HistoryEntryList CreateForAPlay(APlay.Generated.Intern.Server.IHistoryEntryListImpl impl)
+    {
+      APlayTest.Server.HistoryEntryList ob = new APlayTest.Server.HistoryEntryList(impl);
+      return (ob);
+    }
+    public APlay.Generated.Intern.Server.IHistoryEntryListImpl getHistoryEntryObject()
+    {
+      return (impl);
+    }
+    private APlay.Generated.Intern.Server.IHistoryEntryListImpl impl;
+    
+public int IndexOf(APlayTest.Server.HistoryEntry item)
+{
+    return (int)impl.indexOf(new APlay.Generated.Intern.Server.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+}
+
+public void Insert(int index, APlayTest.Server.HistoryEntry item)
+{
+    impl.insertAt(index, new APlay.Generated.Intern.Server.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+}
+
+public void RemoveAt(int index)
+{
+    impl.removeAt(index);
+}
+
+public APlayTest.Server.HistoryEntry this[int index]
+{
+    get
+    {
+        APlay.Generated.Intern.Server.__HistoryEntry item = (APlay.Generated.Intern.Server.__HistoryEntry)impl.get((int)index);
+        return new APlayTest.Server.HistoryEntry(((int) (item.Id)), ((String) (item.Description)));
+    }
+    set
+    {
+        APlayTest.Server.HistoryEntry item =value;
+        impl.setAt(index,new APlay.Generated.Intern.Server.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+    }
+}
+
+public void Add(APlayTest.Server.HistoryEntry item)
+{
+    impl.add(new APlay.Generated.Intern.Server.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+}
+
+public void Clear()
+{
+    impl.clear();
+}
+
+public bool Contains(APlayTest.Server.HistoryEntry item)
+{
+    return impl.contains(new APlay.Generated.Intern.Server.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+}
+
+public void CopyTo(APlayTest.Server.HistoryEntry[] array, int arrayIndex)
+{
+    int i=arrayIndex;
+    foreach (APlayTest.Server.HistoryEntry item in this)
+    {
+        array[i++]=item;
+    }
+}
+
+public int Count
+{
+    get { return (int)impl.length(); }
+}
+
+public bool IsReadOnly
+{
+    get { return false; }
+}
+
+public bool Remove(APlayTest.Server.HistoryEntry item)
+{
+    return impl.remove(new APlay.Generated.Intern.Server.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+}
+System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+{
+    return GetEnumerator();
+}
+
+    public IEnumerator<APlayTest.Server.HistoryEntry> GetEnumerator()
+    {
+        return new HistoryEntryListEnumerator(impl.GetEnumerator());
+    }
+    
+  }
+  
+}
+namespace APlayTest.Server
+{
+  public partial class HistoryEntryListEnumerator : IEnumerator<APlayTest.Server.HistoryEntry>
+  {
+    
+        IEnumerator<APlay.Generated.Intern.Server.__HistoryEntry> intern;
+        public HistoryEntryListEnumerator(IEnumerator<APlay.Generated.Intern.Server.__HistoryEntry> intern)
+        {
+            this.intern = intern;
+        }
+        public APlayTest.Server.HistoryEntry Current
+        {
+            get { APlay.Generated.Intern.Server.__HistoryEntry item = (APlay.Generated.Intern.Server.__HistoryEntry)intern.Current; return new APlayTest.Server.HistoryEntry(((int) (item.Id)), ((String) (item.Description)));}
+        }
+
+        public void Dispose()
+        {
+            intern.Dispose();
+        }
+
+        object System.Collections.IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public bool MoveNext()
+        {
+            return intern.MoveNext();
+        }
+
+        public void Reset()
+        {
+            intern.Reset();
+        }
+
+  }
+  
+}
+namespace APlayTest.Server
+{
   public partial class APlayObjectFactory
   {
     public static void SetUserFactory(APlayTest.Server.IUserObjectFactory factory)
@@ -3012,6 +3999,7 @@ namespace APlayTest.Server
       ProjectManager_ = factory;
       Sheet_ = factory;
       SheetManager_ = factory;
+      UndoManager_ = factory;
       User_ = factory;
     }
     public static void SetAPlayDefaultFactory()
@@ -3022,6 +4010,7 @@ namespace APlayTest.Server
       ProjectManager_ = null;
       Sheet_ = null;
       SheetManager_ = null;
+      UndoManager_ = null;
       User_ = null;
     }
     public static void SetBlockSymbolUserFactory(APlayTest.Server.IBlockSymbolUserFactory factory)
@@ -3144,6 +4133,26 @@ namespace APlayTest.Server
         return (APlay.Generated.Intern.Server.APlayInternalFactory.CreateSheetManager());
       }
     }
+    public static void SetUndoManagerUserFactory(APlayTest.Server.IUndoManagerUserFactory factory)
+    {
+      UndoManager_ = factory;
+    }
+    public static void SetUndoManagerAPlayDefaultFactory()
+    {
+      UndoManager_ = null;
+    }
+    public static APlay.Generated.Intern.Server.__IUndoManagerAPImpl CreateUndoManagerImpl()
+    {
+      if(UndoManager_!=null)
+      {
+        APlay.Common.Logging.Logger.LogDesigned(6,"event adapters are temporarily disabled","Server.Designed");
+        return (null);
+      }
+      else
+      {
+        return (APlay.Generated.Intern.Server.APlayInternalFactory.CreateUndoManager());
+      }
+    }
     public static void SetUserUserFactory(APlayTest.Server.IUserUserFactory factory)
     {
       User_ = factory;
@@ -3170,6 +4179,7 @@ namespace APlayTest.Server
     static private APlayTest.Server.IProjectManagerUserFactory ProjectManager_;
     static private APlayTest.Server.ISheetUserFactory Sheet_;
     static private APlayTest.Server.ISheetManagerUserFactory SheetManager_;
+    static private APlayTest.Server.IUndoManagerUserFactory UndoManager_;
     static private APlayTest.Server.IUserUserFactory User_;
   }
   
@@ -3220,6 +4230,13 @@ namespace APlayTest.Server
       APlay.Common.APlayInitializer.SetInitializer(null);
       return (retu__);
     }
+    public APlay.Generated.Intern.Server.__IUndoManagerAPEvents CreateUndoManagerEvents(APlay.Generated.Intern.Server.__IUndoManagerAPImpl impl)
+    {
+      APlay.Common.APlayInitializer.SetInitializer(impl);
+      APlay.Generated.Intern.Server.__IUndoManagerAPEvents retu__ = ((APlay.Generated.Intern.Server.__IUndoManagerAPEvents) (new APlayTest.Server.UndoManager()));
+      APlay.Common.APlayInitializer.SetInitializer(null);
+      return (retu__);
+    }
     public APlay.Generated.Intern.Server.__IUserAPEvents CreateUserEvents(APlay.Generated.Intern.Server.__IUserAPImpl impl)
     {
       APlay.Common.APlayInitializer.SetInitializer(impl);
@@ -3238,6 +4255,10 @@ namespace APlayTest.Server
     public APlay.Generated.Intern.Server.ISheetListEvents CreateSheetListEvents(APlay.Generated.Intern.Server.ISheetListImpl impl)
     {
       return (((APlay.Generated.Intern.Server.ISheetListEvents) (APlayTest.Server.SheetList.CreateForAPlay(impl))));
+    }
+    public APlay.Generated.Intern.Server.IHistoryEntryListEvents CreateHistoryEntryListEvents(APlay.Generated.Intern.Server.IHistoryEntryListImpl impl)
+    {
+      return (((APlay.Generated.Intern.Server.IHistoryEntryListEvents) (APlayTest.Server.HistoryEntryList.CreateForAPlay(impl))));
     }
   }
   
@@ -3265,6 +4286,8 @@ namespace APlayTest.Server
     public delegate void void_float64_BlockSymbol(double NewPositionX__, APlayTest.Server.BlockSymbol this_);
     public delegate void void_AplaySize(APlayTest.Server.AplaySize NewSize__);
     public delegate void void_AplaySize_BlockSymbol(APlayTest.Server.AplaySize NewSize__, APlayTest.Server.BlockSymbol this_);
+    public delegate void void_AplayPoint_Client(APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__);
+    public delegate void void_AplayPoint_Client_BlockSymbol(APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__, APlayTest.Server.BlockSymbol this_);
     public delegate void void_User(APlayTest.Server.User NewCurrentUser__);
     public delegate void void_User_Client(APlayTest.Server.User NewCurrentUser__, APlayTest.Server.Client this_);
     public delegate void void_int32_Project(int NewId__, APlayTest.Server.Project this_);
@@ -3290,8 +4313,20 @@ namespace APlayTest.Server
     public delegate APlayTest.Server.Sheet Sheet_();
     public delegate APlayTest.Server.Sheet Sheet_SheetManager(APlayTest.Server.SheetManager this_);
     public delegate void void_Sheet_SheetManager(APlayTest.Server.Sheet sheet__, APlayTest.Server.SheetManager this_);
+    public delegate void void_Client(APlayTest.Server.Client NewDataClient__);
+    public delegate void void_Client_UndoManager(APlayTest.Server.Client NewDataClient__, APlayTest.Server.UndoManager this_);
+    public delegate void void_boolean(bool NewCanUndo__);
+    public delegate void void_boolean_UndoManager(bool NewCanUndo__, APlayTest.Server.UndoManager this_);
+    public delegate void void_HistoryEntryList(APlayTest.Server.HistoryEntryList History__);
+    public delegate void void_HistoryEntryList_UndoManager(APlayTest.Server.HistoryEntryList History__, APlayTest.Server.UndoManager this_);
+    public delegate void void_HistoryEntry(APlayTest.Server.HistoryEntry element);
+    public delegate void void_HistoryEntry_UndoManager(APlayTest.Server.HistoryEntry element, APlayTest.Server.UndoManager this_);
+    public delegate void void_UndoManager(APlayTest.Server.UndoManager this_);
+    public delegate void void_int32_HistoryEntry(int pos, APlayTest.Server.HistoryEntry element);
+    public delegate void void_int32_HistoryEntry_UndoManager(int pos, APlayTest.Server.HistoryEntry element, APlayTest.Server.UndoManager this_);
+    public delegate void void_int32_UndoManager(int NewActiveHistoryEntryId__, APlayTest.Server.UndoManager this_);
+    public delegate void void_WString_UndoManager(String description__, APlayTest.Server.UndoManager this_);
     public delegate void void_WString_User(String NewName__, APlayTest.Server.User this_);
-    public delegate void void_Client(APlayTest.Server.Client client);
     public delegate void void_Client_APlayServerSkeleton(APlayTest.Server.Client client, APlayTest.Server.APlayServerSkeleton this_);
     public delegate void void_APlayServerSkeleton(APlayTest.Server.APlayServerSkeleton this_);
     public delegate void void_String(String reason);

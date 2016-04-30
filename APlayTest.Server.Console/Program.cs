@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using APlayTest.Server.Factories;
 using APlayTest.Services;
+using sbardos.UndoFramework;
 
 namespace APlayTest.Server.Console
 {
@@ -14,8 +15,12 @@ namespace APlayTest.Server.Console
     {
         public static void Main()
         {
-            var server = new APlayServer(Int32.Parse(Properties.Settings.Default.ServerPort), new ProjectManagerFactory(new ProjectManagerService()));
-                       
+            var undoServiceFactory = new UndoServiceFactory();
+            var undoService = undoServiceFactory.Create();
+
+            var server = new APlayServer(Int32.Parse(Properties.Settings.Default.ServerPort),
+                new ProjectManagerFactory(new ProjectManagerService(), undoService), undoService);
+
         }
     }
 }

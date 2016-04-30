@@ -27,4 +27,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
     }
 
     internal delegate void ConnectorItemDraggingEventHandler(object sender, ConnectorItemDraggingEventArgs e);
+
+
+   
 }

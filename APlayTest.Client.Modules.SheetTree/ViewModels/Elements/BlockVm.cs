@@ -3,28 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
 {
-    public class Block : ElementViewModel
+    public class BlockVm : ElementViewModel
     {
         private readonly BlockSymbol _blockSymbol;
+        private readonly Client _client;
         private double _x;
         private double _y;
 
-        public Block(BlockSymbol blockSymbol)
+        public BlockVm(BlockSymbol blockSymbol, Client client)
         {
             _blockSymbol = blockSymbol;
-
-            _x= _blockSymbol.PositionX;
+            _client = client;
+            
+            _x = _blockSymbol.PositionX;
             _y = _blockSymbol.PositionY;
 
             _blockSymbol.PositionXChangeEventHandler += x => X = x;
             _blockSymbol.PositionYChangeEventHandler += y => Y = y;
-            
+
             Id = blockSymbol.Id;
+
+            AddInputConnector("Input1", Colors.BlueViolet);
+            AddInputConnector("Input2", Colors.BlueViolet);
+            OutputConnector = new OutputConnectorViewModel(this, "Output1", Colors.Black);
         }
+
+       
+
+      
 
         public int Id { get; private set; }
 
@@ -33,9 +44,11 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
             get { return _x; }
             set
             {
-                if (value.Equals(_x)) return;
+                if (Math.Abs(value - _x) < double.Epsilon)
+                    return;
+
                 _x = value;
-                _blockSymbol.PositionX = _x;
+                       
                 NotifyOfPropertyChange(() => X);
             }
         }
@@ -45,11 +58,18 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
             get { return _y; }
             set
             {
-                if (value.Equals(_y)) return;
+                if (Math.Abs(value - _y) < double.Epsilon) 
+                    return;
+               
                 _y = value;
-                _blockSymbol.PositionY = _y;
+                
                 NotifyOfPropertyChange(() => Y);
             }
+        }
+
+        public void SetPosition(double positionX, double positionY)
+        {
+            _blockSymbol.SetPosition(new AplayPoint(positionX, positionY), _client);
         }
     }
 }

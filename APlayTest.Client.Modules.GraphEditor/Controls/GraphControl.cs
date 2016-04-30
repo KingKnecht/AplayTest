@@ -26,7 +26,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public IEnumerable ElementsSource
         {
-            get { return (IEnumerable) GetValue(ElementsSourceProperty); }
+            get { return (IEnumerable)GetValue(ElementsSourceProperty); }
             set { SetValue(ElementsSourceProperty, value); }
         }
 
@@ -35,7 +35,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public Style ElementItemContainerStyle
         {
-            get { return (Style) GetValue(ElementItemContainerStyleProperty); }
+            get { return (Style)GetValue(ElementItemContainerStyleProperty); }
             set { SetValue(ElementItemContainerStyleProperty, value); }
         }
 
@@ -44,7 +44,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public DataTemplate ElementItemTemplate
         {
-            get { return (DataTemplate) GetValue(ElementItemTemplateProperty); }
+            get { return (DataTemplate)GetValue(ElementItemTemplateProperty); }
             set { SetValue(ElementItemTemplateProperty, value); }
         }
 
@@ -53,7 +53,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public DataTemplateSelector ElementItemDataTemplateSelector
         {
-            get { return (DataTemplateSelector) GetValue(ElementItemDataTemplateSelectorProperty); }
+            get { return (DataTemplateSelector)GetValue(ElementItemDataTemplateSelectorProperty); }
             set { SetValue(ElementItemDataTemplateSelectorProperty, value); }
         }
 
@@ -62,7 +62,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public DataTemplateSelector ConnectionItemDataTemplateSelector
         {
-            get { return (DataTemplateSelector) GetValue(ConnectionItemDataTemplateSelectorProperty); }
+            get { return (DataTemplateSelector)GetValue(ConnectionItemDataTemplateSelectorProperty); }
             set { SetValue(ConnectionItemDataTemplateSelectorProperty, value); }
         }
 
@@ -71,7 +71,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public IEnumerable ConnectionsSource
         {
-            get { return (IEnumerable) GetValue(ConnectionsSourceProperty); }
+            get { return (IEnumerable)GetValue(ConnectionsSourceProperty); }
             set { SetValue(ConnectionsSourceProperty, value); }
         }
 
@@ -80,7 +80,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public Style ConnectionItemContainerStyle
         {
-            get { return (Style) GetValue(ConnectionItemContainerStyleProperty); }
+            get { return (Style)GetValue(ConnectionItemContainerStyleProperty); }
             set { SetValue(ConnectionItemContainerStyleProperty, value); }
         }
 
@@ -89,7 +89,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public DataTemplate ConnectionItemTemplate
         {
-            get { return (DataTemplate) GetValue(ConnectionItemTemplateProperty); }
+            get { return (DataTemplate)GetValue(ConnectionItemTemplateProperty); }
             set { SetValue(ConnectionItemTemplateProperty, value); }
         }
 
@@ -98,15 +98,15 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
         #region Routed events
 
         public static readonly RoutedEvent ConnectionDragStartedEvent = EventManager.RegisterRoutedEvent(
-            "ConnectionDragStarted", RoutingStrategy.Bubble, typeof(ConnectionDragStartedEventHandler), 
+            "ConnectionDragStarted", RoutingStrategy.Bubble, typeof(ConnectionDragStartedEventHandler),
             typeof(GraphControl));
 
         public static readonly RoutedEvent ConnectionDraggingEvent = EventManager.RegisterRoutedEvent(
-            "ConnectionDragging", RoutingStrategy.Bubble, typeof(ConnectionDraggingEventHandler), 
+            "ConnectionDragging", RoutingStrategy.Bubble, typeof(ConnectionDraggingEventHandler),
             typeof(GraphControl));
 
         public static readonly RoutedEvent ConnectionDragCompletedEvent = EventManager.RegisterRoutedEvent(
-            "ConnectionDragCompleted", RoutingStrategy.Bubble, typeof(ConnectionDragCompletedEventHandler), 
+            "ConnectionDragCompleted", RoutingStrategy.Bubble, typeof(ConnectionDragCompletedEventHandler),
             typeof(GraphControl));
 
         public event ConnectionDragStartedEventHandler ConnectionDragStarted
@@ -127,6 +127,37 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
             remove { RemoveHandler(ConnectionDragCompletedEvent, value); }
         }
 
+        /*ElementItem dragging events*/
+        public static readonly RoutedEvent ElementItemDragStartedEvent = EventManager.RegisterRoutedEvent(
+            "ElementItemDragStarted", RoutingStrategy.Bubble, typeof(ElementItemDragStartedEventHandler),
+            typeof(GraphControl));
+
+        public static readonly RoutedEvent ElementItemDraggingEvent = EventManager.RegisterRoutedEvent(
+            "ElementItemDragging", RoutingStrategy.Bubble, typeof(ElementItemDraggingEventHandler),
+            typeof(GraphControl));
+
+        public static readonly RoutedEvent ElementItemDragCompletedEvent = EventManager.RegisterRoutedEvent(
+            "ElementItemDragCompleted", RoutingStrategy.Bubble, typeof(ElementItemDragCompletedEventHandler),
+            typeof(GraphControl));
+
+        public event ElementItemDragStartedEventHandler ElementItemDragStarted
+        {
+            add { AddHandler(ElementItemDragStartedEvent, value); }
+            remove { RemoveHandler(ElementItemDragStartedEvent, value); }
+        }
+
+        public event ElementItemDraggingEventHandler ElementItemDragging
+        {
+            add { AddHandler(ElementItemDraggingEvent, value); }
+            remove { RemoveHandler(ElementItemDraggingEvent, value); }
+        }
+
+        public event ElementItemDragCompletedEventHandler ElementItemDragCompleted
+        {
+            add { AddHandler(ElementItemDragCompletedEvent, value); }
+            remove { RemoveHandler(ElementItemDragCompletedEvent, value); }
+        }
+
         #endregion
 
         public event SelectionChangedEventHandler SelectionChanged;
@@ -141,11 +172,19 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
             AddHandler(ConnectorItem.ConnectorDragStartedEvent, new ConnectorItemDragStartedEventHandler(OnConnectorItemDragStarted));
             AddHandler(ConnectorItem.ConnectorDraggingEvent, new ConnectorItemDraggingEventHandler(OnConnectorItemDragging));
             AddHandler(ConnectorItem.ConnectorDragCompletedEvent, new ConnectorItemDragCompletedEventHandler(OnConnectorItemDragCompleted));
+
+            AddHandler(ElementItem.DragStartedEvent, new ElementItemDragStartedEventHandler(OnElementItemDragStarted));
+            AddHandler(ElementItem.DraggingEvent, new ElementItemDraggingEventHandler(OnElementItemDragging));
+            AddHandler(ElementItem.DragCompletedEvent, new ElementItemDragCompletedEventHandler(OnElementItemDragCompleted));
         }
+
+
+
+
 
         public override void OnApplyTemplate()
         {
-            _elementItemsControl = (ElementItemsControl) Template.FindName("PART_ElementItemsControl", this);
+            _elementItemsControl = (ElementItemsControl)Template.FindName("PART_ElementItemsControl", this);
             _elementItemsControl.SelectionChanged += OnElementItemsControlSelectChanged;
             base.OnApplyTemplate();
         }
@@ -166,7 +205,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
         internal int GetMaxZIndex()
         {
             return _elementItemsControl.Items.Cast<object>()
-                .Select(item => (ElementItem) _elementItemsControl.ItemContainerGenerator.ContainerFromItem(item))
+                .Select(item => (ElementItem)_elementItemsControl.ItemContainerGenerator.ContainerFromItem(item))
                 .Select(elementItem => elementItem.ZIndex)
                 .Concat(new[] { 0 })
                 .Max();
@@ -181,9 +220,9 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
         {
             e.Handled = true;
 
-            _draggingSourceConnector = (ConnectorItem) e.OriginalSource;
+            _draggingSourceConnector = (ConnectorItem)e.OriginalSource;
 
-            var eventArgs = new ConnectionDragStartedEventArgs(ConnectionDragStartedEvent, this, 
+            var eventArgs = new ConnectionDragStartedEventArgs(ConnectionDragStartedEvent, this,
                 _draggingSourceConnector.ParentElementItem, _draggingSourceConnector);
             RaiseEvent(eventArgs);
 
@@ -208,12 +247,33 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
         {
             e.Handled = true;
 
-            RaiseEvent(new ConnectionDragCompletedEventArgs(ConnectionDragCompletedEvent, this, 
+            RaiseEvent(new ConnectionDragCompletedEventArgs(ConnectionDragCompletedEvent, this,
                 _draggingSourceConnector.ParentElementItem, _draggingConnectionDataContext,
                 _draggingSourceConnector));
-             
+
             _draggingSourceConnector = null;
             _draggingConnectionDataContext = null;
+        }
+
+        #endregion
+
+        #region ElementItem dragging
+        private void OnElementItemDragStarted(object sender, ElementItemDragStartedEventArgs e)
+        {
+            e.Handled = true;
+            RaiseEvent(new ElementItemDragStartedEventArgs(ElementItemDragStartedEvent,e.OriginalSource));
+        }
+
+        private void OnElementItemDragging(object sender, ElementItemDraggingEventArgs e)
+        {
+            e.Handled = true;
+            RaiseEvent(new ElementItemDraggingEventArgs(ElementItemDraggingEvent,e.OriginalSource,e.HorizontalChange,e.VerticalChange, e.PositionX,e.PositionY));
+        }
+
+        private void OnElementItemDragCompleted(object sender, ElementItemDragCompletedEventArgs e)
+        {
+            e.Handled = true;
+            RaiseEvent(new ElementItemDragCompletedEventArgs(ElementItemDragCompletedEvent,e.OriginalSource));
         }
 
         #endregion

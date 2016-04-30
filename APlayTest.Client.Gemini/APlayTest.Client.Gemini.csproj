@@ -198,6 +198,10 @@
       <Project>{aa6d9942-571f-42b7-9d63-fd0446b2d458}</Project>
       <Name>APlayTest.Client.Modules.SheetTree</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AplayTest.Client.Modules.UndoHistory\AplayTest.Client.Modules.UndoHistory.csproj">
+      <Project>{5dea5444-2a91-4df1-bd33-87721653eba1}</Project>
+      <Name>AplayTest.Client.Modules.UndoHistory</Name>
+    </ProjectReference>
     <ProjectReference Include="..\APlayTest.Client\APlayTest.Client.csproj">
       <Project>{D2B47293-0448-467B-AA20-63F8AF6C9B13}</Project>
       <Name>APlayTest.Client</Name>

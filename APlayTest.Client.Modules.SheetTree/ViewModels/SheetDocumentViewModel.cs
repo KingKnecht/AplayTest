@@ -1,12 +1,16 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using APlayTest.Client.Modules.Inspector;
 using APlayTest.Client.Modules.SheetTree.ViewModels.Elements;
 using Caliburn.Micro;
 using Gemini.Framework;
+using Reactive.Bindings;
+using sbardos.UndoFramework;
 
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
@@ -17,9 +21,21 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
     {
         private readonly Sheet _sheet;
         private string _name;
-        public SheetDocumentViewModel(Sheet sheet, IInspectorTool inspectorTool)
+        private readonly BindableCollection<ConnectionViewModel> _connections;
+        private readonly IInspectorTool _inspectorTool;
+        private readonly UndoManager _undoManager;
+        private readonly Action<SheetDocumentViewModel> _onOpenedChanged;
+        private readonly Client _client;
+        private bool _isOpen;
+
+        public SheetDocumentViewModel(Sheet sheet, IInspectorTool inspectorTool,UndoManager undoManager , Action<SheetDocumentViewModel> onOpenedChanged, Client client)
         {
             _sheet = sheet;
+            _inspectorTool = inspectorTool;
+            _undoManager = undoManager;
+            _onOpenedChanged = onOpenedChanged;
+            _client = client;
+
             _name = _sheet.Name;
             _sheet.NameChangeEventHandler += _sheet_NameChangeEventHandler;
             SheetId = _sheet.Id;
@@ -28,19 +44,16 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             _elements = new BindableCollection<ElementViewModel>();
             _connections = new BindableCollection<ConnectionViewModel>();
 
-            _inspectorTool = inspectorTool;
-
+            
             _sheet.BlockSymbolsAddEventHandler += _sheet_BlockSymbolsAddEventHandler;
 
             foreach (var blockSymbol in _sheet.BlockSymbols)
             {
                 var block = AddBlock(blockSymbol);
             }
-
-
         }
 
-     
+
         void _sheet_BlockSymbolsAddEventHandler(BlockSymbol newBlockSymbol)
         {
             AddBlock(newBlockSymbol);
@@ -48,7 +61,8 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         private ElementViewModel AddBlock(BlockSymbol blockSymbol)
         {
-            var block = new Block(blockSymbol);
+            var block = new BlockVm(blockSymbol,_client );
+
             _elements.Add(block);
 
             return block;
@@ -65,9 +79,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             get { return _elements; }
         }
 
-        private readonly BindableCollection<ConnectionViewModel> _connections;
-        private readonly IInspectorTool _inspectorTool;
-
+     
         public IObservableCollection<ConnectionViewModel> Connections
         {
             get { return _connections; }
@@ -78,13 +90,29 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             get { return _elements.Where(x => x.IsSelected); }
         }
 
-        //public TElement AddElement<TElement>(BlockSymbol item)
-        //    where TElement : ElementViewModel, new()
-        //{
-        //    var element = new TElement { X = x, Y = y };
-        //    _elements.Add(element);
-        //    return element;
-        //}
+        public override bool IsOpen
+        {
+            get { return _isOpen; }
+            set
+            {
+                if (value == _isOpen) return;
+                _isOpen = value;
+                _onOpenedChanged(this);
+                NotifyOfPropertyChange(() => IsOpen);
+            }
+        }
+
+        public override ICommand UndoCommand
+        {
+            get
+            {
+                return _closeCommand ?? (_closeCommand = new RelayCommand(p =>
+                {
+                    IsOpen = false;
+                    TryClose(null);
+                }, p => true));
+            }
+        }
 
         public ConnectionViewModel OnConnectionDragStarted(ConnectorViewModel sourceConnector, Point currentDragPoint)
         {
@@ -169,14 +197,50 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             set
             {
                 if (value == _name) return;
+
+                
                 _name = value;
                 DisplayName = _name;
                 _sheet.Name = _name;
                 NotifyOfPropertyChange(() => Name);
+
+                _undoManager.EndTransaction();
+
             }
         }
 
-         public int SheetId { get; set; }
+        public int SheetId { get; set; }
 
+        public void OnElementItemDragStarted(ElementViewModel itemViewModel, Point currentDragPoint)
+        {
+            var block = itemViewModel as BlockVm;
+            if (block != null)
+            {
+                _undoManager.StartTransaction("Moving Block: " + block.Name);
+                return;
+            }
+
+        }
+
+        public void OnElementItemDragCompleted(ElementViewModel itemViewModel, Point currentDragPoint)
+        {
+            var block = itemViewModel as BlockVm;
+            if (block != null)
+            {
+                _undoManager.EndTransaction();
+                return;
+            }
+        }
+
+        public void OnElementItemDragging(ElementViewModel itemViewModel, double horizontalChange, double verticalChange, double positionX, double positionY)
+        {
+            var block = itemViewModel as BlockVm;
+            if (block != null)
+            {
+
+                block.SetPosition(positionX, positionY);
+                return;
+            }
+        }
     }
 }

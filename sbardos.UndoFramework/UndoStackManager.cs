@@ -37,12 +37,15 @@ namespace sbardos.UndoFramework
 
         public void CreateStackForClient(int clientId)
         {
-            if (!_undoStacks.ContainsKey(clientId))
+            lock (this)
             {
-                var undoStack = new UndoStack(clientId);
-                undoStack.ActiveStateChanged += UndoStackOnActiveStateChanged;
-                undoStack.StackChanged += UndoStackOnStackChanged;
-                _undoStacks.Add(clientId, undoStack);
+                if (!_undoStacks.ContainsKey(clientId))
+                {
+                    var undoStack = new UndoStack(clientId);
+                    undoStack.ActiveStateChanged += UndoStackOnActiveStateChanged;
+                    undoStack.StackChanged += UndoStackOnStackChanged;
+                    _undoStacks.Add(clientId, undoStack);
+                }
             }
         }
 

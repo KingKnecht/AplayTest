@@ -87,6 +87,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
 
             var aPlayAwareShell = (IAPlayAwareShell)Shell;
             aPlayAwareShell.Client = NewDataClient__;
+            
 
             JoinProjectViewModel = new JoinProjectViewModel(_aplayClient.DataClient.ProjectManager, Close);
 

@@ -85,9 +85,9 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             _inputConnectors.Add(inputConnector);
         }
 
-        protected void SetOutputConnector(string name, Color color, Func<BitmapSource> valueCallback)
+        protected void SetOutputConnector(string name, Color color)
         {
-            OutputConnector = new OutputConnectorViewModel(this, name, color, valueCallback);
+            OutputConnector = new OutputConnectorViewModel(this, name, color);
         }
 
         protected virtual void OnInputConnectorConnectionChanged()

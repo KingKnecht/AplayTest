@@ -61,7 +61,7 @@ namespace Gemini.Modules.UndoRedo.ViewModels
         [ImportingConstructor]
         public HistoryViewModel(IShell shell)
         {
-            DisplayName = "History";
+            DisplayName = "History Original";
 
             _historyItems = new BindableCollection<HistoryItemViewModel>();
 
@@ -88,9 +88,11 @@ namespace Gemini.Modules.UndoRedo.ViewModels
             {
                 _historyItems.Add(new HistoryItemViewModel("Initial State",
                     (_undoRedoManager.UndoStack.Any() ? HistoryItemType.InitialState : HistoryItemType.Current)));
+
                 for (int i = 0; i < _undoRedoManager.UndoStack.Count; i++)
                     _historyItems.Add(new HistoryItemViewModel(_undoRedoManager.UndoStack[i],
                         (i == _undoRedoManager.UndoStack.Count - 1) ? HistoryItemType.Current : HistoryItemType.Undo));
+
                 for (int i = _undoRedoManager.RedoStack.Count - 1; i >= 0; i--)
                     _historyItems.Add(new HistoryItemViewModel(
                         _undoRedoManager.RedoStack[i],

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.Composition;
 
 namespace sbardos.UndoFramework
 {

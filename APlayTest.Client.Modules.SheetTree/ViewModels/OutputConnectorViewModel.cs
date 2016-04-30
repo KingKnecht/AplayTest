@@ -25,11 +25,10 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             get { return _valueCallback(); }
         }
 
-        public OutputConnectorViewModel(ElementViewModel element, string name, Color color, Func<BitmapSource> valueCallback)
+        public OutputConnectorViewModel(ElementViewModel element, string name, Color color)
             : base(element, name, color)
         {
             _connections = new BindableCollection<ConnectionViewModel>();
-            _valueCallback = valueCallback;
         }
     }
 }

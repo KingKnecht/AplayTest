@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using Gemini.Framework;
+using Gemini.Framework.Commands;
 using Gemini.Framework.Services;
 using Gemini.Framework.Themes;
 using Gemini.Modules.MainMenu;
@@ -13,11 +15,13 @@ using Gemini.Modules.Shell.Services;
 using Gemini.Modules.Shell.Views;
 using Gemini.Modules.StatusBar;
 using Gemini.Modules.ToolBars;
+using Gemini.Modules.UndoRedo.Commands;
 
 namespace Gemini.Modules.Shell.ViewModels
 {
     [Export(typeof(IShell))]
     public class ShellViewModel : Conductor<IDocument>.Collection.OneActive, IShell
+       
     {
         public event EventHandler ActiveDocumentChanging;
         public event EventHandler ActiveDocumentChanged;
@@ -260,5 +264,7 @@ namespace Gemini.Modules.Shell.ViewModels
         {
             Application.Current.MainWindow.Close();
         }
-	}
+
+       
+    }
 }

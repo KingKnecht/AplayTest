@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using APlayTest.Services;
+using sbardos.UndoFramework;
 
 namespace APlayTest.Server.Factories
 {
@@ -30,17 +31,19 @@ namespace APlayTest.Server.Factories
     public class ProjectManagerFactory : IProjectManagerFactory
     {
         private readonly IProjectManagerService _projectManagerService;
+        private readonly IUndoService _undoService;
         private readonly AplayProjectsCache _aplayProjectsCache;
 
-        public ProjectManagerFactory(IProjectManagerService projectManagerService)
+        public ProjectManagerFactory(IProjectManagerService projectManagerService, IUndoService undoService)
         {
             _projectManagerService = projectManagerService;
+            _undoService = undoService;
             _aplayProjectsCache = new AplayProjectsCache();
         }
 
         public ProjectManager CreateProjectManager()
         {
-            return new ProjectManager(_projectManagerService, _aplayProjectsCache);
+            return new ProjectManager(_projectManagerService, _aplayProjectsCache, _undoService);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APlayTest.Server", "APlayTest.Server\APlayTest.Server.csproj", "{8398CB5B-DDF5-4627-822D-21F4D4D85EB2}"
 EndProject
@@ -41,6 +41,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APlayTest.Client.Modules.Inspector", "APlayTest.Client.Modules.Inspector\APlayTest.Client.Modules.Inspector.csproj", "{0F8463BD-C1B0-4F2B-855D-49B6963B3337}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APlayTest.Client.Modules.GraphEditor", "APlayTest.Client.Modules.GraphEditor\APlayTest.Client.Modules.GraphEditor.csproj", "{F8204886-1F61-4247-B7B2-EA5E518162F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AplayTest.Client.Modules.UndoHistory", "AplayTest.Client.Modules.UndoHistory\AplayTest.Client.Modules.UndoHistory.csproj", "{5DEA5444-2A91-4DF1-BD33-87721653EBA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,6 +106,10 @@ Global
 		{F8204886-1F61-4247-B7B2-EA5E518162F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8204886-1F61-4247-B7B2-EA5E518162F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8204886-1F61-4247-B7B2-EA5E518162F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DEA5444-2A91-4DF1-BD33-87721653EBA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DEA5444-2A91-4DF1-BD33-87721653EBA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DEA5444-2A91-4DF1-BD33-87721653EBA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DEA5444-2A91-4DF1-BD33-87721653EBA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -116,5 +122,6 @@ Global
 		{6A10D51F-1497-49D2-8553-48F990888827} = {132A61DF-101C-42E8-AE8C-A7E4F6FD2A72}
 		{0F8463BD-C1B0-4F2B-855D-49B6963B3337} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
 		{F8204886-1F61-4247-B7B2-EA5E518162F3} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
+		{5DEA5444-2A91-4DF1-BD33-87721653EBA1} = {DC10A724-9002-485C-BAF8-9AC5F75065DE}
 	EndGlobalSection
 EndGlobal

@@ -78,6 +78,9 @@
     <Compile Include="Controls\ConnectorItemDragCompletedEventArgs.cs" />
     <Compile Include="Controls\ConnectorItemDraggingEventArgs.cs" />
     <Compile Include="Controls\ConnectorItemDragStartedEventArgs.cs" />
+    <Compile Include="Controls\ElementItemDragCompletedEventArgs.cs" />
+    <Compile Include="Controls\ElementItemDraggingEventArgs.cs" />
+    <Compile Include="Controls\ElementItemDragStartedEventArgs.cs" />
     <Compile Include="Controls\GraphControl.cs" />
     <Compile Include="Controls\ElementItem.cs" />
     <Compile Include="Controls\ElementItemsControl.cs" />

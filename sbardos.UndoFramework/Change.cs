@@ -114,19 +114,7 @@ namespace sbardos.UndoFramework
         }
     }
 
-    public class Optional : IUndoable
-    {
-
-        public int Id
-        {
-            get { return 0; }
-        }
-
-        public string Dump()
-        {
-            return "Empty";
-        }
-    }
+   
 
     public enum ChangeReason
     {

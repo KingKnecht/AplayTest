@@ -31,6 +31,8 @@ namespace Gemini.Modules.UndoRedo.Commands
             get { return new Uri("pack://application:,,,/Gemini;component/Resources/Icons/Redo.png"); }
         }
 
+
+
         [Export]
         public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<RedoCommandDefinition>(new KeyGesture(Key.Y, ModifierKeys.Control));
     }

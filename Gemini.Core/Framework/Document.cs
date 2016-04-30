@@ -18,8 +18,6 @@ using Microsoft.Win32;
 namespace Gemini.Framework
 {
 	public abstract class Document : LayoutItemBase, IDocument, 
-        ICommandHandler<UndoCommandDefinition>,
-        ICommandHandler<RedoCommandDefinition>,
         ICommandHandler<SaveFileCommandDefinition>,
         ICommandHandler<SaveFileAsCommandDefinition>
 	{
@@ -29,8 +27,10 @@ namespace Gemini.Framework
             get { return _undoRedoManager ?? (_undoRedoManager = new UndoRedoManager()); }
 	    }
 
-		private ICommand _closeCommand;
-		public override ICommand CloseCommand
+	    public virtual bool IsOpen { get; set; }
+
+	    protected ICommand _closeCommand;
+		public override ICommand UndoCommand
 		{
 		    get { return _closeCommand ?? (_closeCommand = new RelayCommand(p => TryClose(null), p => true)); }
 		}
@@ -64,29 +64,7 @@ namespace Gemini.Framework
                 return _toolBar;
             }
         }
-
-	    void ICommandHandler<UndoCommandDefinition>.Update(Command command)
-	    {
-            command.Enabled = UndoRedoManager.UndoStack.Any();
-	    }
-
-	    Task ICommandHandler<UndoCommandDefinition>.Run(Command command)
-	    {
-            UndoRedoManager.Undo(1);
-            return TaskUtility.Completed;
-	    }
-
-        void ICommandHandler<RedoCommandDefinition>.Update(Command command)
-        {
-            command.Enabled = UndoRedoManager.RedoStack.Any();
-        }
-
-        Task ICommandHandler<RedoCommandDefinition>.Run(Command command)
-        {
-            UndoRedoManager.Redo(1);
-            return TaskUtility.Completed;
-        }
-
+        
         void ICommandHandler<SaveFileCommandDefinition>.Update(Command command)
         {
             command.Enabled = this is IPersistedDocument;

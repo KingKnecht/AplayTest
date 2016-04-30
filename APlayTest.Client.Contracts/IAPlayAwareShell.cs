@@ -11,7 +11,12 @@ namespace APlayTest.Client.Contracts
     {
         event EventHandler<Project> ProjectChanged;
         Project Project { get; set; }
-
+        UndoManager UndoManager { get;}
         Client Client { get; set; }
+      
+        bool CanUndo { get; }
+        bool CanRedo { get; }
+        void Undo();
+        void Redo();
     }
 }

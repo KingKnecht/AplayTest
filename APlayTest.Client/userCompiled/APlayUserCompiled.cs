@@ -26,11 +26,12 @@ namespace APlayTest.Client
   public interface  IBlockSymbolImpl
   {
     int Id {get; }
-    double PositionX {get; set; }
-    double PositionY {get; set; }
-    APlayTest.Client.AplaySize Size {get; set; }
+    double PositionX {get; }
+    double PositionY {get; }
+    APlayTest.Client.AplaySize Size {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
+    void SetPosition (APlayTest.Client.AplayPoint position__, APlayTest.Client.Client client__);
   };
 }
 namespace APlayTest.Client
@@ -56,8 +57,10 @@ namespace APlayTest.Client
     bool IsAdmin {get; }
     String RemoteAddress {get; }
     ulong APlayClientId {get; }
+    int Id {get; }
     APlayTest.Client.Project CurrentProject {get; }
     APlayTest.Client.ProjectManager ProjectManager {get; }
+    APlayTest.Client.UndoManager UndoManager {get; }
     APlayTest.Client.User CurrentUser {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
@@ -67,8 +70,10 @@ namespace APlayTest.Client
 {
   public interface  IClientEvents
   {
+    void onIdChange (int NewId__);
     void onCurrentProjectChange (APlayTest.Client.Project NewCurrentProject__);
     void onProjectManagerChange (APlayTest.Client.ProjectManager NewProjectManager__);
+    void onUndoManagerChange (APlayTest.Client.UndoManager NewUndoManager__);
   };
 }
 namespace APlayTest.Client
@@ -223,6 +228,54 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
+  public interface  IUndoManagerImpl
+  {
+    APlayTest.Client.Client DataClient {get; }
+    bool CanUndo {get; }
+    bool CanRedo {get; }
+    APlayTest.Client.HistoryEntryList History {get; }
+    int ActiveHistoryEntryId {get; }
+    ulong APlayEntityId {get; }
+    bool RequiresInit ();
+    void StartTransaction (String description__);
+    void EndTransaction ();
+    void CancelTransaction ();
+    void ExecuteUndo ();
+    void ExecuteRedo ();
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IUndoManagerEvents
+  {
+    void onDataClientChange (APlayTest.Client.Client NewDataClient__);
+    void onCanUndoChange (bool NewCanUndo__);
+    void onCanRedoChange (bool NewCanRedo__);
+    void onHistoryReplace (APlayTest.Client.HistoryEntryList History__);
+    void onHistoryAdd (APlayTest.Client.HistoryEntry element);
+    void onHistoryRemove (APlayTest.Client.HistoryEntry element);
+    void onHistoryClear ();
+    void onHistoryInsertAt (int pos, APlayTest.Client.HistoryEntry element);
+    void onHistorySetAt (int pos, APlayTest.Client.HistoryEntry element);
+    void onHistoryRemoveAt (int pos, APlayTest.Client.HistoryEntry element);
+    void onActiveHistoryEntryIdChange (int NewActiveHistoryEntryId__);
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IUndoManagerSkeleton : APlayTest.Client.IUndoManagerImpl, APlay.Generated.Intern.Client.__IUndoManagerAPEvents, APlayTest.Client.IUndoManagerEvents
+  {
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IUndoManagerFactory
+  {
+    APlayTest.Client.UndoManager CreateUndoManager ();
+  };
+}
+namespace APlayTest.Client
+{
   public interface  IUserImpl
   {
     String Name {get; set; }
@@ -278,7 +331,7 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
-  public interface  IUserObjectFactory : APlayTest.Client.IBlockSymbolUserFactory, APlayTest.Client.IClientUserFactory, APlayTest.Client.IProjectUserFactory, APlayTest.Client.IProjectManagerUserFactory, APlayTest.Client.ISheetUserFactory, APlayTest.Client.ISheetManagerUserFactory, APlayTest.Client.IUserUserFactory
+  public interface  IUserObjectFactory : APlayTest.Client.IBlockSymbolUserFactory, APlayTest.Client.IClientUserFactory, APlayTest.Client.IProjectUserFactory, APlayTest.Client.IProjectManagerUserFactory, APlayTest.Client.ISheetUserFactory, APlayTest.Client.ISheetManagerUserFactory, APlayTest.Client.IUndoManagerUserFactory, APlayTest.Client.IUserUserFactory
   {
   };
 }
@@ -322,6 +375,13 @@ namespace APlayTest.Client
   public interface  ISheetManagerUserFactory
   {
     APlayTest.Client.ISheetManagerImpl CreateSheetManager ();
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IUndoManagerUserFactory
+  {
+    APlayTest.Client.IUndoManagerImpl CreateUndoManager ();
   };
 }
 namespace APlayTest.Client
@@ -380,13 +440,6 @@ namespace APlayTest.Client
     }
     public virtual double PositionX
     {
-      set
-      {
-        {
-          //float64
-          implBlockSymbol.PositionX = value;
-        }
-      }
       get
       {
         {
@@ -396,13 +449,6 @@ namespace APlayTest.Client
     }
     public virtual double PositionY
     {
-      set
-      {
-        {
-          //float64
-          implBlockSymbol.PositionY = value;
-        }
-      }
       get
       {
         {
@@ -412,13 +458,6 @@ namespace APlayTest.Client
     }
     public virtual APlayTest.Client.AplaySize Size
     {
-      set
-      {
-        {
-          //AplaySize
-          implBlockSymbol.Size = new APlay.Generated.Intern.Client.__AplaySize(value.Width, value.Height);
-        }
-      }
       get
       {
         {
@@ -552,6 +591,10 @@ namespace APlayTest.Client
       bool retu = implBlockSymbol.RequiresInit();
       return (((bool) (retu)));
     }
+    public void SetPosition(APlayTest.Client.AplayPoint position__, APlayTest.Client.Client client__)
+    {
+      implBlockSymbol.SetPosition(new APlay.Generated.Intern.Client.__AplayPoint(position__.X, position__.Y), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
     public APlay.Generated.Intern.Client.__IBlockSymbolAPImpl getBlockSymbolObject()
     {
       return (implBlockSymbol);
@@ -616,6 +659,15 @@ namespace APlayTest.Client
         }
       }
     }
+    public virtual int Id
+    {
+      get
+      {
+        {
+          return (implClient.Id);
+        }
+      }
+    }
     public virtual APlayTest.Client.Project CurrentProject
     {
       get
@@ -631,6 +683,15 @@ namespace APlayTest.Client
       {
         {
           return (((APlayTest.Client.ProjectManager) (implClient.ProjectManager)));
+        }
+      }
+    }
+    public virtual APlayTest.Client.UndoManager UndoManager
+    {
+      get
+      {
+        {
+          return (((APlayTest.Client.UndoManager) (implClient.UndoManager)));
         }
       }
     }
@@ -656,6 +717,28 @@ namespace APlayTest.Client
       {
         {
           return (implClient.APlayEntityId);
+        }
+      }
+    }
+    public virtual void onIdChange(int NewId__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onIdChange received","Client.Designed");
+    }
+    public void onInternIdChange(int NewId__)
+    {
+      if(IdChangeEventHandler!=null)
+      {
+        IdChangeEventHandler(NewId__);
+      }
+      else
+      {
+        if(APlayTest.Client.ClientSkeleton.StaticIdChangeEventHandler!=null)
+        {
+          APlayTest.Client.ClientSkeleton.StaticIdChangeEventHandler(NewId__, ((APlayTest.Client.Client) (this)));
+        }
+        else
+        {
+          this.onIdChange(NewId__);
         }
       }
     }
@@ -703,6 +786,28 @@ namespace APlayTest.Client
         }
       }
     }
+    public virtual void onUndoManagerChange(APlayTest.Client.UndoManager NewUndoManager__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onUndoManagerChange received","Client.Designed");
+    }
+    public void onInternUndoManagerChange(APlay.Generated.Intern.Client.__IUndoManagerAPEvents NewUndoManager__)
+    {
+      if(UndoManagerChangeEventHandler!=null)
+      {
+        UndoManagerChangeEventHandler(((APlayTest.Client.UndoManager) (NewUndoManager__)));
+      }
+      else
+      {
+        if(APlayTest.Client.ClientSkeleton.StaticUndoManagerChangeEventHandler!=null)
+        {
+          APlayTest.Client.ClientSkeleton.StaticUndoManagerChangeEventHandler(((APlayTest.Client.UndoManager) (NewUndoManager__)), ((APlayTest.Client.Client) (this)));
+        }
+        else
+        {
+          this.onUndoManagerChange(((APlayTest.Client.UndoManager) (NewUndoManager__)));
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implClient.RequiresInit();
@@ -716,10 +821,14 @@ namespace APlayTest.Client
     {
       implClient = impl;
     }
+    public event APlayTest.Client.Delegates.void_int32 IdChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Client StaticIdChangeEventHandler;
     public event APlayTest.Client.Delegates.void_Project CurrentProjectChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_Project_Client StaticCurrentProjectChangeEventHandler;
     public event APlayTest.Client.Delegates.void_ProjectManager ProjectManagerChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_ProjectManager_Client StaticProjectManagerChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_UndoManager UndoManagerChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_UndoManager_Client StaticUndoManagerChangeEventHandler;
     private APlay.Generated.Intern.Client.__IClientAPImpl implClient;
   }
   
@@ -1874,6 +1983,377 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
+  public abstract partial class UndoManagerSkeleton : APlayTest.Client.IUndoManagerSkeleton, APlay.Generated.Intern.Client.__IUndoManagerAPEvents
+  {
+    public UndoManagerSkeleton()
+    {
+      if(APlay.Common.APlayInitializer.GetInitializer()!=null)
+      {
+        this.setUndoManagerObject(((APlay.Generated.Intern.Client.__IUndoManagerAPImpl) (APlay.Common.APlayInitializer.GetInitializer())));
+      }
+      else
+      {
+        this.setUndoManagerObject(APlayObjectFactory.CreateUndoManagerImpl());
+      }
+      ((APlay.Generated.Intern.Client.__UndoManager) (this.getUndoManagerObject())).UndoManagerHandler = ((APlay.Generated.Intern.Client.__IUndoManagerAPEvents) (((APlayTest.Client.UndoManagerSkeleton) (this))));
+    }
+    public virtual APlayTest.Client.Client DataClient
+    {
+      get
+      {
+        {
+          return (((APlayTest.Client.Client) (implUndoManager.DataClient)));
+        }
+      }
+    }
+    public virtual bool CanUndo
+    {
+      get
+      {
+        {
+          return (implUndoManager.CanUndo);
+        }
+      }
+    }
+    public virtual bool CanRedo
+    {
+      get
+      {
+        {
+          return (implUndoManager.CanRedo);
+        }
+      }
+    }
+    public virtual APlayTest.Client.HistoryEntryList History
+    {
+      get
+      {
+        {
+          return (((APlayTest.Client.HistoryEntryList) (implUndoManager.History)));
+        }
+      }
+    }
+    public virtual int ActiveHistoryEntryId
+    {
+      get
+      {
+        {
+          return (implUndoManager.ActiveHistoryEntryId);
+        }
+      }
+    }
+    public virtual ulong APlayEntityId
+    {
+      get
+      {
+        {
+          return (implUndoManager.APlayEntityId);
+        }
+      }
+    }
+    public virtual void onDataClientChange(APlayTest.Client.Client NewDataClient__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onDataClientChange received","Client.Designed");
+    }
+    public void onInternDataClientChange(APlay.Generated.Intern.Client.__IClientAPEvents NewDataClient__)
+    {
+      if(DataClientChangeEventHandler!=null)
+      {
+        DataClientChangeEventHandler(((APlayTest.Client.Client) (NewDataClient__)));
+      }
+      else
+      {
+        if(APlayTest.Client.UndoManagerSkeleton.StaticDataClientChangeEventHandler!=null)
+        {
+          APlayTest.Client.UndoManagerSkeleton.StaticDataClientChangeEventHandler(((APlayTest.Client.Client) (NewDataClient__)), ((APlayTest.Client.UndoManager) (this)));
+        }
+        else
+        {
+          this.onDataClientChange(((APlayTest.Client.Client) (NewDataClient__)));
+        }
+      }
+    }
+    public virtual void onCanUndoChange(bool NewCanUndo__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onCanUndoChange received","Client.Designed");
+    }
+    public void onInternCanUndoChange(bool NewCanUndo__)
+    {
+      if(CanUndoChangeEventHandler!=null)
+      {
+        CanUndoChangeEventHandler(NewCanUndo__);
+      }
+      else
+      {
+        if(APlayTest.Client.UndoManagerSkeleton.StaticCanUndoChangeEventHandler!=null)
+        {
+          APlayTest.Client.UndoManagerSkeleton.StaticCanUndoChangeEventHandler(NewCanUndo__, ((APlayTest.Client.UndoManager) (this)));
+        }
+        else
+        {
+          this.onCanUndoChange(NewCanUndo__);
+        }
+      }
+    }
+    public virtual void onCanRedoChange(bool NewCanRedo__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onCanRedoChange received","Client.Designed");
+    }
+    public void onInternCanRedoChange(bool NewCanRedo__)
+    {
+      if(CanRedoChangeEventHandler!=null)
+      {
+        CanRedoChangeEventHandler(NewCanRedo__);
+      }
+      else
+      {
+        if(APlayTest.Client.UndoManagerSkeleton.StaticCanRedoChangeEventHandler!=null)
+        {
+          APlayTest.Client.UndoManagerSkeleton.StaticCanRedoChangeEventHandler(NewCanRedo__, ((APlayTest.Client.UndoManager) (this)));
+        }
+        else
+        {
+          this.onCanRedoChange(NewCanRedo__);
+        }
+      }
+    }
+    public virtual void onHistoryReplace(APlayTest.Client.HistoryEntryList History__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryReplace received","Client.Designed");
+    }
+    public void onInternHistoryReplace(APlay.Generated.Intern.Client.IHistoryEntryListEvents History__)
+    {
+      if(HistoryReplaceEventHandler!=null)
+      {
+        HistoryReplaceEventHandler(((APlayTest.Client.HistoryEntryList) (History__)));
+      }
+      else
+      {
+        if(APlayTest.Client.UndoManagerSkeleton.StaticHistoryReplaceEventHandler!=null)
+        {
+          APlayTest.Client.UndoManagerSkeleton.StaticHistoryReplaceEventHandler(((APlayTest.Client.HistoryEntryList) (History__)), ((APlayTest.Client.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryReplace(((APlayTest.Client.HistoryEntryList) (History__)));
+        }
+      }
+    }
+    public virtual void onHistoryAdd(APlayTest.Client.HistoryEntry element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryAdd received","Client.Designed");
+    }
+    public void onInternHistoryAdd(APlay.Generated.Intern.Client.__HistoryEntry element)
+    {
+      if(HistoryAddEventHandler!=null)
+      {
+        HistoryAddEventHandler(new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+      }
+      else
+      {
+        if(APlayTest.Client.UndoManagerSkeleton.StaticHistoryAddEventHandler!=null)
+        {
+          APlayTest.Client.UndoManagerSkeleton.StaticHistoryAddEventHandler(new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))), ((APlayTest.Client.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryAdd(new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+        }
+      }
+    }
+    public virtual void onHistoryRemove(APlayTest.Client.HistoryEntry element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryRemove received","Client.Designed");
+    }
+    public void onInternHistoryRemove(APlay.Generated.Intern.Client.__HistoryEntry element)
+    {
+      if(HistoryRemoveEventHandler!=null)
+      {
+        HistoryRemoveEventHandler(new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+      }
+      else
+      {
+        if(APlayTest.Client.UndoManagerSkeleton.StaticHistoryRemoveEventHandler!=null)
+        {
+          APlayTest.Client.UndoManagerSkeleton.StaticHistoryRemoveEventHandler(new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))), ((APlayTest.Client.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryRemove(new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+        }
+      }
+    }
+    public virtual void onHistoryClear()
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryClear received","Client.Designed");
+    }
+    public void onInternHistoryClear()
+    {
+      if(HistoryClearEventHandler!=null)
+      {
+        HistoryClearEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Client.UndoManagerSkeleton.StaticHistoryClearEventHandler!=null)
+        {
+          APlayTest.Client.UndoManagerSkeleton.StaticHistoryClearEventHandler(((APlayTest.Client.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryClear();
+        }
+      }
+    }
+    public virtual void onHistoryInsertAt(int pos, APlayTest.Client.HistoryEntry element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryInsertAt received","Client.Designed");
+    }
+    public void onInternHistoryInsertAt(int pos, APlay.Generated.Intern.Client.__HistoryEntry element)
+    {
+      if(HistoryInsertAtEventHandler!=null)
+      {
+        HistoryInsertAtEventHandler(pos, new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+      }
+      else
+      {
+        if(APlayTest.Client.UndoManagerSkeleton.StaticHistoryInsertAtEventHandler!=null)
+        {
+          APlayTest.Client.UndoManagerSkeleton.StaticHistoryInsertAtEventHandler(pos, new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))), ((APlayTest.Client.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryInsertAt(pos, new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+        }
+      }
+    }
+    public virtual void onHistorySetAt(int pos, APlayTest.Client.HistoryEntry element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistorySetAt received","Client.Designed");
+    }
+    public void onInternHistorySetAt(int pos, APlay.Generated.Intern.Client.__HistoryEntry element)
+    {
+      if(HistorySetAtEventHandler!=null)
+      {
+        HistorySetAtEventHandler(pos, new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+      }
+      else
+      {
+        if(APlayTest.Client.UndoManagerSkeleton.StaticHistorySetAtEventHandler!=null)
+        {
+          APlayTest.Client.UndoManagerSkeleton.StaticHistorySetAtEventHandler(pos, new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))), ((APlayTest.Client.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistorySetAt(pos, new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+        }
+      }
+    }
+    public virtual void onHistoryRemoveAt(int pos, APlayTest.Client.HistoryEntry element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onHistoryRemoveAt received","Client.Designed");
+    }
+    public void onInternHistoryRemoveAt(int pos, APlay.Generated.Intern.Client.__HistoryEntry element)
+    {
+      if(HistoryRemoveAtEventHandler!=null)
+      {
+        HistoryRemoveAtEventHandler(pos, new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+      }
+      else
+      {
+        if(APlayTest.Client.UndoManagerSkeleton.StaticHistoryRemoveAtEventHandler!=null)
+        {
+          APlayTest.Client.UndoManagerSkeleton.StaticHistoryRemoveAtEventHandler(pos, new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))), ((APlayTest.Client.UndoManager) (this)));
+        }
+        else
+        {
+          this.onHistoryRemoveAt(pos, new APlayTest.Client.HistoryEntry(((int) (element.Id)), ((String) (element.Description))));
+        }
+      }
+    }
+    public virtual void onActiveHistoryEntryIdChange(int NewActiveHistoryEntryId__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onActiveHistoryEntryIdChange received","Client.Designed");
+    }
+    public void onInternActiveHistoryEntryIdChange(int NewActiveHistoryEntryId__)
+    {
+      if(ActiveHistoryEntryIdChangeEventHandler!=null)
+      {
+        ActiveHistoryEntryIdChangeEventHandler(NewActiveHistoryEntryId__);
+      }
+      else
+      {
+        if(APlayTest.Client.UndoManagerSkeleton.StaticActiveHistoryEntryIdChangeEventHandler!=null)
+        {
+          APlayTest.Client.UndoManagerSkeleton.StaticActiveHistoryEntryIdChangeEventHandler(NewActiveHistoryEntryId__, ((APlayTest.Client.UndoManager) (this)));
+        }
+        else
+        {
+          this.onActiveHistoryEntryIdChange(NewActiveHistoryEntryId__);
+        }
+      }
+    }
+    public bool RequiresInit()
+    {
+      bool retu = implUndoManager.RequiresInit();
+      return (((bool) (retu)));
+    }
+    public void StartTransaction(String description__)
+    {
+      implUndoManager.StartTransaction(description__);
+    }
+    public void EndTransaction()
+    {
+      implUndoManager.EndTransaction();
+    }
+    public void CancelTransaction()
+    {
+      implUndoManager.CancelTransaction();
+    }
+    public void ExecuteUndo()
+    {
+      implUndoManager.ExecuteUndo();
+    }
+    public void ExecuteRedo()
+    {
+      implUndoManager.ExecuteRedo();
+    }
+    public APlay.Generated.Intern.Client.__IUndoManagerAPImpl getUndoManagerObject()
+    {
+      return (implUndoManager);
+    }
+    public void setUndoManagerObject(APlay.Generated.Intern.Client.__IUndoManagerAPImpl impl)
+    {
+      implUndoManager = impl;
+    }
+    public event APlayTest.Client.Delegates.void_Client DataClientChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_Client_UndoManager StaticDataClientChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_boolean CanUndoChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_boolean_UndoManager StaticCanUndoChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_boolean CanRedoChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_boolean_UndoManager StaticCanRedoChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_HistoryEntryList HistoryReplaceEventHandler;
+    static public event APlayTest.Client.Delegates.void_HistoryEntryList_UndoManager StaticHistoryReplaceEventHandler;
+    public event APlayTest.Client.Delegates.void_HistoryEntry HistoryAddEventHandler;
+    static public event APlayTest.Client.Delegates.void_HistoryEntry_UndoManager StaticHistoryAddEventHandler;
+    public event APlayTest.Client.Delegates.void_HistoryEntry HistoryRemoveEventHandler;
+    static public event APlayTest.Client.Delegates.void_HistoryEntry_UndoManager StaticHistoryRemoveEventHandler;
+    public event APlayTest.Client.Delegates.void_ HistoryClearEventHandler;
+    static public event APlayTest.Client.Delegates.void_UndoManager StaticHistoryClearEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_HistoryEntry HistoryInsertAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_HistoryEntry_UndoManager StaticHistoryInsertAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_HistoryEntry HistorySetAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_HistoryEntry_UndoManager StaticHistorySetAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_HistoryEntry HistoryRemoveAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_HistoryEntry_UndoManager StaticHistoryRemoveAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32 ActiveHistoryEntryIdChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_UndoManager StaticActiveHistoryEntryIdChangeEventHandler;
+    private APlay.Generated.Intern.Client.__IUndoManagerAPImpl implUndoManager;
+  }
+  
+}
+namespace APlayTest.Client
+{
   public abstract partial class UserSkeleton : APlayTest.Client.IUserSkeleton, APlay.Generated.Intern.Client.__IUserAPEvents
   {
     public UserSkeleton()
@@ -1934,13 +2414,13 @@ namespace APlayTest.Client
 {
   public partial struct AplayPoint
   {
-    public AplayPoint(float X__, float Y__)
+    public AplayPoint(double X__, double Y__)
     {
       X = X__;
       Y = Y__;
     }
-    public float X;
-    public float Y;
+    public double X;
+    public double Y;
     public static bool operator ==(AplayPoint a, AplayPoint b)
     {
       if (System.Object.ReferenceEquals(a, b)) return true;
@@ -2021,6 +2501,53 @@ namespace APlayTest.Client
     public override string ToString()
     {
       return "["+Width.ToString()+"]" + "["+Height.ToString()+"]";
+    }
+  }
+}
+namespace APlayTest.Client
+{
+  public partial struct HistoryEntry
+  {
+    public HistoryEntry(int Id__, String Description__)
+    {
+      Id = Id__;
+      Description = Description__;
+    }
+    public int Id;
+    public String Description;
+    public static bool operator ==(HistoryEntry a, HistoryEntry b)
+    {
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return true&& (a.Id==b.Id)&& (a.Description==b.Description);
+    }
+    public override bool Equals(System.Object obj)
+    {
+      if (ReferenceEquals(null, obj))
+      {
+        return false;
+      }
+      if (obj.GetType() != typeof(HistoryEntry))
+      {
+        return false;
+      }
+      HistoryEntry a = this;
+      HistoryEntry b = (HistoryEntry)obj;
+      if (System.Object.ReferenceEquals(a, b)) return true;
+      if (((object)a == null) || ((object)b == null)) return false;
+      return (a.Id==b.Id)&&(a.Description==b.Description);
+    }
+    public override int GetHashCode()
+    {
+      return Id.GetHashCode() + Description.GetHashCode();
+    }
+    public static bool operator !=(HistoryEntry a, HistoryEntry b)
+    {
+      return !(a == b);
+    }
+    public override string ToString()
+    {
+      return "["+Id.ToString()+"]" + "["+Description.ToString()+"]";
     }
   }
 }
@@ -2511,6 +3038,162 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
+  public partial class HistoryEntryList : IList<APlayTest.Client.HistoryEntry>, APlay.Generated.Intern.Client.IHistoryEntryListEvents
+  {
+    public HistoryEntryList()
+    {
+      APlay.Generated.Intern.Client.IHistoryEntryListImpl impl_=null;
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Client.HistoryEntryList();
+      }
+    }
+    public HistoryEntryList(APlay.Generated.Intern.Client.IHistoryEntryListImpl impl_)
+    {
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Client.HistoryEntryList();
+      }
+    }
+    public static APlayTest.Client.HistoryEntryList CreateForAPlay(APlay.Generated.Intern.Client.IHistoryEntryListImpl impl)
+    {
+      APlayTest.Client.HistoryEntryList ob = new APlayTest.Client.HistoryEntryList(impl);
+      return (ob);
+    }
+    public APlay.Generated.Intern.Client.IHistoryEntryListImpl getHistoryEntryObject()
+    {
+      return (impl);
+    }
+    private APlay.Generated.Intern.Client.IHistoryEntryListImpl impl;
+    
+public int IndexOf(APlayTest.Client.HistoryEntry item)
+{
+    return (int)impl.indexOf(new APlay.Generated.Intern.Client.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+}
+
+public void Insert(int index, APlayTest.Client.HistoryEntry item)
+{
+    impl.insertAt(index, new APlay.Generated.Intern.Client.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+}
+
+public void RemoveAt(int index)
+{
+    impl.removeAt(index);
+}
+
+public APlayTest.Client.HistoryEntry this[int index]
+{
+    get
+    {
+        APlay.Generated.Intern.Client.__HistoryEntry item = (APlay.Generated.Intern.Client.__HistoryEntry)impl.get((int)index);
+        return new APlayTest.Client.HistoryEntry(((int) (item.Id)), ((String) (item.Description)));
+    }
+    set
+    {
+        APlayTest.Client.HistoryEntry item =value;
+        impl.setAt(index,new APlay.Generated.Intern.Client.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+    }
+}
+
+public void Add(APlayTest.Client.HistoryEntry item)
+{
+    impl.add(new APlay.Generated.Intern.Client.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+}
+
+public void Clear()
+{
+    impl.clear();
+}
+
+public bool Contains(APlayTest.Client.HistoryEntry item)
+{
+    return impl.contains(new APlay.Generated.Intern.Client.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+}
+
+public void CopyTo(APlayTest.Client.HistoryEntry[] array, int arrayIndex)
+{
+    int i=arrayIndex;
+    foreach (APlayTest.Client.HistoryEntry item in this)
+    {
+        array[i++]=item;
+    }
+}
+
+public int Count
+{
+    get { return (int)impl.length(); }
+}
+
+public bool IsReadOnly
+{
+    get { return false; }
+}
+
+public bool Remove(APlayTest.Client.HistoryEntry item)
+{
+    return impl.remove(new APlay.Generated.Intern.Client.__HistoryEntry(((int) (item.Id)), ((String) (item.Description))));
+}
+System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+{
+    return GetEnumerator();
+}
+
+    public IEnumerator<APlayTest.Client.HistoryEntry> GetEnumerator()
+    {
+        return new HistoryEntryListEnumerator(impl.GetEnumerator());
+    }
+    
+  }
+  
+}
+namespace APlayTest.Client
+{
+  public partial class HistoryEntryListEnumerator : IEnumerator<APlayTest.Client.HistoryEntry>
+  {
+    
+        IEnumerator<APlay.Generated.Intern.Client.__HistoryEntry> intern;
+        public HistoryEntryListEnumerator(IEnumerator<APlay.Generated.Intern.Client.__HistoryEntry> intern)
+        {
+            this.intern = intern;
+        }
+        public APlayTest.Client.HistoryEntry Current
+        {
+            get { APlay.Generated.Intern.Client.__HistoryEntry item = (APlay.Generated.Intern.Client.__HistoryEntry)intern.Current; return new APlayTest.Client.HistoryEntry(((int) (item.Id)), ((String) (item.Description)));}
+        }
+
+        public void Dispose()
+        {
+            intern.Dispose();
+        }
+
+        object System.Collections.IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public bool MoveNext()
+        {
+            return intern.MoveNext();
+        }
+
+        public void Reset()
+        {
+            intern.Reset();
+        }
+
+  }
+  
+}
+namespace APlayTest.Client
+{
   public abstract partial class APlayClientSkeleton : APlayTest.Client.IAPlayClientEvents, APlay.Generated.Intern.Client.IDesignedClient
   {
     public APlayClientSkeleton()
@@ -2689,6 +3372,7 @@ namespace APlayTest.Client
       ProjectManager_ = factory;
       Sheet_ = factory;
       SheetManager_ = factory;
+      UndoManager_ = factory;
       User_ = factory;
     }
     public static void SetAPlayDefaultFactory()
@@ -2699,6 +3383,7 @@ namespace APlayTest.Client
       ProjectManager_ = null;
       Sheet_ = null;
       SheetManager_ = null;
+      UndoManager_ = null;
       User_ = null;
     }
     public static void SetBlockSymbolUserFactory(APlayTest.Client.IBlockSymbolUserFactory factory)
@@ -2821,6 +3506,26 @@ namespace APlayTest.Client
         return (APlay.Generated.Intern.Client.APlayInternalFactory.CreateSheetManager());
       }
     }
+    public static void SetUndoManagerUserFactory(APlayTest.Client.IUndoManagerUserFactory factory)
+    {
+      UndoManager_ = factory;
+    }
+    public static void SetUndoManagerAPlayDefaultFactory()
+    {
+      UndoManager_ = null;
+    }
+    public static APlay.Generated.Intern.Client.__IUndoManagerAPImpl CreateUndoManagerImpl()
+    {
+      if(UndoManager_!=null)
+      {
+        APlay.Common.Logging.Logger.LogDesigned(6,"event adapters are temporarily disabled","Client.Designed");
+        return (null);
+      }
+      else
+      {
+        return (APlay.Generated.Intern.Client.APlayInternalFactory.CreateUndoManager());
+      }
+    }
     public static void SetUserUserFactory(APlayTest.Client.IUserUserFactory factory)
     {
       User_ = factory;
@@ -2847,6 +3552,7 @@ namespace APlayTest.Client
     static private APlayTest.Client.IProjectManagerUserFactory ProjectManager_;
     static private APlayTest.Client.ISheetUserFactory Sheet_;
     static private APlayTest.Client.ISheetManagerUserFactory SheetManager_;
+    static private APlayTest.Client.IUndoManagerUserFactory UndoManager_;
     static private APlayTest.Client.IUserUserFactory User_;
   }
   
@@ -2897,6 +3603,13 @@ namespace APlayTest.Client
       APlay.Common.APlayInitializer.SetInitializer(null);
       return (retu__);
     }
+    public APlay.Generated.Intern.Client.__IUndoManagerAPEvents CreateUndoManagerEvents(APlay.Generated.Intern.Client.__IUndoManagerAPImpl impl)
+    {
+      APlay.Common.APlayInitializer.SetInitializer(impl);
+      APlay.Generated.Intern.Client.__IUndoManagerAPEvents retu__ = ((APlay.Generated.Intern.Client.__IUndoManagerAPEvents) (new APlayTest.Client.UndoManager()));
+      APlay.Common.APlayInitializer.SetInitializer(null);
+      return (retu__);
+    }
     public APlay.Generated.Intern.Client.__IUserAPEvents CreateUserEvents(APlay.Generated.Intern.Client.__IUserAPImpl impl)
     {
       APlay.Common.APlayInitializer.SetInitializer(impl);
@@ -2915,6 +3628,10 @@ namespace APlayTest.Client
     public APlay.Generated.Intern.Client.ISheetListEvents CreateSheetListEvents(APlay.Generated.Intern.Client.ISheetListImpl impl)
     {
       return (((APlay.Generated.Intern.Client.ISheetListEvents) (APlayTest.Client.SheetList.CreateForAPlay(impl))));
+    }
+    public APlay.Generated.Intern.Client.IHistoryEntryListEvents CreateHistoryEntryListEvents(APlay.Generated.Intern.Client.IHistoryEntryListImpl impl)
+    {
+      return (((APlay.Generated.Intern.Client.IHistoryEntryListEvents) (APlayTest.Client.HistoryEntryList.CreateForAPlay(impl))));
     }
   }
   
@@ -2942,10 +3659,13 @@ namespace APlayTest.Client
     public delegate void void_float64_BlockSymbol(double NewPositionX__, APlayTest.Client.BlockSymbol this_);
     public delegate void void_AplaySize(APlayTest.Client.AplaySize NewSize__);
     public delegate void void_AplaySize_BlockSymbol(APlayTest.Client.AplaySize NewSize__, APlayTest.Client.BlockSymbol this_);
+    public delegate void void_int32_Client(int NewId__, APlayTest.Client.Client this_);
     public delegate void void_Project(APlayTest.Client.Project NewCurrentProject__);
     public delegate void void_Project_Client(APlayTest.Client.Project NewCurrentProject__, APlayTest.Client.Client this_);
     public delegate void void_ProjectManager(APlayTest.Client.ProjectManager NewProjectManager__);
     public delegate void void_ProjectManager_Client(APlayTest.Client.ProjectManager NewProjectManager__, APlayTest.Client.Client this_);
+    public delegate void void_UndoManager(APlayTest.Client.UndoManager NewUndoManager__);
+    public delegate void void_UndoManager_Client(APlayTest.Client.UndoManager NewUndoManager__, APlayTest.Client.Client this_);
     public delegate void void_int32_Project(int NewId__, APlayTest.Client.Project this_);
     public delegate void void_ProjectDetail(APlayTest.Client.ProjectDetail NewProjectDetail__);
     public delegate void void_ProjectDetail_Project(APlayTest.Client.ProjectDetail NewProjectDetail__, APlayTest.Client.Project this_);
@@ -2972,6 +3692,15 @@ namespace APlayTest.Client
     public delegate void void_SheetList_SheetManager(APlayTest.Client.SheetList Sheets__, APlayTest.Client.SheetManager this_);
     public delegate void void_Sheet_SheetManager(APlayTest.Client.Sheet element, APlayTest.Client.SheetManager this_);
     public delegate void void_int32_Sheet_SheetManager(int pos, APlayTest.Client.Sheet element, APlayTest.Client.SheetManager this_);
+    public delegate void void_Client_UndoManager(APlayTest.Client.Client NewDataClient__, APlayTest.Client.UndoManager this_);
+    public delegate void void_boolean_UndoManager(bool NewCanUndo__, APlayTest.Client.UndoManager this_);
+    public delegate void void_HistoryEntryList(APlayTest.Client.HistoryEntryList History__);
+    public delegate void void_HistoryEntryList_UndoManager(APlayTest.Client.HistoryEntryList History__, APlayTest.Client.UndoManager this_);
+    public delegate void void_HistoryEntry(APlayTest.Client.HistoryEntry element);
+    public delegate void void_HistoryEntry_UndoManager(APlayTest.Client.HistoryEntry element, APlayTest.Client.UndoManager this_);
+    public delegate void void_int32_HistoryEntry(int pos, APlayTest.Client.HistoryEntry element);
+    public delegate void void_int32_HistoryEntry_UndoManager(int pos, APlayTest.Client.HistoryEntry element, APlayTest.Client.UndoManager this_);
+    public delegate void void_int32_UndoManager(int NewActiveHistoryEntryId__, APlayTest.Client.UndoManager this_);
     public delegate void void_Client_APlayClientSkeleton(APlayTest.Client.Client clientObject, APlayTest.Client.APlayClientSkeleton this_);
     public delegate void void_APlayClientSkeleton(APlayTest.Client.APlayClientSkeleton this_);
     public delegate void void_String(String reason);

@@ -5,5 +5,6 @@ namespace Gemini.Framework
 	public interface IDocument : ILayoutItem
 	{
         IUndoRedoManager UndoRedoManager { get; }
+        bool IsOpen { get; set; }
 	}
 }

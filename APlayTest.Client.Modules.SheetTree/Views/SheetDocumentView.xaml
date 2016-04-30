@@ -31,6 +31,10 @@
                                     ConnectionDragStarted="OnGraphControlConnectionDragStarted"
                                     ConnectionDragging="OnGraphControlConnectionDragging"
                                     ConnectionDragCompleted="OnGraphControlConnectionDragCompleted"
+                                    ElementItemDragStarted="OnElementItemDragStarted"
+                                    ElementItemDragCompleted="OnElementItemDragCompleted"
+                                    ElementItemDragging="OnElementItemDragging"
+                                    
                                     AllowDrop="True"
                                     DragEnter="OnGraphControlDragEnter"
                                     Drop="OnGraphControlDrop">

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -9,10 +10,13 @@ using APlayTest.Client.Contracts;
 using APlayTest.Client.Modules.Inspector;
 using APlayTest.Client.Modules.Inspector.Inspectors;
 using Caliburn.Micro;
+using DynamicData;
 using Gemini.Framework;
 using Gemini.Framework.Services;
 
 using Gemini.Modules.UndoRedo;
+using Reactive.Bindings.Extensions;
+using sbardos.UndoFramework;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {
@@ -22,38 +26,52 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
     {
         private readonly IAPlayAwareShell _shell;
         private readonly IInspectorTool _inspectorTool;
-        private IObservableCollection<SheetDocumentViewModel> _sheets;
+         private IObservableCollection<SheetDocumentViewModel> _sheets;
         private SheetDocumentViewModel _selectedSheet;
 
 
         [ImportingConstructor]
         public SheetTreeViewModel(IAPlayAwareShell shell, IInspectorTool inspectorTool)
+       // public SheetTreeViewModel(IAPlayAwareShell shell, IInspectorTool inspectorTool, UndoManager undoManager)
         {
             _shell = shell;
             _inspectorTool = inspectorTool;
             
+
             DisplayName = "Sheet Tree";
+            Sheets = new BindableCollection<SheetDocumentViewModel>();
+
+            _shell.ProjectChanged += OnProjectChanged;
 
             if (shell.Project != null)
             {
                 if (shell.Project.SheetManager.Sheets != null)
                 {
-                    Sheets =
-                        new BindableCollection<SheetDocumentViewModel>(shell.Project.SheetManager.Sheets.Select(s => new SheetDocumentViewModel(s, inspectorTool)));
+                    Sheets.AddRange(shell.Project.SheetManager.Sheets.Select(sheet => new SheetDocumentViewModel(sheet, inspectorTool, shell.UndoManager, OnOpenedChanged, _shell.Client)));
                 }
             }
 
-            _shell.ProjectChanged += OnProjectChanged;
+
+        }
+
+        public void OnOpenedChanged(IDocument vm)
+        {
+            if (vm.IsOpen)
+            {
+                _shell.ActiveLayoutItem = vm;
+            }
+            else
+            {
+                _shell.CloseDocument(vm);
+            }
 
         }
 
         void OnProjectChanged(object sender, Project e)
         {
-            Sheets =
-                new BindableCollection<SheetDocumentViewModel>(
-                    e.SheetManager.Sheets.Select(s => new SheetDocumentViewModel(s,_inspectorTool)));
+            Sheets.AddRange(e.SheetManager.Sheets.Select(s => new SheetDocumentViewModel(s, _inspectorTool, _shell.UndoManager, OnOpenedChanged, _shell.Client)));
         }
-        
+
 
         public override PaneLocation PreferredLocation
         {
@@ -81,7 +99,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
                 if (_selectedSheet != null)
                 {
-                    _shell.ActiveLayoutItem = _selectedSheet;
+                    //_shell.ActiveLayoutItem = _selectedSheet;
 
                     _inspectorTool.SelectedObject =
                         new InspectableObjectBuilder()

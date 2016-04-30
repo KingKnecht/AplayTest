@@ -35,7 +35,7 @@ namespace Gemini.Framework
 
 		#region ICommand Members
 
-		[DebuggerStepThrough]
+		//[DebuggerStepThrough]
 		public bool CanExecute(object parameter)
 		{
 			return _canExecute == null || _canExecute(parameter);
