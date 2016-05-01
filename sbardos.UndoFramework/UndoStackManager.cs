@@ -17,6 +17,7 @@ namespace sbardos.UndoFramework
 
     public class UndoStackManager : IUndoStackManager
     {
+        private static readonly object _myLock = new object();
         private readonly Dictionary<int, UndoStack> _undoStacks = new Dictionary<int, UndoStack>();
 
         public UndoStackManager()
@@ -26,18 +27,25 @@ namespace sbardos.UndoFramework
 
         public void Push(ChangeSet changeSet, int clientId)
         {
-            CreateStackForClient(clientId);
-            _undoStacks[clientId].Push(changeSet);
+            lock (_myLock)
+            {
+                CreateStackForClient(clientId);
+                _undoStacks[clientId].Push(changeSet);
+            }
         }
         public void Cancel(ChangeSet changeSet, int clientId)
         {
-            OnActiveStateChanged(new ActiveStateChangedEventArgs(changeSet.AsReversed(),StateChangeDirection.Undo, clientId));
+            lock (_myLock)
+            {
+                OnActiveStateChanged(new ActiveStateChangedEventArgs(changeSet.AsReversed(), StateChangeDirection.Undo,
+                    clientId));
+            }
         }
 
 
         public void CreateStackForClient(int clientId)
         {
-            lock (this)
+            lock (_myLock)
             {
                 if (!_undoStacks.ContainsKey(clientId))
                 {
@@ -61,10 +69,13 @@ namespace sbardos.UndoFramework
 
         public void DeleteStackForClient(int clientId)
         {
-            _undoStacks[clientId].ActiveStateChanged -= UndoStackOnActiveStateChanged;
-            _undoStacks[clientId].StackChanged -= StackChanged;
+            lock (_myLock)
+            {
+                _undoStacks[clientId].ActiveStateChanged -= UndoStackOnActiveStateChanged;
+                _undoStacks[clientId].StackChanged -= StackChanged;
 
-            _undoStacks.Remove(clientId);
+                _undoStacks.Remove(clientId);
+            }
         }
 
         public event EventHandler<ActiveStateChangedEventArgs> ActiveStateChanged;

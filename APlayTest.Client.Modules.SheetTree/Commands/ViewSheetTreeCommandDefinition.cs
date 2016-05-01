@@ -28,7 +28,7 @@ namespace APlayTest.Client.Modules.SheetTree.Commands
             get
             {
                 return "SheetTree";
-                //return Resources.ViewErrorListCommandText;
+                //return Resources.;
             }
         }
 
@@ -37,7 +37,7 @@ namespace APlayTest.Client.Modules.SheetTree.Commands
             get
             {
                 return "SheetTree";
-                //return Resources.ViewErrorListCommandToolTip;
+                //return Resources.ViewSheetTreeCommandToolTip;
             }
         }
     }

@@ -100,6 +100,11 @@
         <event name="CreateBlockSymbol" returnType="BlockSymbol"/>
         <event name="Add">
           <data type="BlockSymbol" name="blockSymbol" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="Remove">
+          <data type="BlockSymbol" name="blockSymbol" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
         </event>
         <event name="SetName">
           <data type="WString" name="name" persistable="false"/>
@@ -110,7 +115,7 @@
         <data type="WString" name="Name" persistable="false"/>
       </permissionGroup>
       <permissionGroup baseType="ServerToAll">
-        <set type="BlockSymbol" name="BlockSymbols" persistable="false"/>
+        <list type="BlockSymbol" name="BlockSymbols" persistable="false"/>
         <data type="int32" name="Id" persistable="false"/>
       </permissionGroup>
     </communicationObject>

@@ -90,7 +90,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public static readonly DependencyProperty XProperty = DependencyProperty.Register(
             "X", typeof(double), typeof(ElementItem),
-            new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            new FrameworkPropertyMetadata(0.0));
 
         public double X
         {
@@ -100,7 +100,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public static readonly DependencyProperty YProperty = DependencyProperty.Register(
             "Y", typeof(double), typeof(ElementItem),
-            new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            new FrameworkPropertyMetadata(0.0));
 
         public double Y
         {

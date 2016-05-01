@@ -4,21 +4,26 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using APlayTest.Client.Modules.Inspector;
+using APlayTest.Client.Modules.SheetTree.Commands;
 using APlayTest.Client.Modules.SheetTree.ViewModels.Elements;
 using Caliburn.Micro;
 using Gemini.Framework;
+using Gemini.Framework.Commands;
+using Gemini.Framework.Threading;
 using Reactive.Bindings;
 using sbardos.UndoFramework;
 
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {
+   
     [Export(typeof(SheetDocumentViewModel))]
     [PartCreationPolicy(CreationPolicy.NonShared)]
-    public class SheetDocumentViewModel : Document
+    public class SheetDocumentViewModel : Document, ICommandHandler<DeleteCommandDefinition>
     {
         private readonly Sheet _sheet;
         private string _name;
@@ -46,21 +51,34 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             _connections = new BindableCollection<ConnectionViewModel>();
 
 
-            _sheet.BlockSymbolsAddEventHandler += _sheet_BlockSymbolsAddEventHandler;
-
+            
             foreach (var blockSymbol in _sheet.BlockSymbols)
             {
                 var block = AddBlock(blockSymbol);
             }
 
-            _sheet.NameChangeEventHandler += name => DisplayName = name; ;
+            _sheet.NameChangeEventHandler += name => DisplayName = name;
+
+            _sheet.BlockSymbolsInsertAtEventHandler += SheetOnBlockSymbolsInsertAtEventHandler;
+            _sheet.BlockSymbolsRemoveAtEventHandler += SheetOnBlockSymbolsRemoveAtEventHandler;
         }
 
-
-        void _sheet_BlockSymbolsAddEventHandler(BlockSymbol newBlockSymbol)
+        private void SheetOnBlockSymbolsInsertAtEventHandler(int insertAt, BlockSymbol newBlockSymbol)
         {
             AddBlock(newBlockSymbol);
         }
+
+        private void SheetOnBlockSymbolsRemoveAtEventHandler(int indexAt, BlockSymbol blockSymbol)
+        {
+            var toBeRemoved = _elements.OfType<BlockVm>().FirstOrDefault(b => b.Id == blockSymbol.Id);
+            if (toBeRemoved != null)
+            {
+                Elements.Remove(toBeRemoved);
+            }
+        }
+
+
+       
 
         private ElementViewModel AddBlock(BlockSymbol blockSymbol)
         {
@@ -171,8 +189,18 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         public void DeleteElement(ElementViewModel element)
         {
-            Connections.RemoveRange(element.AttachedConnections);
-            Elements.Remove(element);
+            //Connections.RemoveRange(element.AttachedConnections);
+           
+            var block = element as BlockVm;
+            if (block != null)
+            {
+                var toBeDeleted = _sheet.BlockSymbols.FirstOrDefault(b => b.Id == block.Id);
+                
+                _sheet.Remove(toBeDeleted, _client);
+
+                return;
+            }
+
         }
 
         public void DeleteSelectedElements()
@@ -206,7 +234,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
                 NotifyOfPropertyChange(() => Name);
             }
         }
-        
+
         public int SheetId { get; set; }
 
         public void OnElementItemDragStarted(ElementViewModel itemViewModel, Point currentDragPoint)
@@ -214,12 +242,22 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             var block = itemViewModel as BlockVm;
             if (block != null)
             {
+                //Console.WriteLine("OnElementItemDragStarted()");
                 _undoManager.StartTransaction("Moving Block: " + block.Name);
                 return;
             }
-
         }
 
+        public void OnElementItemDragging(ElementViewModel itemViewModel, double horizontalChange, double verticalChange, double positionX, double positionY)
+        {
+            var block = itemViewModel as BlockVm;
+            if (block != null)
+            {
+                //Console.WriteLine("OnElementItemDragging()");
+                block.SetPosition(positionX, positionY);
+                return;
+            }
+        }
         public void OnElementItemDragCompleted(ElementViewModel itemViewModel, Point currentDragPoint)
         {
             var block = itemViewModel as BlockVm;
@@ -230,15 +268,15 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             }
         }
 
-        public void OnElementItemDragging(ElementViewModel itemViewModel, double horizontalChange, double verticalChange, double positionX, double positionY)
+        public void Update(Command command)
         {
-            var block = itemViewModel as BlockVm;
-            if (block != null)
-            {
+            command.Enabled = SelectedElements.Any();
+        }
 
-                block.SetPosition(positionX, positionY);
-                return;
-            }
+        public Task Run(Command command)
+        {
+            DeleteSelectedElements();
+            return TaskUtility.Completed;
         }
     }
 }

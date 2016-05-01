@@ -28,7 +28,7 @@ namespace APlayTest.Server
 
         public BlockSymbol()
         {
-
+            
         }
 
         public BlockSymbol(IUndoService undoService)
@@ -36,6 +36,18 @@ namespace APlayTest.Server
             _undoService = undoService;
 
             _undoService.ActiveStateChanged += UndoServiceOnActiveStateChanged;
+        }
+
+        public BlockSymbol(BlockSymbolUndoable undoable, ChangeSet changeSet, IUndoService undoService):this(undoService)
+        {
+            Id = undoable.Id;
+            PositionX = undoable.Position.X;
+            PositionY = undoable.Position.Y;
+
+            foreach (var change in changeSet.Where(c => c.OwnerId == Id))
+            {
+                
+            }
         }
 
         private void UndoServiceOnActiveStateChanged(object sender, ActiveStateChangedEventArgs e)
@@ -80,6 +92,7 @@ namespace APlayTest.Server
             PositionY = position__.Y;
 
             _undoService.AddUpdate(oldState, new BlockSymbolUndoable(this), "Position of block changed", client__.Id);
+           
         }
     }
 

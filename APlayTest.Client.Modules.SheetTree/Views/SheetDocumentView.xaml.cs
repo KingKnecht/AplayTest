@@ -43,12 +43,12 @@ namespace APlayTest.Client.Modules.SheetTree.Views
             base.OnPreviewMouseDown(e);
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.Key == Key.Delete)
-                ((SheetDocumentViewModel)DataContext).DeleteSelectedElements();
-            base.OnKeyDown(e);
-        }
+        //protected override void OnKeyDown(KeyEventArgs e)
+        //{
+        //    if (e.Key == Key.Delete)
+        //        ((SheetDocumentViewModel)DataContext).DeleteSelectedElements();
+        //    base.OnKeyDown(e);
+        //}
 
         private void OnGraphControlRightMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -160,15 +160,7 @@ namespace APlayTest.Client.Modules.SheetTree.Views
         {
             var dataContext = ((ElementItem)e.OriginalSource).DataContext;
             var itemViewModel = (ElementViewModel)dataContext;
-
-            //var scaledPosition = GetContentPoint(new Point(e.PositionX, e.PositionY), ZoomAndPanControl.ContentScale);
-            var scaledDelta = GetContentPoint(new Point(e.HorizontalChange, e.VerticalChange), ZoomAndPanControl.ContentScale);
-
-            //Console.WriteLine(scaledDelta);
-
-            //ViewModel.OnElementItemDragging(itemViewModel, scaledDelta.X,
-            //    scaledDelta.Y, e.PositionX + scaledDelta.X, e.PositionY + scaledDelta.Y);
-
+            
             ViewModel.OnElementItemDragging(itemViewModel, e.HorizontalChange,
                e.VerticalChange, e.PositionX, e.PositionY);
         }

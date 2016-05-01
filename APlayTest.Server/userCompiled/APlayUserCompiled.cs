@@ -256,7 +256,7 @@ namespace APlayTest.Server
   public interface  ISheetImpl
   {
     String Name {get; set; }
-    APlayTest.Server.BlockSymbolSet BlockSymbols {get; set; }
+    APlayTest.Server.BlockSymbolList BlockSymbols {get; set; }
     int Id {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
@@ -289,13 +289,17 @@ namespace APlayTest.Server
   public interface  ISheetEvents
   {
     void onNameChange (String NewName__);
-    void onBlockSymbolsReplace (APlayTest.Server.BlockSymbolSet BlockSymbols__);
+    void onBlockSymbolsReplace (APlayTest.Server.BlockSymbolList BlockSymbols__);
     void onBlockSymbolsAdd (APlayTest.Server.BlockSymbol element);
     void onBlockSymbolsRemove (APlayTest.Server.BlockSymbol element);
     void onBlockSymbolsClear ();
+    void onBlockSymbolsInsertAt (int pos, APlayTest.Server.BlockSymbol element);
+    void onBlockSymbolsSetAt (int pos, APlayTest.Server.BlockSymbol element);
+    void onBlockSymbolsRemoveAt (int pos, APlayTest.Server.BlockSymbol element);
     void onIdChange (int NewId__);
     APlayTest.Server.BlockSymbol onCreateBlockSymbol ();
-    void onAdd (APlayTest.Server.BlockSymbol blockSymbol__);
+    void onAdd (APlayTest.Server.BlockSymbol blockSymbol__, APlayTest.Server.Client client__);
+    void onRemove (APlayTest.Server.BlockSymbol blockSymbol__, APlayTest.Server.Client client__);
     void onSetName (String name__, APlayTest.Server.Client client__);
   };
 }
@@ -1930,19 +1934,19 @@ namespace APlayTest.Server
         }
       }
     }
-    public virtual APlayTest.Server.BlockSymbolSet BlockSymbols
+    public virtual APlayTest.Server.BlockSymbolList BlockSymbols
     {
       set
       {
         {
           //BlockSymbol
-          implSheet.BlockSymbols = ((APlay.Generated.Intern.Server.IBlockSymbolSetEvents) (value));
+          implSheet.BlockSymbols = ((APlay.Generated.Intern.Server.IBlockSymbolListEvents) (value));
         }
       }
       get
       {
         {
-          return (((APlayTest.Server.BlockSymbolSet) (implSheet.BlockSymbols)));
+          return (((APlayTest.Server.BlockSymbolList) (implSheet.BlockSymbols)));
         }
       }
     }
@@ -1993,25 +1997,25 @@ namespace APlayTest.Server
         }
       }
     }
-    public virtual void onBlockSymbolsReplace(APlayTest.Server.BlockSymbolSet BlockSymbols__)
+    public virtual void onBlockSymbolsReplace(APlayTest.Server.BlockSymbolList BlockSymbols__)
     {
       APlay.Common.Logging.Logger.LogDesigned(2,"onBlockSymbolsReplace received","Server.Designed");
     }
-    public void onInternBlockSymbolsReplace(APlay.Generated.Intern.Server.IBlockSymbolSetEvents BlockSymbols__)
+    public void onInternBlockSymbolsReplace(APlay.Generated.Intern.Server.IBlockSymbolListEvents BlockSymbols__)
     {
       if(BlockSymbolsReplaceEventHandler!=null)
       {
-        BlockSymbolsReplaceEventHandler(((APlayTest.Server.BlockSymbolSet) (BlockSymbols__)));
+        BlockSymbolsReplaceEventHandler(((APlayTest.Server.BlockSymbolList) (BlockSymbols__)));
       }
       else
       {
         if(APlayTest.Server.SheetSkeleton.StaticBlockSymbolsReplaceEventHandler!=null)
         {
-          APlayTest.Server.SheetSkeleton.StaticBlockSymbolsReplaceEventHandler(((APlayTest.Server.BlockSymbolSet) (BlockSymbols__)), ((APlayTest.Server.Sheet) (this)));
+          APlayTest.Server.SheetSkeleton.StaticBlockSymbolsReplaceEventHandler(((APlayTest.Server.BlockSymbolList) (BlockSymbols__)), ((APlayTest.Server.Sheet) (this)));
         }
         else
         {
-          this.onBlockSymbolsReplace(((APlayTest.Server.BlockSymbolSet) (BlockSymbols__)));
+          this.onBlockSymbolsReplace(((APlayTest.Server.BlockSymbolList) (BlockSymbols__)));
         }
       }
     }
@@ -2081,6 +2085,72 @@ namespace APlayTest.Server
         }
       }
     }
+    public virtual void onBlockSymbolsInsertAt(int pos, APlayTest.Server.BlockSymbol element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onBlockSymbolsInsertAt received","Server.Designed");
+    }
+    public void onInternBlockSymbolsInsertAt(int pos, APlay.Generated.Intern.Server.__IBlockSymbolAPEvents element)
+    {
+      if(BlockSymbolsInsertAtEventHandler!=null)
+      {
+        BlockSymbolsInsertAtEventHandler(pos, ((APlayTest.Server.BlockSymbol) (element)));
+      }
+      else
+      {
+        if(APlayTest.Server.SheetSkeleton.StaticBlockSymbolsInsertAtEventHandler!=null)
+        {
+          APlayTest.Server.SheetSkeleton.StaticBlockSymbolsInsertAtEventHandler(pos, ((APlayTest.Server.BlockSymbol) (element)), ((APlayTest.Server.Sheet) (this)));
+        }
+        else
+        {
+          this.onBlockSymbolsInsertAt(pos, ((APlayTest.Server.BlockSymbol) (element)));
+        }
+      }
+    }
+    public virtual void onBlockSymbolsSetAt(int pos, APlayTest.Server.BlockSymbol element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onBlockSymbolsSetAt received","Server.Designed");
+    }
+    public void onInternBlockSymbolsSetAt(int pos, APlay.Generated.Intern.Server.__IBlockSymbolAPEvents element)
+    {
+      if(BlockSymbolsSetAtEventHandler!=null)
+      {
+        BlockSymbolsSetAtEventHandler(pos, ((APlayTest.Server.BlockSymbol) (element)));
+      }
+      else
+      {
+        if(APlayTest.Server.SheetSkeleton.StaticBlockSymbolsSetAtEventHandler!=null)
+        {
+          APlayTest.Server.SheetSkeleton.StaticBlockSymbolsSetAtEventHandler(pos, ((APlayTest.Server.BlockSymbol) (element)), ((APlayTest.Server.Sheet) (this)));
+        }
+        else
+        {
+          this.onBlockSymbolsSetAt(pos, ((APlayTest.Server.BlockSymbol) (element)));
+        }
+      }
+    }
+    public virtual void onBlockSymbolsRemoveAt(int pos, APlayTest.Server.BlockSymbol element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onBlockSymbolsRemoveAt received","Server.Designed");
+    }
+    public void onInternBlockSymbolsRemoveAt(int pos, APlay.Generated.Intern.Server.__IBlockSymbolAPEvents element)
+    {
+      if(BlockSymbolsRemoveAtEventHandler!=null)
+      {
+        BlockSymbolsRemoveAtEventHandler(pos, ((APlayTest.Server.BlockSymbol) (element)));
+      }
+      else
+      {
+        if(APlayTest.Server.SheetSkeleton.StaticBlockSymbolsRemoveAtEventHandler!=null)
+        {
+          APlayTest.Server.SheetSkeleton.StaticBlockSymbolsRemoveAtEventHandler(pos, ((APlayTest.Server.BlockSymbol) (element)), ((APlayTest.Server.Sheet) (this)));
+        }
+        else
+        {
+          this.onBlockSymbolsRemoveAt(pos, ((APlayTest.Server.BlockSymbol) (element)));
+        }
+      }
+    }
     public virtual void onIdChange(int NewId__)
     {
       APlay.Common.Logging.Logger.LogDesigned(2,"onIdChange received","Server.Designed");
@@ -2125,22 +2195,41 @@ namespace APlayTest.Server
         }
       }
     }
-    public abstract void onAdd(APlayTest.Server.BlockSymbol blockSymbol__);
-    public void onInternAdd(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents blockSymbol__)
+    public abstract void onAdd(APlayTest.Server.BlockSymbol blockSymbol__, APlayTest.Server.Client client__);
+    public void onInternAdd(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents blockSymbol__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
     {
       if(AddEventHandler!=null)
       {
-        AddEventHandler(((APlayTest.Server.BlockSymbol) (blockSymbol__)));
+        AddEventHandler(((APlayTest.Server.BlockSymbol) (blockSymbol__)), ((APlayTest.Server.Client) (client__)));
       }
       else
       {
         if(APlayTest.Server.SheetSkeleton.StaticAddEventHandler!=null)
         {
-          APlayTest.Server.SheetSkeleton.StaticAddEventHandler(((APlayTest.Server.BlockSymbol) (blockSymbol__)), ((APlayTest.Server.Sheet) (this)));
+          APlayTest.Server.SheetSkeleton.StaticAddEventHandler(((APlayTest.Server.BlockSymbol) (blockSymbol__)), ((APlayTest.Server.Client) (client__)), ((APlayTest.Server.Sheet) (this)));
         }
         else
         {
-          this.onAdd(((APlayTest.Server.BlockSymbol) (blockSymbol__)));
+          this.onAdd(((APlayTest.Server.BlockSymbol) (blockSymbol__)), ((APlayTest.Server.Client) (client__)));
+        }
+      }
+    }
+    public abstract void onRemove(APlayTest.Server.BlockSymbol blockSymbol__, APlayTest.Server.Client client__);
+    public void onInternRemove(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents blockSymbol__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
+    {
+      if(RemoveEventHandler!=null)
+      {
+        RemoveEventHandler(((APlayTest.Server.BlockSymbol) (blockSymbol__)), ((APlayTest.Server.Client) (client__)));
+      }
+      else
+      {
+        if(APlayTest.Server.SheetSkeleton.StaticRemoveEventHandler!=null)
+        {
+          APlayTest.Server.SheetSkeleton.StaticRemoveEventHandler(((APlayTest.Server.BlockSymbol) (blockSymbol__)), ((APlayTest.Server.Client) (client__)), ((APlayTest.Server.Sheet) (this)));
+        }
+        else
+        {
+          this.onRemove(((APlayTest.Server.BlockSymbol) (blockSymbol__)), ((APlayTest.Server.Client) (client__)));
         }
       }
     }
@@ -2268,20 +2357,28 @@ namespace APlayTest.Server
     }
     public event APlayTest.Server.Delegates.void_WString NameChangeEventHandler;
     static public event APlayTest.Server.Delegates.void_WString_Sheet StaticNameChangeEventHandler;
-    public event APlayTest.Server.Delegates.void_BlockSymbolSet BlockSymbolsReplaceEventHandler;
-    static public event APlayTest.Server.Delegates.void_BlockSymbolSet_Sheet StaticBlockSymbolsReplaceEventHandler;
+    public event APlayTest.Server.Delegates.void_BlockSymbolList BlockSymbolsReplaceEventHandler;
+    static public event APlayTest.Server.Delegates.void_BlockSymbolList_Sheet StaticBlockSymbolsReplaceEventHandler;
     public event APlayTest.Server.Delegates.void_BlockSymbol BlockSymbolsAddEventHandler;
     static public event APlayTest.Server.Delegates.void_BlockSymbol_Sheet StaticBlockSymbolsAddEventHandler;
     public event APlayTest.Server.Delegates.void_BlockSymbol BlockSymbolsRemoveEventHandler;
     static public event APlayTest.Server.Delegates.void_BlockSymbol_Sheet StaticBlockSymbolsRemoveEventHandler;
     public event APlayTest.Server.Delegates.void_ BlockSymbolsClearEventHandler;
     static public event APlayTest.Server.Delegates.void_Sheet StaticBlockSymbolsClearEventHandler;
+    public event APlayTest.Server.Delegates.void_int32_BlockSymbol BlockSymbolsInsertAtEventHandler;
+    static public event APlayTest.Server.Delegates.void_int32_BlockSymbol_Sheet StaticBlockSymbolsInsertAtEventHandler;
+    public event APlayTest.Server.Delegates.void_int32_BlockSymbol BlockSymbolsSetAtEventHandler;
+    static public event APlayTest.Server.Delegates.void_int32_BlockSymbol_Sheet StaticBlockSymbolsSetAtEventHandler;
+    public event APlayTest.Server.Delegates.void_int32_BlockSymbol BlockSymbolsRemoveAtEventHandler;
+    static public event APlayTest.Server.Delegates.void_int32_BlockSymbol_Sheet StaticBlockSymbolsRemoveAtEventHandler;
     public event APlayTest.Server.Delegates.void_int32 IdChangeEventHandler;
     static public event APlayTest.Server.Delegates.void_int32_Sheet StaticIdChangeEventHandler;
     public event APlayTest.Server.Delegates.BlockSymbol_ CreateBlockSymbolEventHandler;
     static public event APlayTest.Server.Delegates.BlockSymbol_Sheet StaticCreateBlockSymbolEventHandler;
-    public event APlayTest.Server.Delegates.void_BlockSymbol AddEventHandler;
-    static public event APlayTest.Server.Delegates.void_BlockSymbol_Sheet StaticAddEventHandler;
+    public event APlayTest.Server.Delegates.void_BlockSymbol_Client AddEventHandler;
+    static public event APlayTest.Server.Delegates.void_BlockSymbol_Client_Sheet StaticAddEventHandler;
+    public event APlayTest.Server.Delegates.void_BlockSymbol_Client RemoveEventHandler;
+    static public event APlayTest.Server.Delegates.void_BlockSymbol_Client_Sheet StaticRemoveEventHandler;
     public event APlayTest.Server.Delegates.void_WString_Client SetNameEventHandler;
     static public event APlayTest.Server.Delegates.void_WString_Client_Sheet StaticSetNameEventHandler;
     private APlay.Generated.Intern.Server.__ISheetAPImpl implSheet;
@@ -3575,21 +3672,21 @@ namespace APlayTest.Server
 }
 namespace APlayTest.Server
 {
-  public partial class BlockSymbolSet : ICollection<APlayTest.Server.BlockSymbol>, APlay.Generated.Intern.Server.IBlockSymbolSetEvents
+  public partial class BlockSymbolList : IList<APlayTest.Server.BlockSymbol>, APlay.Generated.Intern.Server.IBlockSymbolListEvents
   {
-    public BlockSymbolSet()
+    public BlockSymbolList()
     {
-      APlay.Generated.Intern.Server.IBlockSymbolSetImpl impl_=null;
+      APlay.Generated.Intern.Server.IBlockSymbolListImpl impl_=null;
       if(impl_!=null)
       {
         impl = impl_;
       }
       else
       {
-        impl = new APlay.Generated.Intern.Server.BlockSymbolSet();
+        impl = new APlay.Generated.Intern.Server.BlockSymbolList();
       }
     }
-    public BlockSymbolSet(APlay.Generated.Intern.Server.IBlockSymbolSetImpl impl_)
+    public BlockSymbolList(APlay.Generated.Intern.Server.IBlockSymbolListImpl impl_)
     {
       if(impl_!=null)
       {
@@ -3597,24 +3694,54 @@ namespace APlayTest.Server
       }
       else
       {
-        impl = new APlay.Generated.Intern.Server.BlockSymbolSet();
+        impl = new APlay.Generated.Intern.Server.BlockSymbolList();
       }
     }
-    public static APlayTest.Server.BlockSymbolSet CreateForAPlay(APlay.Generated.Intern.Server.IBlockSymbolSetImpl impl)
+    public static APlayTest.Server.BlockSymbolList CreateForAPlay(APlay.Generated.Intern.Server.IBlockSymbolListImpl impl)
     {
-      APlayTest.Server.BlockSymbolSet ob = new APlayTest.Server.BlockSymbolSet(impl);
+      APlayTest.Server.BlockSymbolList ob = new APlayTest.Server.BlockSymbolList(impl);
       return (ob);
     }
-    public APlay.Generated.Intern.Server.IBlockSymbolSetImpl getBlockSymbolObject()
+    public APlay.Generated.Intern.Server.IBlockSymbolListImpl getBlockSymbolObject()
     {
       return (impl);
     }
-    private APlay.Generated.Intern.Server.IBlockSymbolSetImpl impl;
+    private APlay.Generated.Intern.Server.IBlockSymbolListImpl impl;
     
+public int IndexOf(APlayTest.Server.BlockSymbol item)
+{
+    return (int)impl.indexOf(item);
+}
+
+public void Insert(int index, APlayTest.Server.BlockSymbol item)
+{
+    impl.insertAt(index, item);
+}
+
+public void RemoveAt(int index)
+{
+    impl.removeAt(index);
+}
+
+public APlayTest.Server.BlockSymbol this[int index]
+{
+    get
+    {
+         
+        return (APlayTest.Server.BlockSymbol)impl.get((int)index);
+    }
+    set
+    {
+        APlayTest.Server.BlockSymbol item =value;
+        impl.setAt(index,item);
+    }
+}
+
 public void Add(APlayTest.Server.BlockSymbol item)
 {
     impl.add(item);
 }
+
 public void Clear()
 {
     impl.clear();
@@ -3641,19 +3768,21 @@ public int Count
 
 public bool IsReadOnly
 {
-    get { return true; }
+    get { return false; }
+}
+
+public bool Remove(APlayTest.Server.BlockSymbol item)
+{
+    return impl.remove(item);
 }
 System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 {
     return GetEnumerator();
 }
-public bool Remove(APlayTest.Server.BlockSymbol item)
-{
-    return impl.remove(item);
-}
+
     public IEnumerator<APlayTest.Server.BlockSymbol> GetEnumerator()
     {
-        return new BlockSymbolSetEnumerator(impl.GetEnumerator());
+        return new BlockSymbolListEnumerator(impl.GetEnumerator());
     }
     
   }
@@ -3661,11 +3790,11 @@ public bool Remove(APlayTest.Server.BlockSymbol item)
 }
 namespace APlayTest.Server
 {
-  public partial class BlockSymbolSetEnumerator : IEnumerator<APlayTest.Server.BlockSymbol>
+  public partial class BlockSymbolListEnumerator : IEnumerator<APlayTest.Server.BlockSymbol>
   {
     
         IEnumerator<APlay.Generated.Intern.Server.__BlockSymbol> intern;
-        public BlockSymbolSetEnumerator(IEnumerator<APlay.Generated.Intern.Server.__BlockSymbol> intern)
+        public BlockSymbolListEnumerator(IEnumerator<APlay.Generated.Intern.Server.__BlockSymbol> intern)
         {
             this.intern = intern;
         }
@@ -4270,9 +4399,9 @@ namespace APlayTest.Server
     {
       return (((APlay.Generated.Intern.Server.IProjectListEvents) (APlayTest.Server.ProjectList.CreateForAPlay(impl))));
     }
-    public APlay.Generated.Intern.Server.IBlockSymbolSetEvents CreateBlockSymbolSetEvents(APlay.Generated.Intern.Server.IBlockSymbolSetImpl impl)
+    public APlay.Generated.Intern.Server.IBlockSymbolListEvents CreateBlockSymbolListEvents(APlay.Generated.Intern.Server.IBlockSymbolListImpl impl)
     {
-      return (((APlay.Generated.Intern.Server.IBlockSymbolSetEvents) (APlayTest.Server.BlockSymbolSet.CreateForAPlay(impl))));
+      return (((APlay.Generated.Intern.Server.IBlockSymbolListEvents) (APlayTest.Server.BlockSymbolList.CreateForAPlay(impl))));
     }
     public APlay.Generated.Intern.Server.ISheetListEvents CreateSheetListEvents(APlay.Generated.Intern.Server.ISheetListImpl impl)
     {
@@ -4323,15 +4452,18 @@ namespace APlayTest.Server
     public delegate void void_WString_ProjectManager(String searchString__, APlayTest.Server.ProjectManager this_);
     public delegate void void_int32_ProjectManager(int projectId__, APlayTest.Server.ProjectManager this_);
     public delegate void void_WString_Sheet(String NewName__, APlayTest.Server.Sheet this_);
-    public delegate void void_BlockSymbolSet(APlayTest.Server.BlockSymbolSet BlockSymbols__);
-    public delegate void void_BlockSymbolSet_Sheet(APlayTest.Server.BlockSymbolSet BlockSymbols__, APlayTest.Server.Sheet this_);
+    public delegate void void_BlockSymbolList(APlayTest.Server.BlockSymbolList BlockSymbols__);
+    public delegate void void_BlockSymbolList_Sheet(APlayTest.Server.BlockSymbolList BlockSymbols__, APlayTest.Server.Sheet this_);
     public delegate void void_BlockSymbol(APlayTest.Server.BlockSymbol element);
     public delegate void void_BlockSymbol_Sheet(APlayTest.Server.BlockSymbol element, APlayTest.Server.Sheet this_);
     public delegate void void_();
     public delegate void void_Sheet(APlayTest.Server.Sheet this_);
+    public delegate void void_int32_BlockSymbol_Sheet(int pos, APlayTest.Server.BlockSymbol element, APlayTest.Server.Sheet this_);
     public delegate void void_int32_Sheet(int NewId__, APlayTest.Server.Sheet this_);
     public delegate APlayTest.Server.BlockSymbol BlockSymbol_();
     public delegate APlayTest.Server.BlockSymbol BlockSymbol_Sheet(APlayTest.Server.Sheet this_);
+    public delegate void void_BlockSymbol_Client(APlayTest.Server.BlockSymbol blockSymbol__, APlayTest.Server.Client client__);
+    public delegate void void_BlockSymbol_Client_Sheet(APlayTest.Server.BlockSymbol blockSymbol__, APlayTest.Server.Client client__, APlayTest.Server.Sheet this_);
     public delegate void void_WString_Client(String name__, APlayTest.Server.Client client__);
     public delegate void void_WString_Client_Sheet(String name__, APlayTest.Server.Client client__, APlayTest.Server.Sheet this_);
     public delegate APlayTest.Server.Sheet Sheet_();

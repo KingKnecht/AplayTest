@@ -28,6 +28,7 @@ namespace sbardos.UndoFramework
     {
         private readonly ITransactionService _transactionService;
         private readonly IUndoStackManager _undoStackManager;
+        private static readonly Object myLock = new object();
 
         public UndoService(ITransactionService transactionService, IUndoStackManager undoStackManager)
         {
@@ -49,9 +50,12 @@ namespace sbardos.UndoFramework
 
         public Transaction StartTransaction(int clientId, string description)
         {
-            _undoStackManager.CreateStackForClient(clientId);
+            lock (myLock)
+            {
+                _undoStackManager.CreateStackForClient(clientId);
 
-            return _transactionService.StartTransaction(clientId, description);
+                return _transactionService.StartTransaction(clientId, description);
+            }
         }
 
         public void EndTransaction(int clientId)

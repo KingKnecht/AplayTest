@@ -26,8 +26,10 @@ namespace APlayTest.Server
         /// </summary>
         public Sheet()
         {
-            
+
         }
+
+
 
         public Sheet(IUndoService undoService)
         {
@@ -41,35 +43,81 @@ namespace APlayTest.Server
         {
             foreach (var change in e.ChangeSet.Where(c => c.OwnerId == Id))
             {
-                var storedObject = e.ChangeDirection == StateChangeDirection.Undo
-                    ? (SheetUndoable) change.UndoObjectState
-                    : (SheetUndoable) change.RedoObjectState;
 
-                switch (change.ChangeReason)
+                APlay.Common.Logging.Logger.LogDesigned(2,
+                      "ActiveStateChanged received and updated state. OwnerId: " + change.OwnerId,
+                      "AplayTest.Server.Sheet");
+
+                if (e.ChangeDirection == StateChangeDirection.Undo)
                 {
-                    case ChangeReason.InsertAt:
-                        break;
-                    case ChangeReason.Update:
-                        Name = storedObject.Name;
-                        break;
-                    case ChangeReason.RemoveAt:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    if (change.ChangeReason == ChangeReason.InsertAt)
+                    {
+                        BlockSymbols.RemoveAt(change.IndexAt);
+                    }
+                    else if (change.ChangeReason == ChangeReason.RemoveAt)
+                    {
+                        BlockSymbols.Insert(change.IndexAt,
+                            new BlockSymbol((BlockSymbolUndoable)change.RedoObjectState, e.ChangeSet, _undoService));
+                    }
                 }
+                else if (e.ChangeDirection == StateChangeDirection.Redo)
+                {
+                    if (change.ChangeReason == ChangeReason.InsertAt)
+                    {
+                        BlockSymbols.Insert(change.IndexAt,
+                             new BlockSymbol((BlockSymbolUndoable)change.RedoObjectState, e.ChangeSet, _undoService));
+                    }
+                    else if (change.ChangeReason == ChangeReason.RemoveAt)
+                    {
+                        BlockSymbols.RemoveAt(change.IndexAt);
+                    }
+                }
+
+                var storedObject = e.ChangeDirection == StateChangeDirection.Undo
+                                     ? change.UndoObjectState as SheetUndoable
+                                     : change.RedoObjectState as SheetUndoable;
+
+                if (storedObject != null)
+                {
+                    if (change.ChangeReason == ChangeReason.Update)
+                    {
+                        Name = storedObject.Name;
+                    }    
+                }
+                
             }
         }
 
 
         public override BlockSymbol onCreateBlockSymbol()
         {
-            return new BlockSymbol() {Id = IdGenerator.GetNextId(), PositionX = 0, PositionY = 0};
+            return new BlockSymbol() { Id = IdGenerator.GetNextId(), PositionX = 0, PositionY = 0 };
         }
 
-        public override void onAdd(BlockSymbol blockSymbol__)
+        public override void onAdd(BlockSymbol blockSymbol__, Client client)
         {
+            APlay.Common.Logging.Logger.LogDesigned(2, "Sheet.onAdd called", "AplayTest.Server.Sheet");
+
+            var undoObject = new BlockSymbolUndoable(blockSymbol__);
+            _undoService.AddInsert(Id, undoObject, BlockSymbols.Count, "Adding new Task", client.Id);
+
             BlockSymbols.Add(blockSymbol__);
+
         }
+
+        public override void onRemove(BlockSymbol blockSymbol__, Client client__)
+        {
+            APlay.Common.Logging.Logger.LogDesigned(2, "Sheet.onRemove called", "AplayTest.Server.Sheet");
+
+            var toBeDeleted = BlockSymbols.First(t => t.Id == blockSymbol__.Id);
+            var index = BlockSymbols.IndexOf(toBeDeleted);
+
+            var undoObject = new BlockSymbolUndoable(blockSymbol__);
+            _undoService.AddRemove(Id, undoObject, index, "Removing Block [" + toBeDeleted.Id + "]", client__.Id);
+
+            BlockSymbols.RemoveAt(index);
+        }
+
 
         public override void onSetName(string name__, Client client__)
         {
@@ -81,7 +129,7 @@ namespace APlayTest.Server
             Name = name__;
 
             var newState = new SheetUndoable(this);
-        
+
             _undoService.AddUpdate(oldState, newState, "Sheet name changed", client__.Id);
         }
     }

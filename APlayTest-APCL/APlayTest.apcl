@@ -95,14 +95,15 @@ Client DataClient;]]></code>
 [ Client -> Server ]
 
 BlockSymbol CreateBlockSymbol();
-void Add(BlockSymbol blockSymbol);
+void Add(BlockSymbol blockSymbol, Client client);
+void Remove(BlockSymbol blockSymbol, Client client);
 void SetName(WString name, Client client);
 
 [Server  -> All]
 WString Name;
 
 [Server -> All]
-Set<BlockSymbol> BlockSymbols;
+List<BlockSymbol> BlockSymbols;
 int32 Id;]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>

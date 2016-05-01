@@ -3,6 +3,7 @@ using System.Collections;
 using System.Dynamic;
 using System.Net.Mime;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace sbardos.UndoFramework
@@ -10,21 +11,36 @@ namespace sbardos.UndoFramework
     public class Transaction
     {
         private readonly ChangeSet _changeSet;
+        private int _refCounter = 1;
 
         public Transaction(int ownerId, ChangeSet changeSet)
         {
             _changeSet = changeSet;
             OwnerId = ownerId;
-            IsActive = true;
         }
 
         public int OwnerId { get; private set; }
         public int Id { get; set; }
-        internal bool IsActive { get; set; }
+        internal bool IsActive { get { return _refCounter > 0; } }
 
         public ChangeSet ChangeSet
         {
             get { return _changeSet; }
+        }
+
+        public void IncrementRefCounter()
+        {
+            Interlocked.Increment(ref _refCounter);
+        }
+
+        public void DecrementRefCounter()
+        {
+            Interlocked.Decrement(ref _refCounter);
+        }
+
+        public void Cancel()
+        {
+            _refCounter = 0;
         }
     }
 
@@ -74,8 +90,8 @@ namespace sbardos.UndoFramework
         /// <param name="ownerId"></param>
         /// <param name="objectState"></param>
         /// <param name="indexAt">Index where the object should be inserted or removed from.</param>
-        public Change(ChangeReason changeReason, int ownerId,int itemId, IUndoable objectState, int indexAt)
-           {
+        public Change(ChangeReason changeReason, int ownerId, int itemId, IUndoable objectState, int indexAt)
+        {
             if (changeReason == ChangeReason.InsertAt)
             {
                 UndoObjectState = objectState;
@@ -99,7 +115,7 @@ namespace sbardos.UndoFramework
 
         public ChangeReason ChangeReason { get; private set; }
         public int OwnerId { get; private set; }
-        public int ItemId { get;private set; }
+        public int ItemId { get; private set; }
         public int IndexAt { get; set; }
         public IUndoable UndoObjectState { get; set; }
         public IUndoable RedoObjectState { get; set; }
@@ -114,7 +130,7 @@ namespace sbardos.UndoFramework
         }
     }
 
-   
+
 
     public enum ChangeReason
     {
