@@ -41,9 +41,9 @@
                     <controls:GraphControl.ElementItemContainerStyle>
                         <Style TargetType="{x:Type controls:ElementItem}">
                             <Setter Property="X"
-                                    Value="{Binding X}" />
+                                    Value="{Binding X, Mode=TwoWay}" />
                             <Setter Property="Y"
-                                    Value="{Binding Y}" />
+                                    Value="{Binding Y, Mode=TwoWay}" />
                             <Setter Property="IsSelected"
                                     Value="{Binding IsSelected}" />
                         </Style>

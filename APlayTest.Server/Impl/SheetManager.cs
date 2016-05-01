@@ -10,25 +10,34 @@ using APlay.Common.Utils;
 using APlay.Common.DataTypes;
 using APlayTest.Server;
 using APlayTest.Services.Infracstructure;
+using sbardos.UndoFramework;
 
 namespace APlayTest.Server
 {
     public class SheetManager : APlayTest.Server.SheetManagerSkeleton
     {
+        private readonly IUndoService _undoService;
+
         /// <summary>
         /// Use this constructor to create instances in your code.
         /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
         ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
         /// </summary>
-
         public SheetManager()
         {
+            
+        }
+
+
+        public SheetManager(IUndoService undoService)
+        {
+            _undoService = undoService;
             /// TODO: add your code here
         }
 
         public override Sheet onCreateSheet()
         {
-            return new Sheet(){Id = IdGenerator.GetNextId()};
+            return new Sheet(_undoService){Id = IdGenerator.GetNextId()};
         }
 
         public override void onAddSheet(Sheet sheet__)

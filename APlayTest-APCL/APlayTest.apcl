@@ -94,15 +94,16 @@ Client DataClient;]]></code>
 
 [ Client -> Server ]
 
-  BlockSymbol CreateBlockSymbol();
-  void Add(BlockSymbol blockSymbol);
+BlockSymbol CreateBlockSymbol();
+void Add(BlockSymbol blockSymbol);
+void SetName(WString name, Client client);
 
-[Server  Client -> All]
-  WString Name;
+[Server  -> All]
+WString Name;
 
 [Server -> All]
-  Set<BlockSymbol> BlockSymbols;
-  int32 Id;]]></code>
+Set<BlockSymbol> BlockSymbols;
+int32 Id;]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
     <class name="SheetManager" userCreated="servers">

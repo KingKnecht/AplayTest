@@ -93,7 +93,7 @@ namespace sbardos.UndoFramework
 
         internal string Dump()
         {
-            var dump = "\tChangeSet [" + Id + "]: ClientId: " + ClientId + ",  Count: " + Count + "\n";
+            var dump = "\tChangeSet [" + Id + "]: ClientId: " + ClientId + ",  Count: " + Count + ", Descr.: " + Description + "\n";
 
             foreach (var change in _changes)
             {

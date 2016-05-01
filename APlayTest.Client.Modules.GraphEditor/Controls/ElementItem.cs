@@ -90,7 +90,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public static readonly DependencyProperty XProperty = DependencyProperty.Register(
             "X", typeof(double), typeof(ElementItem),
-            new FrameworkPropertyMetadata(0.0));
+            new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public double X
         {
@@ -100,7 +100,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public static readonly DependencyProperty YProperty = DependencyProperty.Register(
             "Y", typeof(double), typeof(ElementItem),
-            new FrameworkPropertyMetadata(0.0));
+            new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public double Y
         {
@@ -124,7 +124,8 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         private GraphControl ParentGraphControl
         {
-            get { return _parentControl ?? (_parentControl = VisualTreeUtility.FindParent<GraphControl>(this)); }
+           // get { return _parentControl ?? (_parentControl = VisualTreeUtility.FindParent<GraphControl>(this)); }
+            get { return VisualTreeUtility.FindParent<GraphControl>(this); }
         }
 
         #region Mouse input

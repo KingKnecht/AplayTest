@@ -57,7 +57,7 @@ namespace sbardos.UndoFramework
 
         public override int GetHashCode()
         {
-            return Id;
+            return Id.GetHashCode();
         }
 
         public int Id { get;private set; }

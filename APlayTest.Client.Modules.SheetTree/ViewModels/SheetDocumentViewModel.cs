@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Configuration;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -28,7 +29,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         private readonly Client _client;
         private bool _isOpen;
 
-        public SheetDocumentViewModel(Sheet sheet, IInspectorTool inspectorTool,UndoManager undoManager , Action<SheetDocumentViewModel> onOpenedChanged, Client client)
+        public SheetDocumentViewModel(Sheet sheet, IInspectorTool inspectorTool, UndoManager undoManager, Action<SheetDocumentViewModel> onOpenedChanged, Client client)
         {
             _sheet = sheet;
             _inspectorTool = inspectorTool;
@@ -44,13 +45,15 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             _elements = new BindableCollection<ElementViewModel>();
             _connections = new BindableCollection<ConnectionViewModel>();
 
-            
+
             _sheet.BlockSymbolsAddEventHandler += _sheet_BlockSymbolsAddEventHandler;
 
             foreach (var blockSymbol in _sheet.BlockSymbols)
             {
                 var block = AddBlock(blockSymbol);
             }
+
+            _sheet.NameChangeEventHandler += name => DisplayName = name; ;
         }
 
 
@@ -61,7 +64,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         private ElementViewModel AddBlock(BlockSymbol blockSymbol)
         {
-            var block = new BlockVm(blockSymbol,_client );
+            var block = new BlockVm(blockSymbol, _client);
 
             _elements.Add(block);
 
@@ -79,7 +82,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             get { return _elements; }
         }
 
-     
+
         public IObservableCollection<ConnectionViewModel> Connections
         {
             get { return _connections; }
@@ -198,17 +201,12 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             {
                 if (value == _name) return;
 
-                
                 _name = value;
-                DisplayName = _name;
-                _sheet.Name = _name;
+                _sheet.SetName(_name, _client);
                 NotifyOfPropertyChange(() => Name);
-
-                _undoManager.EndTransaction();
-
             }
         }
-
+        
         public int SheetId { get; set; }
 
         public void OnElementItemDragStarted(ElementViewModel itemViewModel, Point currentDragPoint)

@@ -11,10 +11,10 @@ namespace sbardos.UndoFramework
         Transaction StartTransaction(int clientId, string description);
         void EndTransaction(int clientId);
         //void Add(Change change, int clientId);
-        void AddUpdate(IUndoable oldState, IUndoable newState,string description, int clientId);
+        void AddUpdate(IUndoable oldState, IUndoable newState, string description, int clientId);
         void AddInsert(int collectionOwnerId, IUndoable insertedObjectState, int indexAt, string description, int clientId);
         void AddRemove(int collectionOwnerId, IUndoable removedObjectState, int indexAt, string description, int clientId);
-      
+
         event EventHandler<ActiveStateChangedEventArgs> ActiveStateChanged;
         event EventHandler<StackChangedEventArgs> StackChanged;
         bool CanUndo(int clientId);
@@ -50,6 +50,7 @@ namespace sbardos.UndoFramework
         public Transaction StartTransaction(int clientId, string description)
         {
             _undoStackManager.CreateStackForClient(clientId);
+
             return _transactionService.StartTransaction(clientId, description);
         }
 
@@ -58,29 +59,29 @@ namespace sbardos.UndoFramework
             _transactionService.EndTransaction(clientId);
         }
 
-        public void AddUpdate(IUndoable oldState, IUndoable newState,string description, int clientId)
+        public void AddUpdate(IUndoable oldState, IUndoable newState, string description, int clientId)
         {
             var updateChange = new Change(oldState.Id, oldState, newState);
-            
-            _transactionService.Add(updateChange,clientId,description);
+
+            _transactionService.Add(updateChange, clientId, description);
         }
 
-        public void AddInsert(int collectionOwnerId, IUndoable insertedObjectState, int indexAt,string description, int clientId)
+        public void AddInsert(int collectionOwnerId, IUndoable insertedObjectState, int indexAt, string description, int clientId)
         {
             var insertChange = new Change(ChangeReason.InsertAt, collectionOwnerId, insertedObjectState.Id,
                 insertedObjectState, indexAt);
 
-            _transactionService.Add(insertChange, clientId,description);
+            _transactionService.Add(insertChange, clientId, description);
         }
 
-        public void AddRemove(int collectionOwnerId, IUndoable removedObjectState, int indexAt,string description, int clientId)
+        public void AddRemove(int collectionOwnerId, IUndoable removedObjectState, int indexAt, string description, int clientId)
         {
             var removeChange = new Change(ChangeReason.RemoveAt, collectionOwnerId, removedObjectState.Id,
                 removedObjectState, indexAt);
-            
-            _transactionService.Add(removeChange, clientId,description);
+
+            _transactionService.Add(removeChange, clientId, description);
         }
-        
+
         public event EventHandler<ActiveStateChangedEventArgs> ActiveStateChanged;
         public event EventHandler<StackChangedEventArgs> StackChanged;
 

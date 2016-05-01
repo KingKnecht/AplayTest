@@ -296,6 +296,7 @@ namespace APlayTest.Server
     void onIdChange (int NewId__);
     APlayTest.Server.BlockSymbol onCreateBlockSymbol ();
     void onAdd (APlayTest.Server.BlockSymbol blockSymbol__);
+    void onSetName (String name__, APlayTest.Server.Client client__);
   };
 }
 namespace APlayTest.Server
@@ -2143,6 +2144,25 @@ namespace APlayTest.Server
         }
       }
     }
+    public abstract void onSetName(String name__, APlayTest.Server.Client client__);
+    public void onInternSetName(String name__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
+    {
+      if(SetNameEventHandler!=null)
+      {
+        SetNameEventHandler(name__, ((APlayTest.Server.Client) (client__)));
+      }
+      else
+      {
+        if(APlayTest.Server.SheetSkeleton.StaticSetNameEventHandler!=null)
+        {
+          APlayTest.Server.SheetSkeleton.StaticSetNameEventHandler(name__, ((APlayTest.Server.Client) (client__)), ((APlayTest.Server.Sheet) (this)));
+        }
+        else
+        {
+          this.onSetName(name__, ((APlayTest.Server.Client) (client__)));
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implSheet.RequiresInit();
@@ -2262,6 +2282,8 @@ namespace APlayTest.Server
     static public event APlayTest.Server.Delegates.BlockSymbol_Sheet StaticCreateBlockSymbolEventHandler;
     public event APlayTest.Server.Delegates.void_BlockSymbol AddEventHandler;
     static public event APlayTest.Server.Delegates.void_BlockSymbol_Sheet StaticAddEventHandler;
+    public event APlayTest.Server.Delegates.void_WString_Client SetNameEventHandler;
+    static public event APlayTest.Server.Delegates.void_WString_Client_Sheet StaticSetNameEventHandler;
     private APlay.Generated.Intern.Server.__ISheetAPImpl implSheet;
   }
   
@@ -4310,6 +4332,8 @@ namespace APlayTest.Server
     public delegate void void_int32_Sheet(int NewId__, APlayTest.Server.Sheet this_);
     public delegate APlayTest.Server.BlockSymbol BlockSymbol_();
     public delegate APlayTest.Server.BlockSymbol BlockSymbol_Sheet(APlayTest.Server.Sheet this_);
+    public delegate void void_WString_Client(String name__, APlayTest.Server.Client client__);
+    public delegate void void_WString_Client_Sheet(String name__, APlayTest.Server.Client client__, APlayTest.Server.Sheet this_);
     public delegate APlayTest.Server.Sheet Sheet_();
     public delegate APlayTest.Server.Sheet Sheet_SheetManager(APlayTest.Server.SheetManager this_);
     public delegate void void_Sheet_SheetManager(APlayTest.Server.Sheet sheet__, APlayTest.Server.SheetManager this_);

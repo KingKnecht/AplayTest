@@ -167,7 +167,7 @@ namespace APlayTest.Client
 {
   public interface  ISheetImpl
   {
-    String Name {get; set; }
+    String Name {get; }
     APlayTest.Client.BlockSymbolSet BlockSymbols {get; }
     int Id {get; }
     ulong APlayEntityId {get; }
@@ -175,6 +175,7 @@ namespace APlayTest.Client
     APlayTest.Client.BlockSymbol CreateBlockSymbol ();
     void CreateBlockSymbol (APlayTest.Client.Delegates.void_BlockSymbol returnDelegate);
     void Add (APlayTest.Client.BlockSymbol blockSymbol__);
+    void SetName (String name__, APlayTest.Client.Client client__);
   };
 }
 namespace APlayTest.Client
@@ -1429,13 +1430,6 @@ namespace APlayTest.Client
     }
     public virtual String Name
     {
-      set
-      {
-        {
-          //WString
-          implSheet.Name = value;
-        }
-      }
       get
       {
         {
@@ -1660,6 +1654,10 @@ namespace APlayTest.Client
     public void Add(APlayTest.Client.BlockSymbol blockSymbol__)
     {
       implSheet.Add(((APlay.Generated.Intern.Client.__IBlockSymbolAPEvents) (blockSymbol__)));
+    }
+    public void SetName(String name__, APlayTest.Client.Client client__)
+    {
+      implSheet.SetName(name__, ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
     }
     public APlay.Generated.Intern.Client.__ISheetAPImpl getSheetObject()
     {

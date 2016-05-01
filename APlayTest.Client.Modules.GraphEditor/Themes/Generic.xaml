@@ -4,8 +4,10 @@
     xmlns:controls="clr-namespace:APlayTest.Client.Modules.GraphEditor.Controls">
 	
 	<Style TargetType="controls:ElementItem">
-		<Setter Property="Canvas.Left" Value="{Binding X, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
-        <Setter Property="Canvas.Top" Value="{Binding Y, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+        <Setter Property="Canvas.Left"
+                Value="{Binding X, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+        <Setter Property="Canvas.Top"
+                Value="{Binding Y, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
 		<Setter Property="Canvas.ZIndex" Value="{Binding ZIndex, RelativeSource={RelativeSource Self}, Mode=TwoWay}" />
 		<Setter Property="Template">
 			<Setter.Value>

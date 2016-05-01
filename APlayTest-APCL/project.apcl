@@ -95,18 +95,18 @@
         <data type="Client" name="DataClient" persistable="false"/>
       </permissionGroup>
     </communicationObject>
-    <permissionGroup name="Server_AND_ClientToAll">
-      <access role="Client" read="true" write="true"/>
-      <access role="Server" read="true" write="true"/>
-    </permissionGroup>
     <communicationObject name="Sheet" userCreated="servers" persistable="false">
       <permissionGroup baseType="ClientToServer">
         <event name="CreateBlockSymbol" returnType="BlockSymbol"/>
         <event name="Add">
           <data type="BlockSymbol" name="blockSymbol" persistable="false"/>
         </event>
+        <event name="SetName">
+          <data type="WString" name="name" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
       </permissionGroup>
-      <permissionGroup baseType="Server_AND_ClientToAll">
+      <permissionGroup baseType="ServerToAll">
         <data type="WString" name="Name" persistable="false"/>
       </permissionGroup>
       <permissionGroup baseType="ServerToAll">

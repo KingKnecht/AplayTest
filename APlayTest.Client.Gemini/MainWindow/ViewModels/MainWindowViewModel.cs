@@ -35,7 +35,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             _aplayClientFactory = aplayClientFactory;
             _serverAddress = Properties.Settings.Default.ServerAddress;
             StartNewClient();
-           
+            Width = 1200;
             Icon = null;
         }
 

@@ -5,36 +5,105 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using APlay.Common;
 using APlay.Common.Utils;
 using APlay.Common.DataTypes;
 using APlayTest.Server;
 using APlayTest.Services.Infracstructure;
+using sbardos.UndoFramework;
 
 namespace APlayTest.Server
 {
-  public class Sheet : APlayTest.Server.SheetSkeleton
-  {
-    /// <summary>
-    /// Use this constructor to create instances in your code.
-    /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
-    ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
-    /// </summary>
-    
-    public Sheet()
+    public class Sheet : APlayTest.Server.SheetSkeleton
     {
-     
+        private readonly IUndoService _undoService;
+
+        /// <summary>
+        /// Use this constructor to create instances in your code.
+        /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
+        ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
+        /// </summary>
+        public Sheet()
+        {
+            
+        }
+
+        public Sheet(IUndoService undoService)
+        {
+            _undoService = undoService;
+
+            _undoService.ActiveStateChanged += UndoServiceOnActiveStateChanged;
+
+        }
+
+        private void UndoServiceOnActiveStateChanged(object sender, ActiveStateChangedEventArgs e)
+        {
+            foreach (var change in e.ChangeSet.Where(c => c.OwnerId == Id))
+            {
+                var storedObject = e.ChangeDirection == StateChangeDirection.Undo
+                    ? (SheetUndoable) change.UndoObjectState
+                    : (SheetUndoable) change.RedoObjectState;
+
+                switch (change.ChangeReason)
+                {
+                    case ChangeReason.InsertAt:
+                        break;
+                    case ChangeReason.Update:
+                        Name = storedObject.Name;
+                        break;
+                    case ChangeReason.RemoveAt:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+
+        public override BlockSymbol onCreateBlockSymbol()
+        {
+            return new BlockSymbol() {Id = IdGenerator.GetNextId(), PositionX = 0, PositionY = 0};
+        }
+
+        public override void onAdd(BlockSymbol blockSymbol__)
+        {
+            BlockSymbols.Add(blockSymbol__);
+        }
+
+        public override void onSetName(string name__, Client client__)
+        {
+            if (Name == name__)
+                return;
+
+            var oldState = new SheetUndoable(this);
+
+            Name = name__;
+
+            var newState = new SheetUndoable(this);
+        
+            _undoService.AddUpdate(oldState, newState, "Sheet name changed", client__.Id);
+        }
     }
 
-      public override BlockSymbol onCreateBlockSymbol()
-      {
-          return new BlockSymbol() {Id = IdGenerator.GetNextId(), PositionX = 0, PositionY = 0};
-      }
+    public class SheetUndoable : IUndoable
+    {
+        public SheetUndoable(Sheet sheet)
+        {
+            Id = sheet.Id;
+            Name = sheet.Name;
+            BlockIds = sheet.BlockSymbols.Select(b => b.Id);
+        }
 
-      public override void onAdd(BlockSymbol blockSymbol__)
-      {
-          BlockSymbols.Add(blockSymbol__);
-      }
-  }
-  
+        public IEnumerable<int> BlockIds { get; private set; }
+
+        public string Name { get; set; }
+
+        public int Id { get; private set; }
+
+        public string Dump()
+        {
+            return "Name: " + Name;
+        }
+    }
 }

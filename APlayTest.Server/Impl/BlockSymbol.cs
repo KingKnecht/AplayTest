@@ -54,7 +54,7 @@ namespace APlayTest.Server
                         PositionY = storedObject.Position.Y;
 
                         APlay.Common.Logging.Logger.LogDesigned(2,
-                            "ActiveStateChanged received and updated state. OwnerId: " + change.OwnerId,
+                            "BlockSymbol: ActiveStateChanged received and updated state. OwnerId: " + change.OwnerId,
                             "Undo.Server.Task");
                         break;
                     case ChangeReason.RemoveAt:
@@ -68,7 +68,8 @@ namespace APlayTest.Server
 
         public override void onSetPosition(AplayPoint position__, Client client__)
         {
-            if (Math.Abs(PositionX - position__.X) < 0.01 && Math.Abs(PositionY - position__.Y) < 0.01)
+            //if (Math.Abs(PositionX - position__.X) < 0.01 && Math.Abs(PositionY - position__.Y) < 0.01)
+            if (Math.Abs(PositionX - position__.X) < double.Epsilon && Math.Abs(PositionY - position__.Y) < double.Epsilon)
             {
                 return;
             }

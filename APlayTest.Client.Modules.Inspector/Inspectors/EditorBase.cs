@@ -50,8 +50,9 @@ namespace APlayTest.Client.Modules.Inspector.Inspectors
             get { return (TValue) BoundPropertyDescriptor.Value; }
             set
             {
-                IoC.Get<IShell>().ActiveItem.UndoRedoManager.ExecuteAction(
-                    new ChangeObjectValueAction(BoundPropertyDescriptor, value));
+                //IoC.Get<IShell>().ActiveItem.UndoRedoManager.ExecuteAction(
+                //    new ChangeObjectValueAction(BoundPropertyDescriptor, value));
+                BoundPropertyDescriptor.Value = value;
                 NotifyOfPropertyChange(() => Value);
             }
         }

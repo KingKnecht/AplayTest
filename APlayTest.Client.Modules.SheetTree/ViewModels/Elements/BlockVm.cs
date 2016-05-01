@@ -19,7 +19,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
         {
             _blockSymbol = blockSymbol;
             _client = client;
-            
+
             _x = _blockSymbol.PositionX;
             _y = _blockSymbol.PositionY;
 
@@ -33,9 +33,9 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
             OutputConnector = new OutputConnectorViewModel(this, "Output1", Colors.Black);
         }
 
-       
 
-      
+
+
 
         public int Id { get; private set; }
 
@@ -44,11 +44,12 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
             get { return _x; }
             set
             {
-                if (Math.Abs(value - _x) < double.Epsilon)
+                if (Math.Abs(_x - value) < Double.Epsilon)
+                {
                     return;
-
+                }
                 _x = value;
-                       
+                
                 NotifyOfPropertyChange(() => X);
             }
         }
@@ -58,9 +59,10 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
             get { return _y; }
             set
             {
-                if (Math.Abs(value - _y) < double.Epsilon) 
+                if (Math.Abs(_y - value) < Double.Epsilon)
+                {
                     return;
-               
+                }
                 _y = value;
                 
                 NotifyOfPropertyChange(() => Y);
@@ -70,6 +72,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
         public void SetPosition(double positionX, double positionY)
         {
             _blockSymbol.SetPosition(new AplayPoint(positionX, positionY), _client);
+
         }
     }
 }

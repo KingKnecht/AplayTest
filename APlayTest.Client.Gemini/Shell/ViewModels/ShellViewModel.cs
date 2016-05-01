@@ -19,9 +19,10 @@ using Gemini.Modules.UndoRedo.Services;
 namespace APlayTest.Client.Gemini.Shell.ViewModels
 {
 
-
+    
     [Export(typeof(IShell))]
     [Export(typeof(IAPlayAwareShell))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class ShellViewModel : global::Gemini.Modules.Shell.ViewModels.ShellViewModel, IAPlayAwareShell,
          ICommandHandler<UndoCommandDefinition>,
         ICommandHandler<RedoCommandDefinition>
@@ -35,6 +36,8 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
         {
             ViewLocator.AddNamespaceMapping(typeof(ShellViewModel).Namespace, typeof(ShellView).Namespace);
         }
+
+        
 
         public event EventHandler<Project> ProjectChanged;
 
