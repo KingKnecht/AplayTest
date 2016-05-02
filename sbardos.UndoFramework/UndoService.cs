@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
 namespace sbardos.UndoFramework
@@ -22,6 +23,9 @@ namespace sbardos.UndoFramework
         void Undo(int clientId);
         void Redo(int clientId);
         void CancelTransaction(int clientId);
+        void UndoRedoTo(HistoryEntry destinationEntry, int clientId);
+
+        IList<HistoryEntry> GetHistory(int clientId );
     }
 
     public class UndoService : IUndoService
@@ -114,6 +118,17 @@ namespace sbardos.UndoFramework
         {
             _transactionService.CancelTransaction(clientId);
         }
+
+        public void UndoRedoTo(HistoryEntry destinationEntry,int clientId)
+        {
+            _undoStackManager.UndoRedoTo(destinationEntry, clientId);
+        }
+
+        public IList<HistoryEntry> GetHistory(int clientId)
+        {
+           return _undoStackManager.GetStackOfClient(clientId).History;
+        }
+
 
         protected virtual void OnActiveStateChanged(ActiveStateChangedEventArgs e)
         {

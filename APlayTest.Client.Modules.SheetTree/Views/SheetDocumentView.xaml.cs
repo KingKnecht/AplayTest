@@ -134,7 +134,8 @@ namespace APlayTest.Client.Modules.SheetTree.Views
                 element.X = mousePosition.X;
                 element.Y = mousePosition.Y;
 
-                ViewModel.Elements.Add(element);
+                ViewModel.DropElement(element);
+                //ViewModel.Elements.Add(element);
             }
         }
 

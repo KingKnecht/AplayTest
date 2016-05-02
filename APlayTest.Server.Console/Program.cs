@@ -20,6 +20,7 @@ namespace APlayTest.Server.Console
 
             var server = new APlayServer(Int32.Parse(Properties.Settings.Default.ServerPort),
                 new ProjectManagerFactory(new ProjectManagerService(), undoService), undoService);
+            
 
         }
     }

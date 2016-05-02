@@ -14,19 +14,20 @@ float64 Y; ]]></code>
 float32 Height;]]></code>
       <__designerPresentation>null</__designerPresentation>
     </struct>
-    <class name="BlockSymbol" userCreated="servers">
+    <class name="BlockSymbol">
       <code><![CDATA[[ Server -> All ]
 
 int32 Id;
-  
-float64 PositionX;
-float64 PositionY;
-
-AplaySize Size;
 
 [Client -> Server]
 
-void SetPosition(AplayPoint position, Client client);]]></code>
+void SetPosition(AplayPoint position, Client client);
+
+[All -> All]
+float64 PositionX;
+float64 PositionY;
+AplaySize Size;
+]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
     <class name="Client">
@@ -125,6 +126,7 @@ void EndTransaction();
 void CancelTransaction();
 void ExecuteUndo();
 void ExecuteRedo();
+void UndoRedoTo(HistoryEntry destinationEntry);
 
 [Server -> All]
 Client DataClient;

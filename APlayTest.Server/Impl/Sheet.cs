@@ -91,7 +91,9 @@ namespace APlayTest.Server
 
         public override BlockSymbol onCreateBlockSymbol()
         {
-            return new BlockSymbol() { Id = IdGenerator.GetNextId(), PositionX = 0, PositionY = 0 };
+            var blockSymbol = new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId(), PositionX = 0, PositionY = 0 };
+           
+            return blockSymbol;
         }
 
         public override void onAdd(BlockSymbol blockSymbol__, Client client)
@@ -99,7 +101,7 @@ namespace APlayTest.Server
             APlay.Common.Logging.Logger.LogDesigned(2, "Sheet.onAdd called", "AplayTest.Server.Sheet");
 
             var undoObject = new BlockSymbolUndoable(blockSymbol__);
-            _undoService.AddInsert(Id, undoObject, BlockSymbols.Count, "Adding new Task", client.Id);
+            _undoService.AddInsert(Id, undoObject, BlockSymbols.Count, "Adding new Block", client.Id);
 
             BlockSymbols.Add(blockSymbol__);
 

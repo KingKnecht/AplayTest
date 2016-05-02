@@ -20,7 +20,7 @@ using sbardos.UndoFramework;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {
-   
+
     [Export(typeof(SheetDocumentViewModel))]
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public class SheetDocumentViewModel : Document, ICommandHandler<DeleteCommandDefinition>
@@ -44,6 +44,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
             _name = _sheet.Name;
             _sheet.NameChangeEventHandler += _sheet_NameChangeEventHandler;
+            _sheet.BlockSymbolsAddEventHandler += OnBlockSymbolsAddEventHandler;
             SheetId = _sheet.Id;
             DisplayName = _name;
 
@@ -51,7 +52,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             _connections = new BindableCollection<ConnectionViewModel>();
 
 
-            
+
             foreach (var blockSymbol in _sheet.BlockSymbols)
             {
                 var block = AddBlock(blockSymbol);
@@ -61,6 +62,11 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
             _sheet.BlockSymbolsInsertAtEventHandler += SheetOnBlockSymbolsInsertAtEventHandler;
             _sheet.BlockSymbolsRemoveAtEventHandler += SheetOnBlockSymbolsRemoveAtEventHandler;
+        }
+
+        private void OnBlockSymbolsAddEventHandler(BlockSymbol blockSymbol)
+        {
+            Elements.Add(new BlockVm(blockSymbol, _client));
         }
 
         private void SheetOnBlockSymbolsInsertAtEventHandler(int insertAt, BlockSymbol newBlockSymbol)
@@ -77,8 +83,16 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             }
         }
 
+        public void DropElement(ElementViewModel blockVm)
+        {
 
-       
+            var blockSymbol = _sheet.CreateBlockSymbol();
+            blockSymbol.PositionX = blockVm.X;
+            blockSymbol.PositionY = blockVm.Y;
+
+            _sheet.Add(blockSymbol,_client);
+        }
+
 
         private ElementViewModel AddBlock(BlockSymbol blockSymbol)
         {
@@ -190,12 +204,12 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         public void DeleteElement(ElementViewModel element)
         {
             //Connections.RemoveRange(element.AttachedConnections);
-           
+
             var block = element as BlockVm;
             if (block != null)
             {
                 var toBeDeleted = _sheet.BlockSymbols.FirstOrDefault(b => b.Id == block.Id);
-                
+
                 _sheet.Remove(toBeDeleted, _client);
 
                 return;
@@ -235,7 +249,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             }
         }
 
-        public int SheetId { get; set; }
+        public int SheetId { get; private set; }
 
         public void OnElementItemDragStarted(ElementViewModel itemViewModel, Point currentDragPoint)
         {

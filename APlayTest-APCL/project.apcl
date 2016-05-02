@@ -18,18 +18,24 @@
       <access role="Client" read="false" write="true"/>
       <access role="Server" read="true" write="false"/>
     </permissionGroup>
-    <communicationObject name="BlockSymbol" userCreated="servers" persistable="false">
+    <permissionGroup name="AllToAll">
+      <access role="Client" read="true" write="true"/>
+      <access role="Server" read="true" write="true"/>
+    </permissionGroup>
+    <communicationObject name="BlockSymbol" persistable="false">
       <permissionGroup baseType="ServerToAll">
         <data type="int32" name="Id" persistable="false"/>
-        <data type="float64" name="PositionX" persistable="false"/>
-        <data type="float64" name="PositionY" persistable="false"/>
-        <data type="AplaySize" name="Size" persistable="false"/>
       </permissionGroup>
       <permissionGroup baseType="ClientToServer">
         <event name="SetPosition">
           <data type="AplayPoint" name="position" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
         </event>
+      </permissionGroup>
+      <permissionGroup baseType="AllToAll">
+        <data type="float64" name="PositionX" persistable="false"/>
+        <data type="float64" name="PositionY" persistable="false"/>
+        <data type="AplaySize" name="Size" persistable="false"/>
       </permissionGroup>
     </communicationObject>
     <permissionGroup name="ServerToClient">
@@ -139,6 +145,9 @@
         <event name="CancelTransaction"/>
         <event name="ExecuteUndo"/>
         <event name="ExecuteRedo"/>
+        <event name="UndoRedoTo">
+          <data type="HistoryEntry" name="destinationEntry" persistable="false"/>
+        </event>
       </permissionGroup>
       <permissionGroup baseType="ServerToAll">
         <data type="Client" name="DataClient" persistable="false"/>

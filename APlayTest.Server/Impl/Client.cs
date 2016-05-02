@@ -15,7 +15,7 @@ namespace APlayTest.Server
 {
     public class Client : APlayTest.Server.ClientSkeleton
     {
-          /// <summary>
+        /// <summary>
         /// Use this constructor to create instances in your code.
         /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
         ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
@@ -25,11 +25,10 @@ namespace APlayTest.Server
         {
             /// TODO: add your code here
             /// 
-
         }
 
 
-     
+
     }
 
 }

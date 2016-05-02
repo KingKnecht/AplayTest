@@ -423,6 +423,7 @@ namespace APlayTest.Server
     void onCancelTransaction ();
     void onExecuteUndo ();
     void onExecuteRedo ();
+    void onUndoRedoTo (APlayTest.Server.HistoryEntry destinationEntry__);
   };
 }
 namespace APlayTest.Server
@@ -3020,6 +3021,25 @@ namespace APlayTest.Server
         }
       }
     }
+    public abstract void onUndoRedoTo(APlayTest.Server.HistoryEntry destinationEntry__);
+    public void onInternUndoRedoTo(APlay.Generated.Intern.Server.__HistoryEntry destinationEntry__)
+    {
+      if(UndoRedoToEventHandler!=null)
+      {
+        UndoRedoToEventHandler(new APlayTest.Server.HistoryEntry(((int) (destinationEntry__.Id)), ((String) (destinationEntry__.Description))));
+      }
+      else
+      {
+        if(APlayTest.Server.UndoManagerSkeleton.StaticUndoRedoToEventHandler!=null)
+        {
+          APlayTest.Server.UndoManagerSkeleton.StaticUndoRedoToEventHandler(new APlayTest.Server.HistoryEntry(((int) (destinationEntry__.Id)), ((String) (destinationEntry__.Description))), ((APlayTest.Server.UndoManager) (this)));
+        }
+        else
+        {
+          this.onUndoRedoTo(new APlayTest.Server.HistoryEntry(((int) (destinationEntry__.Id)), ((String) (destinationEntry__.Description))));
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implUndoManager.RequiresInit();
@@ -3155,6 +3175,8 @@ namespace APlayTest.Server
     static public event APlayTest.Server.Delegates.void_UndoManager StaticExecuteUndoEventHandler;
     public event APlayTest.Server.Delegates.void_ ExecuteRedoEventHandler;
     static public event APlayTest.Server.Delegates.void_UndoManager StaticExecuteRedoEventHandler;
+    public event APlayTest.Server.Delegates.void_HistoryEntry UndoRedoToEventHandler;
+    static public event APlayTest.Server.Delegates.void_HistoryEntry_UndoManager StaticUndoRedoToEventHandler;
     private APlay.Generated.Intern.Server.__IUndoManagerAPImpl implUndoManager;
   }
   

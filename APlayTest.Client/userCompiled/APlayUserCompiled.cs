@@ -26,9 +26,9 @@ namespace APlayTest.Client
   public interface  IBlockSymbolImpl
   {
     int Id {get; }
-    double PositionX {get; }
-    double PositionY {get; }
-    APlayTest.Client.AplaySize Size {get; }
+    double PositionX {get; set; }
+    double PositionY {get; set; }
+    APlayTest.Client.AplaySize Size {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
     void SetPosition (APlayTest.Client.AplayPoint position__, APlayTest.Client.Client client__);
@@ -46,8 +46,15 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
-  public interface  IBlockSymbolSkeleton : APlayTest.Client.IBlockSymbolImpl, APlay.Generated.Intern.Client.__IBlockSymbolAPEvents
+  public interface  IBlockSymbolSkeleton : APlayTest.Client.IBlockSymbolImpl, APlay.Generated.Intern.Client.__IBlockSymbolAPEvents, APlayTest.Client.IBlockSymbolEvents
   {
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IBlockSymbolFactory
+  {
+    APlayTest.Client.BlockSymbol CreateBlockSymbol ();
   };
 }
 namespace APlayTest.Client
@@ -247,6 +254,7 @@ namespace APlayTest.Client
     void CancelTransaction ();
     void ExecuteUndo ();
     void ExecuteRedo ();
+    void UndoRedoTo (APlayTest.Client.HistoryEntry destinationEntry__);
   };
 }
 namespace APlayTest.Client
@@ -405,9 +413,9 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
-  public partial class BlockSymbol : APlayTest.Client.IBlockSymbolSkeleton, APlay.Generated.Intern.Client.__IBlockSymbolAPEvents
+  public abstract partial class BlockSymbolSkeleton : APlayTest.Client.IBlockSymbolSkeleton, APlay.Generated.Intern.Client.__IBlockSymbolAPEvents
   {
-    public BlockSymbol()
+    public BlockSymbolSkeleton()
     {
       if(APlay.Common.APlayInitializer.GetInitializer()!=null)
       {
@@ -417,22 +425,7 @@ namespace APlayTest.Client
       {
         this.setBlockSymbolObject(APlayObjectFactory.CreateBlockSymbolImpl());
       }
-      ((APlay.Generated.Intern.Client.__BlockSymbol) (this.getBlockSymbolObject())).BlockSymbolHandler = ((APlay.Generated.Intern.Client.__IBlockSymbolAPEvents) (((APlayTest.Client.BlockSymbol) (this))));
-    }
-    public virtual APlayTest.Client.IBlockSymbolEvents BlockSymbolHandler
-    {
-      set
-      {
-        {
-          handler_ = value;
-        }
-      }
-      get
-      {
-        {
-          return (handler_);
-        }
-      }
+      ((APlay.Generated.Intern.Client.__BlockSymbol) (this.getBlockSymbolObject())).BlockSymbolHandler = ((APlay.Generated.Intern.Client.__IBlockSymbolAPEvents) (((APlayTest.Client.BlockSymbolSkeleton) (this))));
     }
     public virtual int Id
     {
@@ -445,6 +438,13 @@ namespace APlayTest.Client
     }
     public virtual double PositionX
     {
+      set
+      {
+        {
+          //float64
+          implBlockSymbol.PositionX = value;
+        }
+      }
       get
       {
         {
@@ -454,6 +454,13 @@ namespace APlayTest.Client
     }
     public virtual double PositionY
     {
+      set
+      {
+        {
+          //float64
+          implBlockSymbol.PositionY = value;
+        }
+      }
       get
       {
         {
@@ -463,6 +470,13 @@ namespace APlayTest.Client
     }
     public virtual APlayTest.Client.AplaySize Size
     {
+      set
+      {
+        {
+          //AplaySize
+          implBlockSymbol.Size = new APlay.Generated.Intern.Client.__AplaySize(value.Width, value.Height);
+        }
+      }
       get
       {
         {
@@ -479,6 +493,10 @@ namespace APlayTest.Client
         }
       }
     }
+    public virtual void onIdChange(int NewId__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onIdChange received","Client.Designed");
+    }
     public void onInternIdChange(int NewId__)
     {
       if(IdChangeEventHandler!=null)
@@ -487,25 +505,19 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.BlockSymbol.StaticIdChangeEventHandler!=null)
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticIdChangeEventHandler!=null)
         {
-          APlayTest.Client.BlockSymbol.StaticIdChangeEventHandler(NewId__, ((APlayTest.Client.BlockSymbol) (this)));
+          APlayTest.Client.BlockSymbolSkeleton.StaticIdChangeEventHandler(NewId__, ((APlayTest.Client.BlockSymbol) (this)));
         }
         else
         {
-          if(BlockSymbolHandler!=null)
-          {
-            BlockSymbolHandler.onIdChange(NewId__);
-          }
-          else
-          {
-            if(APlay.Client.APClient.DebugMessagesEnabled)
-            {
-              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __IBlockSymbolAPEvents.onIdChange","Client.Designed");
-            }
-          }
+          this.onIdChange(NewId__);
         }
       }
+    }
+    public virtual void onPositionXChange(double NewPositionX__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onPositionXChange received","Client.Designed");
     }
     public void onInternPositionXChange(double NewPositionX__)
     {
@@ -515,25 +527,19 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.BlockSymbol.StaticPositionXChangeEventHandler!=null)
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticPositionXChangeEventHandler!=null)
         {
-          APlayTest.Client.BlockSymbol.StaticPositionXChangeEventHandler(NewPositionX__, ((APlayTest.Client.BlockSymbol) (this)));
+          APlayTest.Client.BlockSymbolSkeleton.StaticPositionXChangeEventHandler(NewPositionX__, ((APlayTest.Client.BlockSymbol) (this)));
         }
         else
         {
-          if(BlockSymbolHandler!=null)
-          {
-            BlockSymbolHandler.onPositionXChange(NewPositionX__);
-          }
-          else
-          {
-            if(APlay.Client.APClient.DebugMessagesEnabled)
-            {
-              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __IBlockSymbolAPEvents.onPositionXChange","Client.Designed");
-            }
-          }
+          this.onPositionXChange(NewPositionX__);
         }
       }
+    }
+    public virtual void onPositionYChange(double NewPositionY__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onPositionYChange received","Client.Designed");
     }
     public void onInternPositionYChange(double NewPositionY__)
     {
@@ -543,25 +549,19 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.BlockSymbol.StaticPositionYChangeEventHandler!=null)
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticPositionYChangeEventHandler!=null)
         {
-          APlayTest.Client.BlockSymbol.StaticPositionYChangeEventHandler(NewPositionY__, ((APlayTest.Client.BlockSymbol) (this)));
+          APlayTest.Client.BlockSymbolSkeleton.StaticPositionYChangeEventHandler(NewPositionY__, ((APlayTest.Client.BlockSymbol) (this)));
         }
         else
         {
-          if(BlockSymbolHandler!=null)
-          {
-            BlockSymbolHandler.onPositionYChange(NewPositionY__);
-          }
-          else
-          {
-            if(APlay.Client.APClient.DebugMessagesEnabled)
-            {
-              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __IBlockSymbolAPEvents.onPositionYChange","Client.Designed");
-            }
-          }
+          this.onPositionYChange(NewPositionY__);
         }
       }
+    }
+    public virtual void onSizeChange(APlayTest.Client.AplaySize NewSize__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onSizeChange received","Client.Designed");
     }
     public void onInternSizeChange(APlay.Generated.Intern.Client.__AplaySize NewSize__)
     {
@@ -571,23 +571,13 @@ namespace APlayTest.Client
       }
       else
       {
-        if(APlayTest.Client.BlockSymbol.StaticSizeChangeEventHandler!=null)
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticSizeChangeEventHandler!=null)
         {
-          APlayTest.Client.BlockSymbol.StaticSizeChangeEventHandler(new APlayTest.Client.AplaySize(((float) (NewSize__.Width)), ((float) (NewSize__.Height))), ((APlayTest.Client.BlockSymbol) (this)));
+          APlayTest.Client.BlockSymbolSkeleton.StaticSizeChangeEventHandler(new APlayTest.Client.AplaySize(((float) (NewSize__.Width)), ((float) (NewSize__.Height))), ((APlayTest.Client.BlockSymbol) (this)));
         }
         else
         {
-          if(BlockSymbolHandler!=null)
-          {
-            BlockSymbolHandler.onSizeChange(new APlayTest.Client.AplaySize(((float) (NewSize__.Width)), ((float) (NewSize__.Height))));
-          }
-          else
-          {
-            if(APlay.Client.APClient.DebugMessagesEnabled)
-            {
-              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __IBlockSymbolAPEvents.onSizeChange","Client.Designed");
-            }
-          }
+          this.onSizeChange(new APlayTest.Client.AplaySize(((float) (NewSize__.Width)), ((float) (NewSize__.Height))));
         }
       }
     }
@@ -608,7 +598,6 @@ namespace APlayTest.Client
     {
       implBlockSymbol = impl;
     }
-    private APlayTest.Client.IBlockSymbolEvents handler_;
     public event APlayTest.Client.Delegates.void_int32 IdChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_int32_BlockSymbol StaticIdChangeEventHandler;
     public event APlayTest.Client.Delegates.void_float64 PositionXChangeEventHandler;
@@ -2413,6 +2402,10 @@ namespace APlayTest.Client
     public void ExecuteRedo()
     {
       implUndoManager.ExecuteRedo();
+    }
+    public void UndoRedoTo(APlayTest.Client.HistoryEntry destinationEntry__)
+    {
+      implUndoManager.UndoRedoTo(new APlay.Generated.Intern.Client.__HistoryEntry(destinationEntry__.Id, destinationEntry__.Description));
     }
     public APlay.Generated.Intern.Client.__IUndoManagerAPImpl getUndoManagerObject()
     {

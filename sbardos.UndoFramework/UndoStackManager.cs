@@ -13,6 +13,7 @@ namespace sbardos.UndoFramework
         event EventHandler<ActiveStateChangedEventArgs> ActiveStateChanged;
         event EventHandler<StackChangedEventArgs> StackChanged;
         void Cancel(ChangeSet changeSet, int clientId);
+        void UndoRedoTo(HistoryEntry destinationEntry, int clientId);
     }
 
     public class UndoStackManager : IUndoStackManager
@@ -39,6 +40,14 @@ namespace sbardos.UndoFramework
             {
                 OnActiveStateChanged(new ActiveStateChangedEventArgs(changeSet.AsReversed(), StateChangeDirection.Undo,
                     clientId));
+            }
+        }
+
+        public void UndoRedoTo(HistoryEntry destinationEntry, int clientId)
+        {
+            lock (_myLock)
+            {
+                _undoStacks[clientId].UndoRedoTo(destinationEntry);
             }
         }
 

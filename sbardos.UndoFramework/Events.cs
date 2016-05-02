@@ -28,11 +28,11 @@ namespace sbardos.UndoFramework
 
     public class StackChangedEventArgs : EventArgs
     {
-        public IList<HistoryChanges> HistoryChanges { get; private set; }
+        public IList<HistoryChange> HistoryChanges { get; private set; }
         public int ActiveHistoryEntryId { get; private set; }
         public int ClientId { get;private set; }
 
-        public StackChangedEventArgs(IList<HistoryChanges> historyChanges, int activeHistoryEntryId, int clientId)
+        public StackChangedEventArgs(IList<HistoryChange> historyChanges, int activeHistoryEntryId, int clientId)
         {
             HistoryChanges = historyChanges;
             ActiveHistoryEntryId = activeHistoryEntryId;
@@ -63,9 +63,9 @@ namespace sbardos.UndoFramework
         public int Id { get;private set; }
         public string Description { get;private set; }
 
-        public HistoryEntry(int id, string description)
+        public HistoryEntry(int changeSetId, string description)
         {
-            Id = id;
+            Id = changeSetId;
             Description = description;
         }
     }

@@ -83,6 +83,7 @@
     <Compile Include="Factories\AplayClientFactory.cs" />
     <Compile Include="Factories\APlayUserFactory.cs" />
     <Compile Include="Impl\APlayClient.cs" />
+    <Compile Include="Impl\BlockSymbol.cs" />
     <Compile Include="Impl\Client.cs" />
     <Compile Include="Impl\ProjectManager.cs" />
     <Compile Include="Impl\UndoManager.cs" />

@@ -18,7 +18,6 @@ namespace APlayTest.Server
     public class BlockSymbol : APlayTest.Server.BlockSymbolSkeleton
     {
         private readonly IUndoService _undoService;
-        private double _positionX;
 
         /// <summary>
         /// Use this constructor to create instances in your code.
@@ -26,18 +25,19 @@ namespace APlayTest.Server
         ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
         /// </summary>
 
-        public BlockSymbol()
+        public BlockSymbol() :base()
         {
             
         }
 
-        public BlockSymbol(IUndoService undoService)
+        public BlockSymbol(IUndoService undoService) :this()
         {
             _undoService = undoService;
 
             _undoService.ActiveStateChanged += UndoServiceOnActiveStateChanged;
         }
 
+   
         public BlockSymbol(BlockSymbolUndoable undoable, ChangeSet changeSet, IUndoService undoService):this(undoService)
         {
             Id = undoable.Id;
@@ -80,7 +80,6 @@ namespace APlayTest.Server
 
         public override void onSetPosition(AplayPoint position__, Client client__)
         {
-            //if (Math.Abs(PositionX - position__.X) < 0.01 && Math.Abs(PositionY - position__.Y) < 0.01)
             if (Math.Abs(PositionX - position__.X) < double.Epsilon && Math.Abs(PositionY - position__.Y) < double.Epsilon)
             {
                 return;

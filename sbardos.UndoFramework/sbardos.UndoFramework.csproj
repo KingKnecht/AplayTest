@@ -49,6 +49,7 @@
     <Compile Include="ChangeSet.cs" />
     <Compile Include="Change.cs" />
     <Compile Include="Events.cs" />
+    <Compile Include="HistoryChange.cs" />
     <Compile Include="UndoService.cs" />
     <Compile Include="UndoStackManager.cs" />
     <Compile Include="Properties\Annotations.cs" />

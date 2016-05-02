@@ -208,6 +208,7 @@ namespace APlayTest.Server
             aplayProject.SheetManager.Sheets.Add(new Sheet(_undoService) { Name = "Sheet 1 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
             aplayProject.SheetManager.Sheets.Add(new Sheet(_undoService) { Name = "Sheet 2 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
             aplayProject.SheetManager.Sheets.Add(new Sheet(_undoService) { Name = "Sheet 3 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
+            aplayProject.SheetManager.Sheets.Add(new Sheet(_undoService) { Name = "Sheet 4 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
 
             aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId() });
             aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId(), PositionX = 200, PositionY = 0 });

@@ -20,40 +20,63 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
         ObservableCollection<HistoryEntry> History { get; set; }
     }
 
-    
+
     [Export(typeof(UndoHistoryViewModel))]
     public class UndoHistoryViewModel : Tool, IUndoHistoryViewModel
     {
         private readonly IAPlayAwareShell _shell;
         private int _selectedIndex;
         private PaneLocation _preferredLocation = PaneLocation.Right;
+        private bool _isUpdatingFromModel;
+        private int _maxIndex;
 
         [ImportingConstructor]
         public UndoHistoryViewModel(IAPlayAwareShell shell)
         {
             _shell = shell;
-            DisplayName = "Undo/Redo History";
-            
+            DisplayName = "History";
+
             if (_shell.UndoManager != null)
             {
                 _shell.UndoManager.HistoryAddEventHandler += UndoManagerOnHistoryAddEventHandler;
                 _shell.UndoManager.HistoryRemoveAtEventHandler += UndoManagerOnHistoryRemoveAtEventHandler;
                 _shell.UndoManager.ActiveHistoryEntryIdChangeEventHandler += _undoManager_ActiveHistoryEntryIdChangeEventHandler;
                 _shell.UndoManager.HistoryRemoveEventHandler += _undoManager_HistoryRemoveEventHandler;
-                
+
                 History =
                     new ObservableCollection<HistoryEntry>(
                         _shell.UndoManager.History.Select(item => new HistoryEntry(item.Id, item.Description)));
 
+                UpdateStates();
             }
         }
 
+        public void Undo()
+        {
+            _shell.UndoManager.ExecuteUndo();
+        }
 
+        public void Redo()
+        {
+            _shell.UndoManager.ExecuteRedo();
+        }
+
+        public bool CanUndo
+        {
+            get
+            {
+                return _shell.UndoManager.CanUndo;
+            }
+        }
+
+        public bool CanRedo { get { return _shell.UndoManager.CanRedo; } }
 
         void _undoManager_HistoryRemoveEventHandler(HistoryEntry element)
         {
             Application.Current.Dispatcher.BeginInvoke(
                 new ThreadStart(() => History.Remove(element)));
+
+            UpdateStates();
         }
 
         void _undoManager_ActiveHistoryEntryIdChangeEventHandler(int NewId__)
@@ -63,14 +86,20 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
                 {
                     var activeItem = History.FirstOrDefault(he => he.Id == NewId__);
                     var activeIndex = History.IndexOf(activeItem);
+                    _isUpdatingFromModel = true;
                     SelectedIndex = activeIndex;
+                    _isUpdatingFromModel = false;
                 }));
+
+            UpdateStates();
         }
 
         private void UndoManagerOnHistoryRemoveAtEventHandler(int pos, HistoryEntry element)
         {
             Application.Current.Dispatcher.BeginInvoke(
                 new ThreadStart(() => History.RemoveAt(pos)));
+
+            UpdateStates();
         }
 
         private void UndoManagerOnHistoryAddEventHandler(HistoryEntry element)
@@ -80,6 +109,16 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
                 {
                     History.Add(new HistoryEntry(element.Id, element.Description));
                 }));
+
+            UpdateStates();
+        }
+
+        private void UpdateStates()
+        {
+            OnPropertyChanged("CanUndo");
+            OnPropertyChanged("CanRedo");
+            //NotifyOfPropertyChange(() => CanUndo); //Not working. Don't know why...
+            //NotifyOfPropertyChange(() => CanRedo);
         }
 
         public ObservableCollection<HistoryEntry> History { get; set; }
@@ -91,7 +130,15 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
             {
                 if (value == _selectedIndex) return;
                 _selectedIndex = value;
+
                 OnPropertyChanged();
+
+                if (!_isUpdatingFromModel)
+                {
+                    _shell.UndoManager.UndoRedoTo(History[_selectedIndex]);
+                }
+
+
             }
         }
 
