@@ -39,6 +39,7 @@ UndoManager UndoManager;
 
 [Client -> Server]
 User CurrentUser;
+boolean TryGetId(int32 id, Client client);
 ]]></code>
       <__designerPresentation>
         <x>59</x>

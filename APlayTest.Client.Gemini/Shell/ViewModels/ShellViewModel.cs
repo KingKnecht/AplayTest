@@ -8,6 +8,7 @@ using System.Windows;
 using APlayTest.Client.Contracts;
 using APlayTest.Client.Gemini.Properties;
 using Caliburn.Micro;
+using DynamicData.Annotations;
 using Gemini.Framework.Commands;
 using Gemini.Framework.Services;
 using Gemini.Framework.Threading;
@@ -29,9 +30,7 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
     {
         private Project _project;
         private Client _client;
-        private bool _canUndo;
-        private bool _canRedo;
-
+     
         static ShellViewModel()
         {
             ViewLocator.AddNamespaceMapping(typeof(ShellViewModel).Namespace, typeof(ShellView).Namespace);
@@ -40,6 +39,7 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
         
 
         public event EventHandler<Project> ProjectChanged;
+        public event EventHandler<UndoManager> UndoManagerChanged;
 
         public Project Project
         {
@@ -59,6 +59,7 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
             }
         }
 
+        [CanBeNull]
         public UndoManager UndoManager
         {
             get { return Client.UndoManager; }
@@ -70,7 +71,17 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
             set
             {
                 if (Equals(value, _client)) return;
+
+                if (_client != null)
+                {
+                    _client.CurrentProjectChangeEventHandler -= OnProjectChanged;
+                    _client.UndoManagerChangeEventHandler -= OnUndoManagerChanged;    
+                }
+                
                 _client = value;
+
+                _client.CurrentProjectChangeEventHandler += OnProjectChanged;
+                _client.UndoManagerChangeEventHandler += OnUndoManagerChanged;
 
                 StatusBar.Items.Clear();
                 StatusBar.AddItem("Connected to " + Client.RemoteAddress, GridLength.Auto);
@@ -78,25 +89,7 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
             }
         }
 
-        public bool CanUndo
-        {
-            get { return _canUndo; }
-        }
-
-        public bool CanRedo
-        {
-            get { return _canRedo; }
-        }
-
-        public void Undo()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Redo()
-        {
-            throw new NotImplementedException();
-        }
+     
 
         //public override void CanClose(Action<bool> callback)
         //{
@@ -138,6 +131,12 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
 
         void ICommandHandler<UndoCommandDefinition>.Update(Command command)
         {
+            if (UndoManager == null)
+            {
+                command.Enabled = false;
+                return;
+            }
+
             command.Enabled = UndoManager.CanUndo;
         }
 
@@ -149,6 +148,12 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
 
         void ICommandHandler<RedoCommandDefinition>.Update(Command command)
         {
+            if (UndoManager == null)
+            {
+                command.Enabled = false;
+                return;
+            }
+
             command.Enabled = UndoManager.CanRedo;
         }
 
@@ -158,8 +163,11 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
             return TaskUtility.Completed;
         }
 
-       
 
-       
+        protected virtual void OnUndoManagerChanged(UndoManager e)
+        {
+            var handler = UndoManagerChanged;
+            if (handler != null) handler(this, e);
+        }
     }
 }

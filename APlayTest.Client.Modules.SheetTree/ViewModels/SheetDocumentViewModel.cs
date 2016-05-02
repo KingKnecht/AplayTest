@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using APlayTest.Client.Contracts;
 using APlayTest.Client.Modules.Inspector;
 using APlayTest.Client.Modules.SheetTree.Commands;
 using APlayTest.Client.Modules.SheetTree.ViewModels.Elements;
@@ -29,16 +30,17 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         private string _name;
         private readonly BindableCollection<ConnectionViewModel> _connections;
         private readonly IInspectorTool _inspectorTool;
-        private readonly UndoManager _undoManager;
+        private readonly IAPlayAwareShell _shell;
         private readonly Action<SheetDocumentViewModel> _onOpenedChanged;
         private readonly Client _client;
         private bool _isOpen;
 
-        public SheetDocumentViewModel(Sheet sheet, IInspectorTool inspectorTool, UndoManager undoManager, Action<SheetDocumentViewModel> onOpenedChanged, Client client)
+        public SheetDocumentViewModel(Sheet sheet, IInspectorTool inspectorTool, IAPlayAwareShell shell, Action<SheetDocumentViewModel> onOpenedChanged, Client client)
         {
             _sheet = sheet;
             _inspectorTool = inspectorTool;
-            _undoManager = undoManager;
+            _shell = shell;
+
             _onOpenedChanged = onOpenedChanged;
             _client = client;
 
@@ -85,7 +87,6 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         public void DropElement(ElementViewModel blockVm)
         {
-
             var blockSymbol = _sheet.CreateBlockSymbol();
             blockSymbol.PositionX = blockVm.X;
             blockSymbol.PositionY = blockVm.Y;
@@ -257,7 +258,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             if (block != null)
             {
                 //Console.WriteLine("OnElementItemDragStarted()");
-                _undoManager.StartTransaction("Moving Block: " + block.Name);
+                _shell.UndoManager.StartTransaction("Moving Block: " + block.Name);
                 return;
             }
         }
@@ -277,7 +278,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             var block = itemViewModel as BlockVm;
             if (block != null)
             {
-                _undoManager.EndTransaction();
+                _shell.UndoManager.EndTransaction();
                 return;
             }
         }

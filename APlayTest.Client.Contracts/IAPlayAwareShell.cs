@@ -10,13 +10,11 @@ namespace APlayTest.Client.Contracts
     public interface IAPlayAwareShell : IShell
     {
         event EventHandler<Project> ProjectChanged;
+        event EventHandler<UndoManager> UndoManagerChanged;
         Project Project { get; set; }
         UndoManager UndoManager { get;}
         Client Client { get; set; }
       
-        bool CanUndo { get; }
-        bool CanRedo { get; }
-        void Undo();
-        void Redo();
+     
     }
 }

@@ -46,7 +46,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             {
                 if (shell.Project.SheetManager.Sheets != null)
                 {
-                    Sheets.AddRange(shell.Project.SheetManager.Sheets.Select(sheet => new SheetDocumentViewModel(sheet, inspectorTool, shell.UndoManager, OnOpenedChanged, _shell.Client)));
+                    Sheets.AddRange(shell.Project.SheetManager.Sheets.Select(sheet => new SheetDocumentViewModel(sheet, inspectorTool, shell, OnOpenedChanged, _shell.Client)));
                 }
             }
 
@@ -68,7 +68,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         void OnProjectChanged(object sender, Project e)
         {
-            Sheets.AddRange(e.SheetManager.Sheets.Select(s => new SheetDocumentViewModel(s, _inspectorTool, _shell.UndoManager, OnOpenedChanged, _shell.Client)));
+            Sheets.AddRange(e.SheetManager.Sheets.Select(s => new SheetDocumentViewModel(s, _inspectorTool, _shell, OnOpenedChanged, _shell.Client)));
         }
 
 

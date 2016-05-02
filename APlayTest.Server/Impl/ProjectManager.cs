@@ -30,6 +30,7 @@ namespace APlayTest.Server
         private readonly IProjectManagerService _projectManagerService;
         private readonly IAplayProjectsCache _aplayProjectsCache;
         private readonly IUndoService _undoService;
+        private readonly IUndoManagerCache _undoManagerCache;
         private string _searchString = String.Empty;
         private CompositeDisposable _cleanUp = new CompositeDisposable();
         /// <summary>
@@ -47,11 +48,13 @@ namespace APlayTest.Server
         /// <param name="projectManagerService">Gets projects from some source i.e. DB</param>
         /// <param name="aplayProjectsCache">A cache of transformed projects. Contains Aplay-Projects. These projects must be the same over all ProjectManagers.</param>
         /// <param name="undoService">A service for undo/redo. Same for all clients.</param>
-        public ProjectManager(IProjectManagerService projectManagerService, IAplayProjectsCache aplayProjectsCache, IUndoService undoService)
+        /// <param name="undoManagerCache"></param>
+        public ProjectManager(IProjectManagerService projectManagerService, IAplayProjectsCache aplayProjectsCache, IUndoService undoService, IUndoManagerCache undoManagerCache)
         {
             _projectManagerService = projectManagerService;
             _aplayProjectsCache = aplayProjectsCache;
             _undoService = undoService;
+            _undoManagerCache = undoManagerCache;
 
 
             //Subscribe for newly added, deleted projects from the service.
@@ -97,13 +100,13 @@ namespace APlayTest.Server
                     {
                         sender.CurrentProject = joinedProject;
 
-                        //sender.UndoManager = new UndoManager(_undoService, sender.Id);
+                        sender.UndoManager = _undoManagerCache.GetUndoManager(sender.Id); //new UndoManager(_undoService, sender.Id);
 
                         JoinedProject(joinedProject);
 
                         APlay.Common.Logging.Logger.LogDesigned(2,
                             "User: " + sender.CurrentUser.Name + " has joined project: " +
-                            SelectedProject.ProjectDetail.Name + "[ClientId: " + sender.APlayClientId + "]",
+                            SelectedProject.ProjectDetail.Name + "[ClientId: " + sender.Id + "]",
                             "APlayTest.Server.ProjectManager");
                     }
                 }

@@ -32,18 +32,20 @@ namespace APlayTest.Server.Factories
     {
         private readonly IProjectManagerService _projectManagerService;
         private readonly IUndoService _undoService;
+        private readonly IUndoManagerCache _undoManagerCache;
         private readonly AplayProjectsCache _aplayProjectsCache;
 
-        public ProjectManagerFactory(IProjectManagerService projectManagerService, IUndoService undoService)
+        public ProjectManagerFactory(IProjectManagerService projectManagerService, IUndoService undoService, IUndoManagerCache undoManagerCache)
         {
             _projectManagerService = projectManagerService;
             _undoService = undoService;
+            _undoManagerCache = undoManagerCache;
             _aplayProjectsCache = new AplayProjectsCache();
         }
 
         public ProjectManager CreateProjectManager()
         {
-            return new ProjectManager(_projectManagerService, _aplayProjectsCache, _undoService);
+            return new ProjectManager(_projectManagerService, _aplayProjectsCache, _undoService, _undoManagerCache);
         }
     }
 }

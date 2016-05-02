@@ -27,6 +27,7 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
         private readonly string _serverAddress;
         private ServerNotFoundViewModel _serverNotFoundViewModel;
         private JoinProjectViewModel _joinProjectViewModel;
+        private IAPlayAwareShell _aPlayAwareShell;
 
         [ImportingConstructor]
         public MainWindowViewModel(IAplayClientFactory aplayClientFactory)
@@ -50,11 +51,11 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
         private void StartNewClient()
         {
             _aplayClient = _aplayClientFactory.Create();
-
+            
             _aplayClient.ConnectionFailedEventHandler += aplayClient_ConnectionFailedEventHandler;
             _aplayClient.ConnectEventHandler += _aplayClient_ConnectEventHandler;
             _aplayClient.DisconnectEventHandler += _aplayClient_DisconnectEventHandler;
-
+            
 
             _aplayClient.Start(_serverAddress);
         }
@@ -76,30 +77,41 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             _aplayClient.ConnectionFailedEventHandler -= aplayClient_ConnectionFailedEventHandler;
             _aplayClient.ConnectEventHandler -= _aplayClient_ConnectEventHandler;
             _aplayClient.DisconnectEventHandler -= _aplayClient_DisconnectEventHandler;
+            
         }
 
         void _aplayClient_ConnectEventHandler(Client NewDataClient__)
         {
+            //Todo: Get rid of the magic number.
+            NewDataClient__.TryGetId(10005, NewDataClient__, value => { ; });
+
             ServerNotFoundViewModel = null;
 
             _aplayClient.DataClient = NewDataClient__;
+            
             _aplayClient.DataClient.CurrentUser = new User() { Name = Environment.UserName };
 
             var aPlayAwareShell = (IAPlayAwareShell)Shell;
             aPlayAwareShell.Client = NewDataClient__;
             
-
             JoinProjectViewModel = new JoinProjectViewModel(_aplayClient.DataClient.ProjectManager, Close);
 
             _aplayClient.DataClient.CurrentProjectChangeEventHandler += DataClientOnCurrentProjectChangeEventHandler;
+            _aplayClient.DataClient.UndoManagerChangeEventHandler += OnUndoManagerChangeEventHandler;
+           
+        }
+
+        private void OnUndoManagerChangeEventHandler(UndoManager newUndoManager)
+        {
+           
         }
 
         private void DataClientOnCurrentProjectChangeEventHandler(Project newCurrentProject)
         {
-            var aPlayAwareShell = (IAPlayAwareShell)Shell;
+            _aPlayAwareShell = (IAPlayAwareShell)Shell;
 
             Title = "APlayTest [" + newCurrentProject.ProjectDetail.Name + "]";
-            aPlayAwareShell.Project = newCurrentProject;
+            _aPlayAwareShell.Project = newCurrentProject;
         }
 
         void aplayClient_ConnectionFailedEventHandler()

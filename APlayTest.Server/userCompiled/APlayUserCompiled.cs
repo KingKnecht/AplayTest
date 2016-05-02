@@ -123,6 +123,7 @@ namespace APlayTest.Server
   public interface  IClientEvents
   {
     void onCurrentUserChange (APlayTest.Server.User NewCurrentUser__);
+    bool onTryGetId (int id__, APlayTest.Server.Client client__);
   };
 }
 namespace APlayTest.Server
@@ -1262,6 +1263,28 @@ namespace APlayTest.Server
         }
       }
     }
+    public abstract bool onTryGetId(int id__, APlayTest.Server.Client client__);
+    public bool onInternTryGetId(int id__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
+    {
+      if(TryGetIdEventHandler!=null)
+      {
+        bool retu = TryGetIdEventHandler(id__, ((APlayTest.Server.Client) (client__)));
+        return (((bool) (retu)));
+      }
+      else
+      {
+        if(APlayTest.Server.ClientSkeleton.StaticTryGetIdEventHandler!=null)
+        {
+          bool retu = APlayTest.Server.ClientSkeleton.StaticTryGetIdEventHandler(id__, ((APlayTest.Server.Client) (client__)), ((APlayTest.Server.Client) (this)));
+          return (((bool) (retu)));
+        }
+        else
+        {
+          bool retu = this.onTryGetId(id__, ((APlayTest.Server.Client) (client__)));
+          return (((bool) (retu)));
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implClient.RequiresInit();
@@ -1371,6 +1394,8 @@ namespace APlayTest.Server
     }
     public event APlayTest.Server.Delegates.void_User CurrentUserChangeEventHandler;
     static public event APlayTest.Server.Delegates.void_User_Client StaticCurrentUserChangeEventHandler;
+    public event APlayTest.Server.Delegates.boolean_int32_Client TryGetIdEventHandler;
+    static public event APlayTest.Server.Delegates.boolean_int32_Client_Client StaticTryGetIdEventHandler;
     private APlay.Generated.Intern.Server.__IClientAPImpl implClient;
   }
   
@@ -4463,6 +4488,8 @@ namespace APlayTest.Server
     public delegate void void_AplayPoint_Client_BlockSymbol(APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__, APlayTest.Server.BlockSymbol this_);
     public delegate void void_User(APlayTest.Server.User NewCurrentUser__);
     public delegate void void_User_Client(APlayTest.Server.User NewCurrentUser__, APlayTest.Server.Client this_);
+    public delegate bool boolean_int32_Client(int id__, APlayTest.Server.Client client__);
+    public delegate bool boolean_int32_Client_Client(int id__, APlayTest.Server.Client client__, APlayTest.Server.Client this_);
     public delegate void void_int32_Project(int NewId__, APlayTest.Server.Project this_);
     public delegate void void_ProjectDetail(APlayTest.Server.ProjectDetail NewProjectDetail__);
     public delegate void void_ProjectDetail_Project(APlayTest.Server.ProjectDetail NewProjectDetail__, APlayTest.Server.Project this_);

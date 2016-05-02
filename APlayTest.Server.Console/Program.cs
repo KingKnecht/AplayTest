@@ -17,9 +17,10 @@ namespace APlayTest.Server.Console
         {
             var undoServiceFactory = new UndoServiceFactory();
             var undoService = undoServiceFactory.Create();
+            var undoManagerCache = new UndoManagerCache(undoService);
 
             var server = new APlayServer(Int32.Parse(Properties.Settings.Default.ServerPort),
-                new ProjectManagerFactory(new ProjectManagerService(), undoService), undoService);
+                new ProjectManagerFactory(new ProjectManagerService(), undoService, undoManagerCache), undoService);
             
 
         }

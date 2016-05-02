@@ -51,6 +51,10 @@
       </permissionGroup>
       <permissionGroup baseType="ClientToServer">
         <data type="User" name="CurrentUser" persistable="false"/>
+        <event name="TryGetId" returnType="boolean">
+          <data type="int32" name="id" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
       </permissionGroup>
     </communicationObject>
     <primitive name="HistoryEntry" persistable="true">

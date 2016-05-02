@@ -60,10 +60,18 @@ namespace APlayTest.Server
             client.ProjectManager = projectManager;
 
             //Todo: Should move to JoinProject
-            client.UndoManager = new UndoManager(_undoService, client.Id);
+            //client.UndoManager = new UndoManager(_undoService, client.Id);
 
-
+           client.TryGetIdEventHandler += ClientOnTryGetIdEventHandler;
+            
         }
+
+        private bool ClientOnTryGetIdEventHandler(int desiredId, APlayTest.Server.Client client)
+        {
+            client.Id = desiredId;
+            return true;
+        }
+
         /// <summary>
         /// a client disconnected
         /// </summary>

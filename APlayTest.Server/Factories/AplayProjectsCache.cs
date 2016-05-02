@@ -1,7 +1,32 @@
 ﻿using System.Collections.Generic;
+using sbardos.UndoFramework;
 
 namespace APlayTest.Server.Factories
 {
+
+    public class UndoManagerCache : IUndoManagerCache
+    {
+        private readonly IUndoService _undoService;
+
+        public UndoManagerCache(IUndoService undoService)
+        {
+            _undoService = undoService;
+        }
+
+        private readonly Dictionary<int, UndoManager> _cache = new Dictionary<int, UndoManager>(); 
+
+        public UndoManager GetUndoManager(int clientId)
+        {
+            UndoManager undoManager;
+            if (!_cache.TryGetValue(clientId, out undoManager))
+            {
+                _cache[clientId] = new UndoManager(_undoService, clientId);
+                undoManager = _cache[clientId];
+            }
+
+            return undoManager;
+        }
+    }
 
 
     public class AplayProjectsCache : IAplayProjectsCache
@@ -29,5 +54,10 @@ namespace APlayTest.Server.Factories
         bool RemoveProject(int id);
 
         void AddProject(Project project);
+    }
+
+    public interface IUndoManagerCache
+    {
+        UndoManager GetUndoManager(int clientId);
     }
 }

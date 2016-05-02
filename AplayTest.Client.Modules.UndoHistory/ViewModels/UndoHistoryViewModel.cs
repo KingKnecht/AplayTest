@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
@@ -34,14 +35,13 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
         public UndoHistoryViewModel(IAPlayAwareShell shell)
         {
             _shell = shell;
+            _shell.UndoManagerChanged += ShellOnUndoManagerChanged;
+            
             DisplayName = "History";
-
+             
             if (_shell.UndoManager != null)
             {
-                _shell.UndoManager.HistoryAddEventHandler += UndoManagerOnHistoryAddEventHandler;
-                _shell.UndoManager.HistoryRemoveAtEventHandler += UndoManagerOnHistoryRemoveAtEventHandler;
-                _shell.UndoManager.ActiveHistoryEntryIdChangeEventHandler += _undoManager_ActiveHistoryEntryIdChangeEventHandler;
-                _shell.UndoManager.HistoryRemoveEventHandler += _undoManager_HistoryRemoveEventHandler;
+                SetUndoManagerEventHandlers(_shell.UndoManager);
 
                 History =
                     new ObservableCollection<HistoryEntry>(
@@ -49,6 +49,38 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
 
                 UpdateStates();
             }
+            else
+            {
+                History = new ObservableCollection<HistoryEntry>();
+            }
+        }
+
+        private void SetUndoManagerEventHandlers(UndoManager undoManager)
+        {
+            //Todo: Event handlers are always addded but never removed.
+
+            undoManager.HistoryAddEventHandler += UndoManagerOnHistoryAddEventHandler;
+            undoManager.HistoryRemoveAtEventHandler += UndoManagerOnHistoryRemoveAtEventHandler;
+            undoManager.ActiveHistoryEntryIdChangeEventHandler += _undoManager_ActiveHistoryEntryIdChangeEventHandler;
+            undoManager.HistoryRemoveEventHandler += _undoManager_HistoryRemoveEventHandler;
+        }
+
+        private void ShellOnUndoManagerChanged(object sender, UndoManager undoManager)
+        {
+            Application.Current.Dispatcher.BeginInvoke(
+                new ThreadStart(() =>
+                {
+
+                    SetUndoManagerEventHandlers(undoManager);
+
+                    History.Clear();
+                    foreach (var historyEntry in undoManager.History)
+                    {
+                        History.Add(new HistoryEntry(historyEntry.Id, historyEntry.Description));
+                    }
+                  
+                    UpdateStates();
+                }));
         }
 
         public void Undo()
@@ -58,18 +90,18 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
 
         public void Redo()
         {
-            _shell.UndoManager.ExecuteRedo();
+           _shell.UndoManager.ExecuteRedo();
         }
 
         public bool CanUndo
         {
-            get
-            {
-                return _shell.UndoManager.CanUndo;
-            }
+            get { return _shell.UndoManager != null && _shell.UndoManager.CanUndo; }
         }
 
-        public bool CanRedo { get { return _shell.UndoManager.CanRedo; } }
+        public bool CanRedo
+        {
+            get { return _shell.UndoManager != null && _shell.UndoManager.CanRedo; }
+        }
 
         void _undoManager_HistoryRemoveEventHandler(HistoryEntry element)
         {
@@ -121,6 +153,7 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
             //NotifyOfPropertyChange(() => CanRedo);
         }
 
+        
         public ObservableCollection<HistoryEntry> History { get; set; }
 
         public int SelectedIndex

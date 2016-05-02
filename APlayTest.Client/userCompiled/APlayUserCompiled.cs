@@ -71,6 +71,8 @@ namespace APlayTest.Client
     APlayTest.Client.User CurrentUser {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
+    bool TryGetId (int id__, APlayTest.Client.Client client__);
+    void TryGetId (int id__, APlayTest.Client.Client client__, APlayTest.Client.Delegates.void_boolean returnDelegate);
   };
 }
 namespace APlayTest.Client
@@ -806,6 +808,22 @@ namespace APlayTest.Client
     {
       bool retu = implClient.RequiresInit();
       return (((bool) (retu)));
+    }
+    public bool TryGetId(int id__, APlayTest.Client.Client client__)
+    {
+      bool retu = implClient.TryGetId(id__, ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+      return (((bool) (retu)));
+    }
+    public void TryGetId(int id__, APlayTest.Client.Client client__, APlayTest.Client.Delegates.void_boolean returnDelegate)
+    {
+      implClient.TryGetId(id__, ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)), delegate(APlay.Common.Protocol.MessageReader reader_){
+  bool __retu__ = false;
+  // boolean Native
+  // Not Native
+  __retu__ = reader_.read_boolean();
+  returnDelegate(((bool) (__retu__)));
+}
+);
     }
     public APlay.Generated.Intern.Client.__IClientAPImpl getClientObject()
     {
@@ -3780,6 +3798,7 @@ namespace APlayTest.Client
     public delegate void void_float64_BlockSymbol(double NewPositionX__, APlayTest.Client.BlockSymbol this_);
     public delegate void void_AplaySize(APlayTest.Client.AplaySize NewSize__);
     public delegate void void_AplaySize_BlockSymbol(APlayTest.Client.AplaySize NewSize__, APlayTest.Client.BlockSymbol this_);
+    public delegate void void_boolean(bool returnValue);
     public delegate void void_int32_Client(int NewId__, APlayTest.Client.Client this_);
     public delegate void void_Project(APlayTest.Client.Project NewCurrentProject__);
     public delegate void void_Project_Client(APlayTest.Client.Project NewCurrentProject__, APlayTest.Client.Client this_);
@@ -3792,7 +3811,6 @@ namespace APlayTest.Client
     public delegate void void_ProjectDetail_Project(APlayTest.Client.ProjectDetail NewProjectDetail__, APlayTest.Client.Project this_);
     public delegate void void_SheetManager(APlayTest.Client.SheetManager NewSheetManager__);
     public delegate void void_SheetManager_Project(APlayTest.Client.SheetManager NewSheetManager__, APlayTest.Client.Project this_);
-    public delegate void void_boolean(bool NewCanJoinProject__);
     public delegate void void_boolean_ProjectManager(bool NewCanJoinProject__, APlayTest.Client.ProjectManager this_);
     public delegate void void_ProjectList(APlayTest.Client.ProjectList Projects__);
     public delegate void void_ProjectList_ProjectManager(APlayTest.Client.ProjectList Projects__, APlayTest.Client.ProjectManager this_);

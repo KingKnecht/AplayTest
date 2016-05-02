@@ -28,7 +28,10 @@ namespace APlayTest.Server
         }
 
 
-
+        public override bool onTryGetId(int id__, Client client__)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
