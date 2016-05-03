@@ -58,5 +58,17 @@ namespace APlayTest.Client.Gemini.Properties {
                 this["ServerAddress"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LastClientId {
+            get {
+                return ((int)(this["LastClientId"]));
+            }
+            set {
+                this["LastClientId"] = value;
+            }
+        }
     }
 }

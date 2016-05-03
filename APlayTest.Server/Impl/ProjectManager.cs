@@ -31,6 +31,7 @@ namespace APlayTest.Server
         private readonly IAplayProjectsCache _aplayProjectsCache;
         private readonly IUndoService _undoService;
         private readonly IUndoManagerCache _undoManagerCache;
+        private readonly IClientIdLookup _clientIdLookup;
         private string _searchString = String.Empty;
         private CompositeDisposable _cleanUp = new CompositeDisposable();
         /// <summary>
@@ -55,7 +56,7 @@ namespace APlayTest.Server
             _aplayProjectsCache = aplayProjectsCache;
             _undoService = undoService;
             _undoManagerCache = undoManagerCache;
-
+     
 
             //Subscribe for newly added, deleted projects from the service.
             var serviceUpdates = _projectManagerService.ProjectsDelta.Connect()
@@ -100,10 +101,11 @@ namespace APlayTest.Server
                     {
                         sender.CurrentProject = joinedProject;
 
-                        sender.UndoManager = _undoManagerCache.GetUndoManager(sender.Id); //new UndoManager(_undoService, sender.Id);
+                        //this.SyncedWithClient( sender);
+                        sender.UndoManager =  _undoManagerCache.GetUndoManager(sender.Id, joinedProject.Id);
 
                         JoinedProject(joinedProject);
-
+                        
                         APlay.Common.Logging.Logger.LogDesigned(2,
                             "User: " + sender.CurrentUser.Name + " has joined project: " +
                             SelectedProject.ProjectDetail.Name + "[ClientId: " + sender.Id + "]",

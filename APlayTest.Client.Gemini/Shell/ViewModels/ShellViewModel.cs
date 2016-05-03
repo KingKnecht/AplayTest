@@ -35,9 +35,7 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
         {
             ViewLocator.AddNamespaceMapping(typeof(ShellViewModel).Namespace, typeof(ShellView).Namespace);
         }
-
         
-
         public event EventHandler<Project> ProjectChanged;
         public event EventHandler<UndoManager> UndoManagerChanged;
 
@@ -74,13 +72,10 @@ namespace APlayTest.Client.Gemini.Shell.ViewModels
 
                 if (_client != null)
                 {
-                    _client.CurrentProjectChangeEventHandler -= OnProjectChanged;
-                    _client.UndoManagerChangeEventHandler -= OnUndoManagerChanged;    
+                     _client.UndoManagerChangeEventHandler -= OnUndoManagerChanged;    
                 }
                 
                 _client = value;
-
-                _client.CurrentProjectChangeEventHandler += OnProjectChanged;
                 _client.UndoManagerChangeEventHandler += OnUndoManagerChanged;
 
                 StatusBar.Items.Clear();

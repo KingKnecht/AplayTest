@@ -53,6 +53,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientIdLookup.cs" />
+    <Compile Include="IClientIdLookup.cs" />
     <Compile Include="Infracstructure\IdGenerator.cs" />
     <Compile Include="IProjectManagerService.cs" />
     <Compile Include="Properties\Annotations.cs" />

@@ -59,14 +59,5 @@ namespace APlayTest.Client.Gemini.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string LastClientId {
-            get {
-                return ResourceManager.GetString("LastClientId", resourceCulture);
-            }
-        }
     }
 }

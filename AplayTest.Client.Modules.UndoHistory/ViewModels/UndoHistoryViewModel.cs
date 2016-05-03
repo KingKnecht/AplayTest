@@ -36,23 +36,43 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
         {
             _shell = shell;
             _shell.UndoManagerChanged += ShellOnUndoManagerChanged;
-            
+
             DisplayName = "History";
-             
+
+            History = new ObservableCollection<HistoryEntry>();
+
             if (_shell.UndoManager != null)
             {
-                SetUndoManagerEventHandlers(_shell.UndoManager);
-
-                History =
-                    new ObservableCollection<HistoryEntry>(
-                        _shell.UndoManager.History.Select(item => new HistoryEntry(item.Id, item.Description)));
-
-                UpdateStates();
+                SetUndoHistory(_shell.UndoManager);
             }
-            else
+
+        }
+
+        private void SetUndoHistory(UndoManager undoManager)
+        {
+            SetUndoManagerEventHandlers(undoManager);
+            
+            History.Clear();
+
+            foreach (HistoryEntry historyEntry in undoManager.History)
             {
-                History = new ObservableCollection<HistoryEntry>();
+                History.Add(new HistoryEntry(historyEntry.Id, historyEntry.Description));
             }
+
+            OnActiveHistoryEntryIdChanged(undoManager.ActiveHistoryEntryId);
+
+            UpdateStates();
+
+        }
+
+
+        private void ShellOnUndoManagerChanged(object sender, UndoManager undoManager)
+        {
+            Application.Current.Dispatcher.BeginInvoke(
+                new ThreadStart(() =>
+                {
+                    SetUndoHistory(undoManager);
+                }));
         }
 
         private void SetUndoManagerEventHandlers(UndoManager undoManager)
@@ -61,26 +81,8 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
 
             undoManager.HistoryAddEventHandler += UndoManagerOnHistoryAddEventHandler;
             undoManager.HistoryRemoveAtEventHandler += UndoManagerOnHistoryRemoveAtEventHandler;
-            undoManager.ActiveHistoryEntryIdChangeEventHandler += _undoManager_ActiveHistoryEntryIdChangeEventHandler;
+            undoManager.ActiveHistoryEntryIdChangeEventHandler += OnActiveHistoryEntryIdChanged;
             undoManager.HistoryRemoveEventHandler += _undoManager_HistoryRemoveEventHandler;
-        }
-
-        private void ShellOnUndoManagerChanged(object sender, UndoManager undoManager)
-        {
-            Application.Current.Dispatcher.BeginInvoke(
-                new ThreadStart(() =>
-                {
-
-                    SetUndoManagerEventHandlers(undoManager);
-
-                    History.Clear();
-                    foreach (var historyEntry in undoManager.History)
-                    {
-                        History.Add(new HistoryEntry(historyEntry.Id, historyEntry.Description));
-                    }
-                  
-                    UpdateStates();
-                }));
         }
 
         public void Undo()
@@ -90,7 +92,7 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
 
         public void Redo()
         {
-           _shell.UndoManager.ExecuteRedo();
+            _shell.UndoManager.ExecuteRedo();
         }
 
         public bool CanUndo
@@ -111,12 +113,12 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
             UpdateStates();
         }
 
-        void _undoManager_ActiveHistoryEntryIdChangeEventHandler(int NewId__)
+        void OnActiveHistoryEntryIdChanged(int historyElementId)
         {
             Application.Current.Dispatcher.BeginInvoke(
                 new ThreadStart(() =>
                 {
-                    var activeItem = History.FirstOrDefault(he => he.Id == NewId__);
+                    var activeItem = History.FirstOrDefault(he => he.Id == historyElementId);
                     var activeIndex = History.IndexOf(activeItem);
                     _isUpdatingFromModel = true;
                     SelectedIndex = activeIndex;
@@ -153,7 +155,7 @@ namespace AplayTest.Client.Modules.UndoHistory.ViewModels
             //NotifyOfPropertyChange(() => CanRedo);
         }
 
-        
+
         public ObservableCollection<HistoryEntry> History { get; set; }
 
         public int SelectedIndex

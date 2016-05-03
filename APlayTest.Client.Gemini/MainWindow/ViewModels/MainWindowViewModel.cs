@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using APlayTest.Client.Contracts;
 using APlayTest.Client.Factories;
+using APlayTest.Client.Gemini.Properties;
 using Gemini.Framework.Services;
 
 namespace APlayTest.Client.Gemini.MainWindow.ViewModels
@@ -62,12 +63,16 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
 
         void _aplayClient_DisconnectEventHandler()
         {
+
+            Settings.Default.LastClientId = _aplayClient.DataClient.Id;
+            Settings.Default.Save();
+
             //if (ServerNotFoundViewModel == null)
             //{
             //    ServerNotFoundViewModel = new ServerNotFoundViewModel();
             //}
 
-            //RemoveOldHandlers();
+            RemoveOldHandlers();
 
             //StartNewClient();
         }
@@ -77,14 +82,16 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             _aplayClient.ConnectionFailedEventHandler -= aplayClient_ConnectionFailedEventHandler;
             _aplayClient.ConnectEventHandler -= _aplayClient_ConnectEventHandler;
             _aplayClient.DisconnectEventHandler -= _aplayClient_DisconnectEventHandler;
-            
+            _aplayClient.DataClient.CurrentProjectChangeEventHandler -= DataClientOnCurrentProjectChangeEventHandler;
         }
 
         void _aplayClient_ConnectEventHandler(Client NewDataClient__)
         {
-            //Todo: Get rid of the magic number.
-            NewDataClient__.TryGetId(10005, NewDataClient__, value => { ; });
-
+            if (Settings.Default.LastClientId > 0 && NewDataClient__.Id != Settings.Default.LastClientId) 
+            {
+                NewDataClient__.TryGetId(Settings.Default.LastClientId, NewDataClient__, value => {;});    
+            }
+            
             ServerNotFoundViewModel = null;
 
             _aplayClient.DataClient = NewDataClient__;
@@ -97,15 +104,9 @@ namespace APlayTest.Client.Gemini.MainWindow.ViewModels
             JoinProjectViewModel = new JoinProjectViewModel(_aplayClient.DataClient.ProjectManager, Close);
 
             _aplayClient.DataClient.CurrentProjectChangeEventHandler += DataClientOnCurrentProjectChangeEventHandler;
-            _aplayClient.DataClient.UndoManagerChangeEventHandler += OnUndoManagerChangeEventHandler;
            
         }
-
-        private void OnUndoManagerChangeEventHandler(UndoManager newUndoManager)
-        {
-           
-        }
-
+        
         private void DataClientOnCurrentProjectChangeEventHandler(Project newCurrentProject)
         {
             _aPlayAwareShell = (IAPlayAwareShell)Shell;
