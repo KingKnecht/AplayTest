@@ -11,13 +11,18 @@ using APlay.Common;
 using APlay.Common.Utils;
 using APlay.Common.DataTypes;
 using APlayTest.Server;
+using APlayTest.Server.Factories;
+using DynamicData;
 using sbardos.UndoFramework;
+using ChangeReason = sbardos.UndoFramework.ChangeReason;
 
 namespace APlayTest.Server
 {
     public class BlockSymbol : APlayTest.Server.BlockSymbolSkeleton
     {
         private readonly IUndoService _undoService;
+        private readonly Factories.IConnectorFactory _connectorFactory;
+        private readonly Action<BlockSymbol> _onPrepareRemoveCallBack;
 
         /// <summary>
         /// Use this constructor to create instances in your code.
@@ -25,30 +30,25 @@ namespace APlayTest.Server
         ///  if you want to determine in the constructor if the object is user created or by aplay - check IsInitializedByAPlay
         /// </summary>
 
-        public BlockSymbol() :base()
+        public BlockSymbol()
         {
-            
+
         }
 
-        public BlockSymbol(IUndoService undoService) :this()
+        public BlockSymbol(int id, IUndoService undoService, Factories.IConnectorFactory connectorFactory, Action<BlockSymbol> onPrepareRemoveCallBack, Sheet sheet)
+            : this()
         {
+            Sheet = sheet;
+            Id = id;
             _undoService = undoService;
+            _connectorFactory = connectorFactory;
+            _onPrepareRemoveCallBack = onPrepareRemoveCallBack;
 
             _undoService.ActiveStateChanged += UndoServiceOnActiveStateChanged;
         }
 
-   
-        public BlockSymbol(BlockSymbolUndoable undoable, ChangeSet changeSet, IUndoService undoService):this(undoService)
-        {
-            Id = undoable.Id;
-            PositionX = undoable.Position.X;
-            PositionY = undoable.Position.Y;
+        public Sheet Sheet { get; set; }
 
-            foreach (var change in changeSet.Where(c => c.OwnerId == Id))
-            {
-                
-            }
-        }
 
         private void UndoServiceOnActiveStateChanged(object sender, ActiveStateChangedEventArgs e)
         {
@@ -90,8 +90,82 @@ namespace APlayTest.Server
             PositionX = position__.X;
             PositionY = position__.Y;
 
+            UpdateConnectorPositions();
+
             _undoService.AddUpdate(oldState, new BlockSymbolUndoable(this), "Position of block changed", client__.Id);
-           
+
+        }
+
+        private void UpdateConnectorPositions()
+        {
+
+            foreach (var inputConnector in InputConnectors)
+            {
+                inputConnector.Position = new AplayPoint(PositionX, PositionY);
+            }
+
+            if (OutputConnector != null)
+            {
+                OutputConnector.Position = new AplayPoint(PositionX, PositionY);
+            }
+        }
+
+        public override void onAddInputConnector(Connector connector__, Client client__)
+        {
+
+        }
+
+        public override void onRemoveInputConnector(int connectorId__, Client client__)
+        {
+
+        }
+
+        public override void onSetOutputConnector(Connector connector__, Client client__)
+        {
+
+        }
+
+        public override ConnectionList onGetAttachedConnections()
+        {
+            var connections = new ConnectionList();
+
+            if (OutputConnector != null)
+            {
+                connections.AddRange(OutputConnector.Connections);
+            }
+
+            connections.AddRange(InputConnectors.SelectMany(ic => ic.Connections));
+
+            return connections;
+        }
+
+        public void PrepareForRemove(int clientId)
+        {
+            //Unsubscribe from all events.
+            _undoService.ActiveStateChanged -= UndoServiceOnActiveStateChanged;
+            
+            _onPrepareRemoveCallBack(this);
+        }
+
+        public BlockSymbolUndoable CreateUndoable()
+        {
+            return new BlockSymbolUndoable(this);
+        }
+
+        public string Dump()
+        {
+            var dump = "BlockSymbol: Id: " + Id;
+            foreach (var inputConnector in InputConnectors)
+            {
+                dump += "\n\t" + inputConnector.Dump();
+            }
+
+            if (OutputConnector != null)
+            {
+                dump += "\n\t" + OutputConnector.Dump();
+            }
+
+            return dump;
         }
     }
 
@@ -101,7 +175,28 @@ namespace APlayTest.Server
         {
             Id = blockSymbol.Id;
             Position = new AplayPoint(blockSymbol.PositionX, blockSymbol.PositionY);
+
+            SheetId = blockSymbol.Sheet.Id;
+
+            //InputConnectorIds = blockSymbol.InputConnectors.Select(ic => ic.Id).ToList();
+            InputConnectors = blockSymbol.InputConnectors.Select(ic => ic.CreateUndoable()).ToList();
+
+
+            if (blockSymbol.OutputConnector != null)
+            {
+                //OutputConnectorId = blockSymbol.OutputConnector.Id;
+                OutputConnector = blockSymbol.OutputConnector.CreateUndoable();
+            }
+
         }
+
+        public ConnectorUndoable OutputConnector { get; set; }
+
+        public IEnumerable<ConnectorUndoable> InputConnectors { get; set; }
+
+        //public int? OutputConnectorId { get; set; }
+
+        //public IEnumerable<int> InputConnectorIds { get; set; }
 
         public BlockSymbolUndoable(int id, double positionX, double positionY)
         {
@@ -112,10 +207,11 @@ namespace APlayTest.Server
         public AplayPoint Position { get; private set; }
 
         public int Id { get; private set; }
+        public int SheetId { get; set; }
 
         public string Dump()
         {
-            return "Block Id: " + Id + ", Pos: " + Position.ToString();
+            return "Block Id: " + Id + ", Pos: " + Position;
         }
     }
 }

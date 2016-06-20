@@ -26,12 +26,19 @@ namespace APlayTest.Client
   public interface  IBlockSymbolImpl
   {
     int Id {get; }
+    APlayTest.Client.ConnectorList InputConnectors {get; }
     double PositionX {get; set; }
     double PositionY {get; set; }
     APlayTest.Client.AplaySize Size {get; set; }
+    APlayTest.Client.Connector OutputConnector {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
     void SetPosition (APlayTest.Client.AplayPoint position__, APlayTest.Client.Client client__);
+    void AddInputConnector (APlayTest.Client.Connector connector__, APlayTest.Client.Client client__);
+    void RemoveInputConnector (int connectorId__, APlayTest.Client.Client client__);
+    void SetOutputConnector (APlayTest.Client.Connector connector__, APlayTest.Client.Client client__);
+    APlayTest.Client.ConnectionList GetAttachedConnections ();
+    void GetAttachedConnections (APlayTest.Client.Delegates.void_ConnectionList returnDelegate);
   };
 }
 namespace APlayTest.Client
@@ -39,9 +46,17 @@ namespace APlayTest.Client
   public interface  IBlockSymbolEvents
   {
     void onIdChange (int NewId__);
+    void onInputConnectorsReplace (APlayTest.Client.ConnectorList InputConnectors__);
+    void onInputConnectorsAdd (APlayTest.Client.Connector element);
+    void onInputConnectorsRemove (APlayTest.Client.Connector element);
+    void onInputConnectorsClear ();
+    void onInputConnectorsInsertAt (int pos, APlayTest.Client.Connector element);
+    void onInputConnectorsSetAt (int pos, APlayTest.Client.Connector element);
+    void onInputConnectorsRemoveAt (int pos, APlayTest.Client.Connector element);
     void onPositionXChange (double NewPositionX__);
     void onPositionYChange (double NewPositionY__);
     void onSizeChange (APlayTest.Client.AplaySize NewSize__);
+    void onOutputConnectorChange (APlayTest.Client.Connector NewOutputConnector__);
   };
 }
 namespace APlayTest.Client
@@ -96,6 +111,91 @@ namespace APlayTest.Client
   public interface  IClientFactory
   {
     APlayTest.Client.Client CreateClient ();
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IConnectionImpl
+  {
+    int Id {get; }
+    uint Color {get; set; }
+    APlayTest.Client.Connector From {get; set; }
+    APlayTest.Client.Connector To {get; set; }
+    APlayTest.Client.AplayPoint FromPosition {get; set; }
+    APlayTest.Client.AplayPoint ToPosition {get; set; }
+    ulong APlayEntityId {get; }
+    bool RequiresInit ();
+    void SetFromPosition (APlayTest.Client.AplayPoint position__, APlayTest.Client.Client client__);
+    void SetToPosition (APlayTest.Client.AplayPoint position__, APlayTest.Client.Client client__);
+    void SetFrom (APlayTest.Client.Connector connector__, APlayTest.Client.Client client__);
+    void SetTo (APlayTest.Client.Connector connector__, APlayTest.Client.Client client__);
+    void SetColor (uint Color__, APlayTest.Client.Client client__);
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IConnectionEvents
+  {
+    void onIdChange (int NewId__);
+    void onColorChange (uint NewColor__);
+    void onFromChange (APlayTest.Client.Connector NewFrom__);
+    void onToChange (APlayTest.Client.Connector NewTo__);
+    void onFromPositionChange (APlayTest.Client.AplayPoint NewFromPosition__);
+    void onToPositionChange (APlayTest.Client.AplayPoint NewToPosition__);
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IConnectionSkeleton : APlayTest.Client.IConnectionImpl, APlay.Generated.Intern.Client.__IConnectionAPEvents, APlayTest.Client.IConnectionEvents
+  {
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IConnectionFactory
+  {
+    APlayTest.Client.Connection CreateConnection ();
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IConnectorImpl
+  {
+    int Id {get; }
+    APlayTest.Client.ConnectorDirection Direction {get; set; }
+    APlayTest.Client.ConnectionList Connections {get; set; }
+    APlayTest.Client.AplayPoint Position {get; set; }
+    ulong APlayEntityId {get; }
+    bool RequiresInit ();
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IConnectorEvents
+  {
+    void onIdChange (int NewId__);
+    void onDirectionChange (APlayTest.Client.ConnectorDirection NewDirection__);
+    void onConnectionsReplace (APlayTest.Client.ConnectionList Connections__);
+    void onConnectionsAdd (APlayTest.Client.Connection element);
+    void onConnectionsRemove (APlayTest.Client.Connection element);
+    void onConnectionsClear ();
+    void onConnectionsInsertAt (int pos, APlayTest.Client.Connection element);
+    void onConnectionsSetAt (int pos, APlayTest.Client.Connection element);
+    void onConnectionsRemoveAt (int pos, APlayTest.Client.Connection element);
+    void onPositionChange (APlayTest.Client.AplayPoint NewPosition__);
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IConnectorSkeleton : APlayTest.Client.IConnectorImpl, APlay.Generated.Intern.Client.__IConnectorAPEvents, APlayTest.Client.IConnectorEvents
+  {
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IConnectorFactory
+  {
+    APlayTest.Client.Connector CreateConnector ();
   };
 }
 namespace APlayTest.Client
@@ -178,14 +278,19 @@ namespace APlayTest.Client
   {
     String Name {get; }
     APlayTest.Client.BlockSymbolList BlockSymbols {get; }
+    APlayTest.Client.ConnectionList Connections {get; }
     int Id {get; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
+    void SetName (String name__, APlayTest.Client.Client client__);
     APlayTest.Client.BlockSymbol CreateBlockSymbol ();
     void CreateBlockSymbol (APlayTest.Client.Delegates.void_BlockSymbol returnDelegate);
     void Add (APlayTest.Client.BlockSymbol blockSymbol__, APlayTest.Client.Client client__);
     void Remove (APlayTest.Client.BlockSymbol blockSymbol__, APlayTest.Client.Client client__);
-    void SetName (String name__, APlayTest.Client.Client client__);
+    APlayTest.Client.Connection CreateConnection ();
+    void CreateConnection (APlayTest.Client.Delegates.void_Connection returnDelegate);
+    void AddConnection (APlayTest.Client.Connection connection__, APlayTest.Client.Client client__);
+    void RemoveConnection (APlayTest.Client.Connection connection__, APlayTest.Client.Client client__);
   };
 }
 namespace APlayTest.Client
@@ -200,6 +305,13 @@ namespace APlayTest.Client
     void onBlockSymbolsInsertAt (int pos, APlayTest.Client.BlockSymbol element);
     void onBlockSymbolsSetAt (int pos, APlayTest.Client.BlockSymbol element);
     void onBlockSymbolsRemoveAt (int pos, APlayTest.Client.BlockSymbol element);
+    void onConnectionsReplace (APlayTest.Client.ConnectionList Connections__);
+    void onConnectionsAdd (APlayTest.Client.Connection element);
+    void onConnectionsRemove (APlayTest.Client.Connection element);
+    void onConnectionsClear ();
+    void onConnectionsInsertAt (int pos, APlayTest.Client.Connection element);
+    void onConnectionsSetAt (int pos, APlayTest.Client.Connection element);
+    void onConnectionsRemoveAt (int pos, APlayTest.Client.Connection element);
     void onIdChange (int NewId__);
   };
 }
@@ -346,7 +458,7 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
-  public interface  IUserObjectFactory : APlayTest.Client.IBlockSymbolUserFactory, APlayTest.Client.IClientUserFactory, APlayTest.Client.IProjectUserFactory, APlayTest.Client.IProjectManagerUserFactory, APlayTest.Client.ISheetUserFactory, APlayTest.Client.ISheetManagerUserFactory, APlayTest.Client.IUndoManagerUserFactory, APlayTest.Client.IUserUserFactory
+  public interface  IUserObjectFactory : APlayTest.Client.IBlockSymbolUserFactory, APlayTest.Client.IClientUserFactory, APlayTest.Client.IConnectionUserFactory, APlayTest.Client.IConnectorUserFactory, APlayTest.Client.IProjectUserFactory, APlayTest.Client.IProjectManagerUserFactory, APlayTest.Client.ISheetUserFactory, APlayTest.Client.ISheetManagerUserFactory, APlayTest.Client.IUndoManagerUserFactory, APlayTest.Client.IUserUserFactory
   {
   };
 }
@@ -362,6 +474,20 @@ namespace APlayTest.Client
   public interface  IClientUserFactory
   {
     APlayTest.Client.IClientImpl CreateClient ();
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IConnectionUserFactory
+  {
+    APlayTest.Client.IConnectionImpl CreateConnection ();
+  };
+}
+namespace APlayTest.Client
+{
+  public interface  IConnectorUserFactory
+  {
+    APlayTest.Client.IConnectorImpl CreateConnector ();
   };
 }
 namespace APlayTest.Client
@@ -438,6 +564,15 @@ namespace APlayTest.Client
         }
       }
     }
+    public virtual APlayTest.Client.ConnectorList InputConnectors
+    {
+      get
+      {
+        {
+          return (((APlayTest.Client.ConnectorList) (implBlockSymbol.InputConnectors)));
+        }
+      }
+    }
     public virtual double PositionX
     {
       set
@@ -486,6 +621,22 @@ namespace APlayTest.Client
         }
       }
     }
+    public virtual APlayTest.Client.Connector OutputConnector
+    {
+      set
+      {
+        {
+          //Connector
+          implBlockSymbol.OutputConnector = ((APlay.Generated.Intern.Client.__IConnectorAPEvents) (value));
+        }
+      }
+      get
+      {
+        {
+          return (((APlayTest.Client.Connector) (implBlockSymbol.OutputConnector)));
+        }
+      }
+    }
     public virtual ulong APlayEntityId
     {
       get
@@ -514,6 +665,160 @@ namespace APlayTest.Client
         else
         {
           this.onIdChange(NewId__);
+        }
+      }
+    }
+    public virtual void onInputConnectorsReplace(APlayTest.Client.ConnectorList InputConnectors__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onInputConnectorsReplace received","Client.Designed");
+    }
+    public void onInternInputConnectorsReplace(APlay.Generated.Intern.Client.IConnectorListEvents InputConnectors__)
+    {
+      if(InputConnectorsReplaceEventHandler!=null)
+      {
+        InputConnectorsReplaceEventHandler(((APlayTest.Client.ConnectorList) (InputConnectors__)));
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsReplaceEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsReplaceEventHandler(((APlayTest.Client.ConnectorList) (InputConnectors__)), ((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onInputConnectorsReplace(((APlayTest.Client.ConnectorList) (InputConnectors__)));
+        }
+      }
+    }
+    public virtual void onInputConnectorsAdd(APlayTest.Client.Connector element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onInputConnectorsAdd received","Client.Designed");
+    }
+    public void onInternInputConnectorsAdd(APlay.Generated.Intern.Client.__IConnectorAPEvents element)
+    {
+      if(InputConnectorsAddEventHandler!=null)
+      {
+        InputConnectorsAddEventHandler(((APlayTest.Client.Connector) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsAddEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsAddEventHandler(((APlayTest.Client.Connector) (element)), ((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onInputConnectorsAdd(((APlayTest.Client.Connector) (element)));
+        }
+      }
+    }
+    public virtual void onInputConnectorsRemove(APlayTest.Client.Connector element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onInputConnectorsRemove received","Client.Designed");
+    }
+    public void onInternInputConnectorsRemove(APlay.Generated.Intern.Client.__IConnectorAPEvents element)
+    {
+      if(InputConnectorsRemoveEventHandler!=null)
+      {
+        InputConnectorsRemoveEventHandler(((APlayTest.Client.Connector) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsRemoveEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsRemoveEventHandler(((APlayTest.Client.Connector) (element)), ((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onInputConnectorsRemove(((APlayTest.Client.Connector) (element)));
+        }
+      }
+    }
+    public virtual void onInputConnectorsClear()
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onInputConnectorsClear received","Client.Designed");
+    }
+    public void onInternInputConnectorsClear()
+    {
+      if(InputConnectorsClearEventHandler!=null)
+      {
+        InputConnectorsClearEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsClearEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsClearEventHandler(((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onInputConnectorsClear();
+        }
+      }
+    }
+    public virtual void onInputConnectorsInsertAt(int pos, APlayTest.Client.Connector element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onInputConnectorsInsertAt received","Client.Designed");
+    }
+    public void onInternInputConnectorsInsertAt(int pos, APlay.Generated.Intern.Client.__IConnectorAPEvents element)
+    {
+      if(InputConnectorsInsertAtEventHandler!=null)
+      {
+        InputConnectorsInsertAtEventHandler(pos, ((APlayTest.Client.Connector) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsInsertAtEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsInsertAtEventHandler(pos, ((APlayTest.Client.Connector) (element)), ((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onInputConnectorsInsertAt(pos, ((APlayTest.Client.Connector) (element)));
+        }
+      }
+    }
+    public virtual void onInputConnectorsSetAt(int pos, APlayTest.Client.Connector element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onInputConnectorsSetAt received","Client.Designed");
+    }
+    public void onInternInputConnectorsSetAt(int pos, APlay.Generated.Intern.Client.__IConnectorAPEvents element)
+    {
+      if(InputConnectorsSetAtEventHandler!=null)
+      {
+        InputConnectorsSetAtEventHandler(pos, ((APlayTest.Client.Connector) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsSetAtEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsSetAtEventHandler(pos, ((APlayTest.Client.Connector) (element)), ((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onInputConnectorsSetAt(pos, ((APlayTest.Client.Connector) (element)));
+        }
+      }
+    }
+    public virtual void onInputConnectorsRemoveAt(int pos, APlayTest.Client.Connector element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onInputConnectorsRemoveAt received","Client.Designed");
+    }
+    public void onInternInputConnectorsRemoveAt(int pos, APlay.Generated.Intern.Client.__IConnectorAPEvents element)
+    {
+      if(InputConnectorsRemoveAtEventHandler!=null)
+      {
+        InputConnectorsRemoveAtEventHandler(pos, ((APlayTest.Client.Connector) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsRemoveAtEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbolSkeleton.StaticInputConnectorsRemoveAtEventHandler(pos, ((APlayTest.Client.Connector) (element)), ((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onInputConnectorsRemoveAt(pos, ((APlayTest.Client.Connector) (element)));
         }
       }
     }
@@ -583,6 +888,28 @@ namespace APlayTest.Client
         }
       }
     }
+    public virtual void onOutputConnectorChange(APlayTest.Client.Connector NewOutputConnector__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onOutputConnectorChange received","Client.Designed");
+    }
+    public void onInternOutputConnectorChange(APlay.Generated.Intern.Client.__IConnectorAPEvents NewOutputConnector__)
+    {
+      if(OutputConnectorChangeEventHandler!=null)
+      {
+        OutputConnectorChangeEventHandler(((APlayTest.Client.Connector) (NewOutputConnector__)));
+      }
+      else
+      {
+        if(APlayTest.Client.BlockSymbolSkeleton.StaticOutputConnectorChangeEventHandler!=null)
+        {
+          APlayTest.Client.BlockSymbolSkeleton.StaticOutputConnectorChangeEventHandler(((APlayTest.Client.Connector) (NewOutputConnector__)), ((APlayTest.Client.BlockSymbol) (this)));
+        }
+        else
+        {
+          this.onOutputConnectorChange(((APlayTest.Client.Connector) (NewOutputConnector__)));
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implBlockSymbol.RequiresInit();
@@ -591,6 +918,32 @@ namespace APlayTest.Client
     public void SetPosition(APlayTest.Client.AplayPoint position__, APlayTest.Client.Client client__)
     {
       implBlockSymbol.SetPosition(new APlay.Generated.Intern.Client.__AplayPoint(position__.X, position__.Y), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
+    public void AddInputConnector(APlayTest.Client.Connector connector__, APlayTest.Client.Client client__)
+    {
+      implBlockSymbol.AddInputConnector(((APlay.Generated.Intern.Client.__IConnectorAPEvents) (connector__)), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
+    public void RemoveInputConnector(int connectorId__, APlayTest.Client.Client client__)
+    {
+      implBlockSymbol.RemoveInputConnector(connectorId__, ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
+    public void SetOutputConnector(APlayTest.Client.Connector connector__, APlayTest.Client.Client client__)
+    {
+      implBlockSymbol.SetOutputConnector(((APlay.Generated.Intern.Client.__IConnectorAPEvents) (connector__)), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
+    public APlayTest.Client.ConnectionList GetAttachedConnections()
+    {
+      APlay.Generated.Intern.Client.IConnectionListEvents retu = implBlockSymbol.GetAttachedConnections();
+      return (((APlayTest.Client.ConnectionList) (retu)));
+    }
+    public void GetAttachedConnections(APlayTest.Client.Delegates.void_ConnectionList returnDelegate)
+    {
+      implBlockSymbol.GetAttachedConnections(delegate(APlay.Common.Protocol.MessageReader reader_){
+  APlay.Generated.Intern.Client.ConnectionList __retu__ = new APlay.Generated.Intern.Client.ConnectionList();
+  __retu__.readFromStream(reader_);
+  returnDelegate(((APlayTest.Client.ConnectionList) ((__retu__==null)?null:__retu__.__GetExternConnection())));
+}
+);
     }
     public APlay.Generated.Intern.Client.__IBlockSymbolAPImpl getBlockSymbolObject()
     {
@@ -602,12 +955,28 @@ namespace APlayTest.Client
     }
     public event APlayTest.Client.Delegates.void_int32 IdChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_int32_BlockSymbol StaticIdChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_ConnectorList InputConnectorsReplaceEventHandler;
+    static public event APlayTest.Client.Delegates.void_ConnectorList_BlockSymbol StaticInputConnectorsReplaceEventHandler;
+    public event APlayTest.Client.Delegates.void_Connector InputConnectorsAddEventHandler;
+    static public event APlayTest.Client.Delegates.void_Connector_BlockSymbol StaticInputConnectorsAddEventHandler;
+    public event APlayTest.Client.Delegates.void_Connector InputConnectorsRemoveEventHandler;
+    static public event APlayTest.Client.Delegates.void_Connector_BlockSymbol StaticInputConnectorsRemoveEventHandler;
+    public event APlayTest.Client.Delegates.void_ InputConnectorsClearEventHandler;
+    static public event APlayTest.Client.Delegates.void_BlockSymbol StaticInputConnectorsClearEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Connector InputConnectorsInsertAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Connector_BlockSymbol StaticInputConnectorsInsertAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Connector InputConnectorsSetAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Connector_BlockSymbol StaticInputConnectorsSetAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Connector InputConnectorsRemoveAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Connector_BlockSymbol StaticInputConnectorsRemoveAtEventHandler;
     public event APlayTest.Client.Delegates.void_float64 PositionXChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_float64_BlockSymbol StaticPositionXChangeEventHandler;
     public event APlayTest.Client.Delegates.void_float64 PositionYChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_float64_BlockSymbol StaticPositionYChangeEventHandler;
     public event APlayTest.Client.Delegates.void_AplaySize SizeChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_AplaySize_BlockSymbol StaticSizeChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_Connector OutputConnectorChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_Connector_BlockSymbol StaticOutputConnectorChangeEventHandler;
     private APlay.Generated.Intern.Client.__IBlockSymbolAPImpl implBlockSymbol;
   }
   
@@ -842,6 +1211,640 @@ namespace APlayTest.Client
     public event APlayTest.Client.Delegates.void_UndoManager UndoManagerChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_UndoManager_Client StaticUndoManagerChangeEventHandler;
     private APlay.Generated.Intern.Client.__IClientAPImpl implClient;
+  }
+  
+}
+namespace APlayTest.Client
+{
+  public abstract partial class ConnectionSkeleton : APlayTest.Client.IConnectionSkeleton, APlay.Generated.Intern.Client.__IConnectionAPEvents
+  {
+    public ConnectionSkeleton()
+    {
+      if(APlay.Common.APlayInitializer.GetInitializer()!=null)
+      {
+        this.setConnectionObject(((APlay.Generated.Intern.Client.__IConnectionAPImpl) (APlay.Common.APlayInitializer.GetInitializer())));
+      }
+      else
+      {
+        this.setConnectionObject(APlayObjectFactory.CreateConnectionImpl());
+      }
+      ((APlay.Generated.Intern.Client.__Connection) (this.getConnectionObject())).ConnectionHandler = ((APlay.Generated.Intern.Client.__IConnectionAPEvents) (((APlayTest.Client.ConnectionSkeleton) (this))));
+    }
+    public virtual int Id
+    {
+      get
+      {
+        {
+          return (implConnection.Id);
+        }
+      }
+    }
+    public virtual uint Color
+    {
+      set
+      {
+        {
+          //uint32
+          implConnection.Color = value;
+        }
+      }
+      get
+      {
+        {
+          return (implConnection.Color);
+        }
+      }
+    }
+    public virtual APlayTest.Client.Connector From
+    {
+      set
+      {
+        {
+          //Connector
+          implConnection.From = ((APlay.Generated.Intern.Client.__IConnectorAPEvents) (value));
+        }
+      }
+      get
+      {
+        {
+          return (((APlayTest.Client.Connector) (implConnection.From)));
+        }
+      }
+    }
+    public virtual APlayTest.Client.Connector To
+    {
+      set
+      {
+        {
+          //Connector
+          implConnection.To = ((APlay.Generated.Intern.Client.__IConnectorAPEvents) (value));
+        }
+      }
+      get
+      {
+        {
+          return (((APlayTest.Client.Connector) (implConnection.To)));
+        }
+      }
+    }
+    public virtual APlayTest.Client.AplayPoint FromPosition
+    {
+      set
+      {
+        {
+          //AplayPoint
+          implConnection.FromPosition = new APlay.Generated.Intern.Client.__AplayPoint(value.X, value.Y);
+        }
+      }
+      get
+      {
+        {
+          return (new APlayTest.Client.AplayPoint(((double) (implConnection.FromPosition.X)), ((double) (implConnection.FromPosition.Y))));
+        }
+      }
+    }
+    public virtual APlayTest.Client.AplayPoint ToPosition
+    {
+      set
+      {
+        {
+          //AplayPoint
+          implConnection.ToPosition = new APlay.Generated.Intern.Client.__AplayPoint(value.X, value.Y);
+        }
+      }
+      get
+      {
+        {
+          return (new APlayTest.Client.AplayPoint(((double) (implConnection.ToPosition.X)), ((double) (implConnection.ToPosition.Y))));
+        }
+      }
+    }
+    public virtual ulong APlayEntityId
+    {
+      get
+      {
+        {
+          return (implConnection.APlayEntityId);
+        }
+      }
+    }
+    public virtual void onIdChange(int NewId__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onIdChange received","Client.Designed");
+    }
+    public void onInternIdChange(int NewId__)
+    {
+      if(IdChangeEventHandler!=null)
+      {
+        IdChangeEventHandler(NewId__);
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectionSkeleton.StaticIdChangeEventHandler!=null)
+        {
+          APlayTest.Client.ConnectionSkeleton.StaticIdChangeEventHandler(NewId__, ((APlayTest.Client.Connection) (this)));
+        }
+        else
+        {
+          this.onIdChange(NewId__);
+        }
+      }
+    }
+    public virtual void onColorChange(uint NewColor__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onColorChange received","Client.Designed");
+    }
+    public void onInternColorChange(uint NewColor__)
+    {
+      if(ColorChangeEventHandler!=null)
+      {
+        ColorChangeEventHandler(NewColor__);
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectionSkeleton.StaticColorChangeEventHandler!=null)
+        {
+          APlayTest.Client.ConnectionSkeleton.StaticColorChangeEventHandler(NewColor__, ((APlayTest.Client.Connection) (this)));
+        }
+        else
+        {
+          this.onColorChange(NewColor__);
+        }
+      }
+    }
+    public virtual void onFromChange(APlayTest.Client.Connector NewFrom__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onFromChange received","Client.Designed");
+    }
+    public void onInternFromChange(APlay.Generated.Intern.Client.__IConnectorAPEvents NewFrom__)
+    {
+      if(FromChangeEventHandler!=null)
+      {
+        FromChangeEventHandler(((APlayTest.Client.Connector) (NewFrom__)));
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectionSkeleton.StaticFromChangeEventHandler!=null)
+        {
+          APlayTest.Client.ConnectionSkeleton.StaticFromChangeEventHandler(((APlayTest.Client.Connector) (NewFrom__)), ((APlayTest.Client.Connection) (this)));
+        }
+        else
+        {
+          this.onFromChange(((APlayTest.Client.Connector) (NewFrom__)));
+        }
+      }
+    }
+    public virtual void onToChange(APlayTest.Client.Connector NewTo__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onToChange received","Client.Designed");
+    }
+    public void onInternToChange(APlay.Generated.Intern.Client.__IConnectorAPEvents NewTo__)
+    {
+      if(ToChangeEventHandler!=null)
+      {
+        ToChangeEventHandler(((APlayTest.Client.Connector) (NewTo__)));
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectionSkeleton.StaticToChangeEventHandler!=null)
+        {
+          APlayTest.Client.ConnectionSkeleton.StaticToChangeEventHandler(((APlayTest.Client.Connector) (NewTo__)), ((APlayTest.Client.Connection) (this)));
+        }
+        else
+        {
+          this.onToChange(((APlayTest.Client.Connector) (NewTo__)));
+        }
+      }
+    }
+    public virtual void onFromPositionChange(APlayTest.Client.AplayPoint NewFromPosition__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onFromPositionChange received","Client.Designed");
+    }
+    public void onInternFromPositionChange(APlay.Generated.Intern.Client.__AplayPoint NewFromPosition__)
+    {
+      if(FromPositionChangeEventHandler!=null)
+      {
+        FromPositionChangeEventHandler(new APlayTest.Client.AplayPoint(((double) (NewFromPosition__.X)), ((double) (NewFromPosition__.Y))));
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectionSkeleton.StaticFromPositionChangeEventHandler!=null)
+        {
+          APlayTest.Client.ConnectionSkeleton.StaticFromPositionChangeEventHandler(new APlayTest.Client.AplayPoint(((double) (NewFromPosition__.X)), ((double) (NewFromPosition__.Y))), ((APlayTest.Client.Connection) (this)));
+        }
+        else
+        {
+          this.onFromPositionChange(new APlayTest.Client.AplayPoint(((double) (NewFromPosition__.X)), ((double) (NewFromPosition__.Y))));
+        }
+      }
+    }
+    public virtual void onToPositionChange(APlayTest.Client.AplayPoint NewToPosition__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onToPositionChange received","Client.Designed");
+    }
+    public void onInternToPositionChange(APlay.Generated.Intern.Client.__AplayPoint NewToPosition__)
+    {
+      if(ToPositionChangeEventHandler!=null)
+      {
+        ToPositionChangeEventHandler(new APlayTest.Client.AplayPoint(((double) (NewToPosition__.X)), ((double) (NewToPosition__.Y))));
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectionSkeleton.StaticToPositionChangeEventHandler!=null)
+        {
+          APlayTest.Client.ConnectionSkeleton.StaticToPositionChangeEventHandler(new APlayTest.Client.AplayPoint(((double) (NewToPosition__.X)), ((double) (NewToPosition__.Y))), ((APlayTest.Client.Connection) (this)));
+        }
+        else
+        {
+          this.onToPositionChange(new APlayTest.Client.AplayPoint(((double) (NewToPosition__.X)), ((double) (NewToPosition__.Y))));
+        }
+      }
+    }
+    public bool RequiresInit()
+    {
+      bool retu = implConnection.RequiresInit();
+      return (((bool) (retu)));
+    }
+    public void SetFromPosition(APlayTest.Client.AplayPoint position__, APlayTest.Client.Client client__)
+    {
+      implConnection.SetFromPosition(new APlay.Generated.Intern.Client.__AplayPoint(position__.X, position__.Y), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
+    public void SetToPosition(APlayTest.Client.AplayPoint position__, APlayTest.Client.Client client__)
+    {
+      implConnection.SetToPosition(new APlay.Generated.Intern.Client.__AplayPoint(position__.X, position__.Y), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
+    public void SetFrom(APlayTest.Client.Connector connector__, APlayTest.Client.Client client__)
+    {
+      implConnection.SetFrom(((APlay.Generated.Intern.Client.__IConnectorAPEvents) (connector__)), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
+    public void SetTo(APlayTest.Client.Connector connector__, APlayTest.Client.Client client__)
+    {
+      implConnection.SetTo(((APlay.Generated.Intern.Client.__IConnectorAPEvents) (connector__)), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
+    public void SetColor(uint Color__, APlayTest.Client.Client client__)
+    {
+      implConnection.SetColor(Color__, ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
+    public APlay.Generated.Intern.Client.__IConnectionAPImpl getConnectionObject()
+    {
+      return (implConnection);
+    }
+    public void setConnectionObject(APlay.Generated.Intern.Client.__IConnectionAPImpl impl)
+    {
+      implConnection = impl;
+    }
+    public event APlayTest.Client.Delegates.void_int32 IdChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Connection StaticIdChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_uint32 ColorChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_uint32_Connection StaticColorChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_Connector FromChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_Connector_Connection StaticFromChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_Connector ToChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_Connector_Connection StaticToChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_AplayPoint FromPositionChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_AplayPoint_Connection StaticFromPositionChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_AplayPoint ToPositionChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_AplayPoint_Connection StaticToPositionChangeEventHandler;
+    private APlay.Generated.Intern.Client.__IConnectionAPImpl implConnection;
+  }
+  
+}
+namespace APlayTest.Client
+{
+  public abstract partial class ConnectorSkeleton : APlayTest.Client.IConnectorSkeleton, APlay.Generated.Intern.Client.__IConnectorAPEvents
+  {
+    public ConnectorSkeleton()
+    {
+      if(APlay.Common.APlayInitializer.GetInitializer()!=null)
+      {
+        this.setConnectorObject(((APlay.Generated.Intern.Client.__IConnectorAPImpl) (APlay.Common.APlayInitializer.GetInitializer())));
+      }
+      else
+      {
+        this.setConnectorObject(APlayObjectFactory.CreateConnectorImpl());
+      }
+      ((APlay.Generated.Intern.Client.__Connector) (this.getConnectorObject())).ConnectorHandler = ((APlay.Generated.Intern.Client.__IConnectorAPEvents) (((APlayTest.Client.ConnectorSkeleton) (this))));
+    }
+    public virtual int Id
+    {
+      get
+      {
+        {
+          return (implConnector.Id);
+        }
+      }
+    }
+    public virtual APlayTest.Client.ConnectorDirection Direction
+    {
+      set
+      {
+        {
+          //ConnectorDirection
+          implConnector.Direction = value;
+        }
+      }
+      get
+      {
+        {
+          return (implConnector.Direction);
+        }
+      }
+    }
+    public virtual APlayTest.Client.ConnectionList Connections
+    {
+      set
+      {
+        {
+          //Connection
+          implConnector.Connections = ((APlay.Generated.Intern.Client.IConnectionListEvents) (value));
+        }
+      }
+      get
+      {
+        {
+          return (((APlayTest.Client.ConnectionList) (implConnector.Connections)));
+        }
+      }
+    }
+    public virtual APlayTest.Client.AplayPoint Position
+    {
+      set
+      {
+        {
+          //AplayPoint
+          implConnector.Position = new APlay.Generated.Intern.Client.__AplayPoint(value.X, value.Y);
+        }
+      }
+      get
+      {
+        {
+          return (new APlayTest.Client.AplayPoint(((double) (implConnector.Position.X)), ((double) (implConnector.Position.Y))));
+        }
+      }
+    }
+    public virtual ulong APlayEntityId
+    {
+      get
+      {
+        {
+          return (implConnector.APlayEntityId);
+        }
+      }
+    }
+    public virtual void onIdChange(int NewId__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onIdChange received","Client.Designed");
+    }
+    public void onInternIdChange(int NewId__)
+    {
+      if(IdChangeEventHandler!=null)
+      {
+        IdChangeEventHandler(NewId__);
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectorSkeleton.StaticIdChangeEventHandler!=null)
+        {
+          APlayTest.Client.ConnectorSkeleton.StaticIdChangeEventHandler(NewId__, ((APlayTest.Client.Connector) (this)));
+        }
+        else
+        {
+          this.onIdChange(NewId__);
+        }
+      }
+    }
+    public virtual void onDirectionChange(APlayTest.Client.ConnectorDirection NewDirection__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onDirectionChange received","Client.Designed");
+    }
+    public void onInternDirectionChange(APlayTest.Client.ConnectorDirection NewDirection__)
+    {
+      if(DirectionChangeEventHandler!=null)
+      {
+        DirectionChangeEventHandler(NewDirection__);
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectorSkeleton.StaticDirectionChangeEventHandler!=null)
+        {
+          APlayTest.Client.ConnectorSkeleton.StaticDirectionChangeEventHandler(NewDirection__, ((APlayTest.Client.Connector) (this)));
+        }
+        else
+        {
+          this.onDirectionChange(NewDirection__);
+        }
+      }
+    }
+    public virtual void onConnectionsReplace(APlayTest.Client.ConnectionList Connections__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onConnectionsReplace received","Client.Designed");
+    }
+    public void onInternConnectionsReplace(APlay.Generated.Intern.Client.IConnectionListEvents Connections__)
+    {
+      if(ConnectionsReplaceEventHandler!=null)
+      {
+        ConnectionsReplaceEventHandler(((APlayTest.Client.ConnectionList) (Connections__)));
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectorSkeleton.StaticConnectionsReplaceEventHandler!=null)
+        {
+          APlayTest.Client.ConnectorSkeleton.StaticConnectionsReplaceEventHandler(((APlayTest.Client.ConnectionList) (Connections__)), ((APlayTest.Client.Connector) (this)));
+        }
+        else
+        {
+          this.onConnectionsReplace(((APlayTest.Client.ConnectionList) (Connections__)));
+        }
+      }
+    }
+    public virtual void onConnectionsAdd(APlayTest.Client.Connection element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onConnectionsAdd received","Client.Designed");
+    }
+    public void onInternConnectionsAdd(APlay.Generated.Intern.Client.__IConnectionAPEvents element)
+    {
+      if(ConnectionsAddEventHandler!=null)
+      {
+        ConnectionsAddEventHandler(((APlayTest.Client.Connection) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectorSkeleton.StaticConnectionsAddEventHandler!=null)
+        {
+          APlayTest.Client.ConnectorSkeleton.StaticConnectionsAddEventHandler(((APlayTest.Client.Connection) (element)), ((APlayTest.Client.Connector) (this)));
+        }
+        else
+        {
+          this.onConnectionsAdd(((APlayTest.Client.Connection) (element)));
+        }
+      }
+    }
+    public virtual void onConnectionsRemove(APlayTest.Client.Connection element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onConnectionsRemove received","Client.Designed");
+    }
+    public void onInternConnectionsRemove(APlay.Generated.Intern.Client.__IConnectionAPEvents element)
+    {
+      if(ConnectionsRemoveEventHandler!=null)
+      {
+        ConnectionsRemoveEventHandler(((APlayTest.Client.Connection) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectorSkeleton.StaticConnectionsRemoveEventHandler!=null)
+        {
+          APlayTest.Client.ConnectorSkeleton.StaticConnectionsRemoveEventHandler(((APlayTest.Client.Connection) (element)), ((APlayTest.Client.Connector) (this)));
+        }
+        else
+        {
+          this.onConnectionsRemove(((APlayTest.Client.Connection) (element)));
+        }
+      }
+    }
+    public virtual void onConnectionsClear()
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onConnectionsClear received","Client.Designed");
+    }
+    public void onInternConnectionsClear()
+    {
+      if(ConnectionsClearEventHandler!=null)
+      {
+        ConnectionsClearEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectorSkeleton.StaticConnectionsClearEventHandler!=null)
+        {
+          APlayTest.Client.ConnectorSkeleton.StaticConnectionsClearEventHandler(((APlayTest.Client.Connector) (this)));
+        }
+        else
+        {
+          this.onConnectionsClear();
+        }
+      }
+    }
+    public virtual void onConnectionsInsertAt(int pos, APlayTest.Client.Connection element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onConnectionsInsertAt received","Client.Designed");
+    }
+    public void onInternConnectionsInsertAt(int pos, APlay.Generated.Intern.Client.__IConnectionAPEvents element)
+    {
+      if(ConnectionsInsertAtEventHandler!=null)
+      {
+        ConnectionsInsertAtEventHandler(pos, ((APlayTest.Client.Connection) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectorSkeleton.StaticConnectionsInsertAtEventHandler!=null)
+        {
+          APlayTest.Client.ConnectorSkeleton.StaticConnectionsInsertAtEventHandler(pos, ((APlayTest.Client.Connection) (element)), ((APlayTest.Client.Connector) (this)));
+        }
+        else
+        {
+          this.onConnectionsInsertAt(pos, ((APlayTest.Client.Connection) (element)));
+        }
+      }
+    }
+    public virtual void onConnectionsSetAt(int pos, APlayTest.Client.Connection element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onConnectionsSetAt received","Client.Designed");
+    }
+    public void onInternConnectionsSetAt(int pos, APlay.Generated.Intern.Client.__IConnectionAPEvents element)
+    {
+      if(ConnectionsSetAtEventHandler!=null)
+      {
+        ConnectionsSetAtEventHandler(pos, ((APlayTest.Client.Connection) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectorSkeleton.StaticConnectionsSetAtEventHandler!=null)
+        {
+          APlayTest.Client.ConnectorSkeleton.StaticConnectionsSetAtEventHandler(pos, ((APlayTest.Client.Connection) (element)), ((APlayTest.Client.Connector) (this)));
+        }
+        else
+        {
+          this.onConnectionsSetAt(pos, ((APlayTest.Client.Connection) (element)));
+        }
+      }
+    }
+    public virtual void onConnectionsRemoveAt(int pos, APlayTest.Client.Connection element)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onConnectionsRemoveAt received","Client.Designed");
+    }
+    public void onInternConnectionsRemoveAt(int pos, APlay.Generated.Intern.Client.__IConnectionAPEvents element)
+    {
+      if(ConnectionsRemoveAtEventHandler!=null)
+      {
+        ConnectionsRemoveAtEventHandler(pos, ((APlayTest.Client.Connection) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectorSkeleton.StaticConnectionsRemoveAtEventHandler!=null)
+        {
+          APlayTest.Client.ConnectorSkeleton.StaticConnectionsRemoveAtEventHandler(pos, ((APlayTest.Client.Connection) (element)), ((APlayTest.Client.Connector) (this)));
+        }
+        else
+        {
+          this.onConnectionsRemoveAt(pos, ((APlayTest.Client.Connection) (element)));
+        }
+      }
+    }
+    public virtual void onPositionChange(APlayTest.Client.AplayPoint NewPosition__)
+    {
+      APlay.Common.Logging.Logger.LogDesigned(2,"onPositionChange received","Client.Designed");
+    }
+    public void onInternPositionChange(APlay.Generated.Intern.Client.__AplayPoint NewPosition__)
+    {
+      if(PositionChangeEventHandler!=null)
+      {
+        PositionChangeEventHandler(new APlayTest.Client.AplayPoint(((double) (NewPosition__.X)), ((double) (NewPosition__.Y))));
+      }
+      else
+      {
+        if(APlayTest.Client.ConnectorSkeleton.StaticPositionChangeEventHandler!=null)
+        {
+          APlayTest.Client.ConnectorSkeleton.StaticPositionChangeEventHandler(new APlayTest.Client.AplayPoint(((double) (NewPosition__.X)), ((double) (NewPosition__.Y))), ((APlayTest.Client.Connector) (this)));
+        }
+        else
+        {
+          this.onPositionChange(new APlayTest.Client.AplayPoint(((double) (NewPosition__.X)), ((double) (NewPosition__.Y))));
+        }
+      }
+    }
+    public bool RequiresInit()
+    {
+      bool retu = implConnector.RequiresInit();
+      return (((bool) (retu)));
+    }
+    public APlay.Generated.Intern.Client.__IConnectorAPImpl getConnectorObject()
+    {
+      return (implConnector);
+    }
+    public void setConnectorObject(APlay.Generated.Intern.Client.__IConnectorAPImpl impl)
+    {
+      implConnector = impl;
+    }
+    public event APlayTest.Client.Delegates.void_int32 IdChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Connector StaticIdChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_ConnectorDirection DirectionChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_ConnectorDirection_Connector StaticDirectionChangeEventHandler;
+    public event APlayTest.Client.Delegates.void_ConnectionList ConnectionsReplaceEventHandler;
+    static public event APlayTest.Client.Delegates.void_ConnectionList_Connector StaticConnectionsReplaceEventHandler;
+    public event APlayTest.Client.Delegates.void_Connection ConnectionsAddEventHandler;
+    static public event APlayTest.Client.Delegates.void_Connection_Connector StaticConnectionsAddEventHandler;
+    public event APlayTest.Client.Delegates.void_Connection ConnectionsRemoveEventHandler;
+    static public event APlayTest.Client.Delegates.void_Connection_Connector StaticConnectionsRemoveEventHandler;
+    public event APlayTest.Client.Delegates.void_ ConnectionsClearEventHandler;
+    static public event APlayTest.Client.Delegates.void_Connector StaticConnectionsClearEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Connection ConnectionsInsertAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Connection_Connector StaticConnectionsInsertAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Connection ConnectionsSetAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Connection_Connector StaticConnectionsSetAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Connection ConnectionsRemoveAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Connection_Connector StaticConnectionsRemoveAtEventHandler;
+    public event APlayTest.Client.Delegates.void_AplayPoint PositionChangeEventHandler;
+    static public event APlayTest.Client.Delegates.void_AplayPoint_Connector StaticPositionChangeEventHandler;
+    private APlay.Generated.Intern.Client.__IConnectorAPImpl implConnector;
   }
   
 }
@@ -1457,6 +2460,15 @@ namespace APlayTest.Client
         }
       }
     }
+    public virtual APlayTest.Client.ConnectionList Connections
+    {
+      get
+      {
+        {
+          return (((APlayTest.Client.ConnectionList) (implSheet.Connections)));
+        }
+      }
+    }
     public virtual int Id
     {
       get
@@ -1699,6 +2711,202 @@ namespace APlayTest.Client
         }
       }
     }
+    public void onInternConnectionsReplace(APlay.Generated.Intern.Client.IConnectionListEvents Connections__)
+    {
+      if(ConnectionsReplaceEventHandler!=null)
+      {
+        ConnectionsReplaceEventHandler(((APlayTest.Client.ConnectionList) (Connections__)));
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticConnectionsReplaceEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticConnectionsReplaceEventHandler(((APlayTest.Client.ConnectionList) (Connections__)), ((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onConnectionsReplace(((APlayTest.Client.ConnectionList) (Connections__)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onConnectionsReplace","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternConnectionsAdd(APlay.Generated.Intern.Client.__IConnectionAPEvents element)
+    {
+      if(ConnectionsAddEventHandler!=null)
+      {
+        ConnectionsAddEventHandler(((APlayTest.Client.Connection) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticConnectionsAddEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticConnectionsAddEventHandler(((APlayTest.Client.Connection) (element)), ((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onConnectionsAdd(((APlayTest.Client.Connection) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onConnectionsAdd","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternConnectionsRemove(APlay.Generated.Intern.Client.__IConnectionAPEvents element)
+    {
+      if(ConnectionsRemoveEventHandler!=null)
+      {
+        ConnectionsRemoveEventHandler(((APlayTest.Client.Connection) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticConnectionsRemoveEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticConnectionsRemoveEventHandler(((APlayTest.Client.Connection) (element)), ((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onConnectionsRemove(((APlayTest.Client.Connection) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onConnectionsRemove","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternConnectionsClear()
+    {
+      if(ConnectionsClearEventHandler!=null)
+      {
+        ConnectionsClearEventHandler();
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticConnectionsClearEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticConnectionsClearEventHandler(((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onConnectionsClear();
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onConnectionsClear","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternConnectionsInsertAt(int pos, APlay.Generated.Intern.Client.__IConnectionAPEvents element)
+    {
+      if(ConnectionsInsertAtEventHandler!=null)
+      {
+        ConnectionsInsertAtEventHandler(pos, ((APlayTest.Client.Connection) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticConnectionsInsertAtEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticConnectionsInsertAtEventHandler(pos, ((APlayTest.Client.Connection) (element)), ((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onConnectionsInsertAt(pos, ((APlayTest.Client.Connection) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onConnectionsInsertAt","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternConnectionsSetAt(int pos, APlay.Generated.Intern.Client.__IConnectionAPEvents element)
+    {
+      if(ConnectionsSetAtEventHandler!=null)
+      {
+        ConnectionsSetAtEventHandler(pos, ((APlayTest.Client.Connection) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticConnectionsSetAtEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticConnectionsSetAtEventHandler(pos, ((APlayTest.Client.Connection) (element)), ((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onConnectionsSetAt(pos, ((APlayTest.Client.Connection) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onConnectionsSetAt","Client.Designed");
+            }
+          }
+        }
+      }
+    }
+    public void onInternConnectionsRemoveAt(int pos, APlay.Generated.Intern.Client.__IConnectionAPEvents element)
+    {
+      if(ConnectionsRemoveAtEventHandler!=null)
+      {
+        ConnectionsRemoveAtEventHandler(pos, ((APlayTest.Client.Connection) (element)));
+      }
+      else
+      {
+        if(APlayTest.Client.Sheet.StaticConnectionsRemoveAtEventHandler!=null)
+        {
+          APlayTest.Client.Sheet.StaticConnectionsRemoveAtEventHandler(pos, ((APlayTest.Client.Connection) (element)), ((APlayTest.Client.Sheet) (this)));
+        }
+        else
+        {
+          if(SheetHandler!=null)
+          {
+            SheetHandler.onConnectionsRemoveAt(pos, ((APlayTest.Client.Connection) (element)));
+          }
+          else
+          {
+            if(APlay.Client.APClient.DebugMessagesEnabled)
+            {
+              APlay.Common.Logging.Logger.LogDesigned(2,"Handler not set __ISheetAPEvents.onConnectionsRemoveAt","Client.Designed");
+            }
+          }
+        }
+      }
+    }
     public void onInternIdChange(int NewId__)
     {
       if(IdChangeEventHandler!=null)
@@ -1732,6 +2940,10 @@ namespace APlayTest.Client
       bool retu = implSheet.RequiresInit();
       return (((bool) (retu)));
     }
+    public void SetName(String name__, APlayTest.Client.Client client__)
+    {
+      implSheet.SetName(name__, ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
     public APlayTest.Client.BlockSymbol CreateBlockSymbol()
     {
       APlay.Generated.Intern.Client.__IBlockSymbolAPEvents retu = implSheet.CreateBlockSymbol();
@@ -1754,9 +2966,27 @@ namespace APlayTest.Client
     {
       implSheet.Remove(((APlay.Generated.Intern.Client.__IBlockSymbolAPEvents) (blockSymbol__)), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
     }
-    public void SetName(String name__, APlayTest.Client.Client client__)
+    public APlayTest.Client.Connection CreateConnection()
     {
-      implSheet.SetName(name__, ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+      APlay.Generated.Intern.Client.__IConnectionAPEvents retu = implSheet.CreateConnection();
+      return (((APlayTest.Client.Connection) (retu)));
+    }
+    public void CreateConnection(APlayTest.Client.Delegates.void_Connection returnDelegate)
+    {
+      implSheet.CreateConnection(delegate(APlay.Common.Protocol.MessageReader reader_){
+  APlay.Generated.Intern.Client.__Connection __retu__ = new APlay.Generated.Intern.Client.__Connection();
+  __retu__ = APlay.Generated.Intern.Client.__Connection.readReferenceFromStream(reader_);
+  returnDelegate(((APlayTest.Client.Connection) ((__retu__==null)?null:__retu__.__GetExternConnection())));
+}
+);
+    }
+    public void AddConnection(APlayTest.Client.Connection connection__, APlayTest.Client.Client client__)
+    {
+      implSheet.AddConnection(((APlay.Generated.Intern.Client.__IConnectionAPEvents) (connection__)), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
+    }
+    public void RemoveConnection(APlayTest.Client.Connection connection__, APlayTest.Client.Client client__)
+    {
+      implSheet.RemoveConnection(((APlay.Generated.Intern.Client.__IConnectionAPEvents) (connection__)), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
     }
     public APlay.Generated.Intern.Client.__ISheetAPImpl getSheetObject()
     {
@@ -1783,6 +3013,20 @@ namespace APlayTest.Client
     static public event APlayTest.Client.Delegates.void_int32_BlockSymbol_Sheet StaticBlockSymbolsSetAtEventHandler;
     public event APlayTest.Client.Delegates.void_int32_BlockSymbol BlockSymbolsRemoveAtEventHandler;
     static public event APlayTest.Client.Delegates.void_int32_BlockSymbol_Sheet StaticBlockSymbolsRemoveAtEventHandler;
+    public event APlayTest.Client.Delegates.void_ConnectionList ConnectionsReplaceEventHandler;
+    static public event APlayTest.Client.Delegates.void_ConnectionList_Sheet StaticConnectionsReplaceEventHandler;
+    public event APlayTest.Client.Delegates.void_Connection ConnectionsAddEventHandler;
+    static public event APlayTest.Client.Delegates.void_Connection_Sheet StaticConnectionsAddEventHandler;
+    public event APlayTest.Client.Delegates.void_Connection ConnectionsRemoveEventHandler;
+    static public event APlayTest.Client.Delegates.void_Connection_Sheet StaticConnectionsRemoveEventHandler;
+    public event APlayTest.Client.Delegates.void_ ConnectionsClearEventHandler;
+    static public event APlayTest.Client.Delegates.void_Sheet StaticConnectionsClearEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Connection ConnectionsInsertAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Connection_Sheet StaticConnectionsInsertAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Connection ConnectionsSetAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Connection_Sheet StaticConnectionsSetAtEventHandler;
+    public event APlayTest.Client.Delegates.void_int32_Connection ConnectionsRemoveAtEventHandler;
+    static public event APlayTest.Client.Delegates.void_int32_Connection_Sheet StaticConnectionsRemoveAtEventHandler;
     public event APlayTest.Client.Delegates.void_int32 IdChangeEventHandler;
     static public event APlayTest.Client.Delegates.void_int32_Sheet StaticIdChangeEventHandler;
     private APlay.Generated.Intern.Client.__ISheetAPImpl implSheet;
@@ -2709,6 +3953,318 @@ namespace APlayTest.Client
 }
 namespace APlayTest.Client
 {
+  public partial class ConnectorList : IList<APlayTest.Client.Connector>, APlay.Generated.Intern.Client.IConnectorListEvents
+  {
+    public ConnectorList()
+    {
+      APlay.Generated.Intern.Client.IConnectorListImpl impl_=null;
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Client.ConnectorList();
+      }
+    }
+    public ConnectorList(APlay.Generated.Intern.Client.IConnectorListImpl impl_)
+    {
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Client.ConnectorList();
+      }
+    }
+    public static APlayTest.Client.ConnectorList CreateForAPlay(APlay.Generated.Intern.Client.IConnectorListImpl impl)
+    {
+      APlayTest.Client.ConnectorList ob = new APlayTest.Client.ConnectorList(impl);
+      return (ob);
+    }
+    public APlay.Generated.Intern.Client.IConnectorListImpl getConnectorObject()
+    {
+      return (impl);
+    }
+    private APlay.Generated.Intern.Client.IConnectorListImpl impl;
+    
+public int IndexOf(APlayTest.Client.Connector item)
+{
+    return (int)impl.indexOf(item);
+}
+
+public void Insert(int index, APlayTest.Client.Connector item)
+{
+    impl.insertAt(index, item);
+}
+
+public void RemoveAt(int index)
+{
+    impl.removeAt(index);
+}
+
+public APlayTest.Client.Connector this[int index]
+{
+    get
+    {
+         
+        return (APlayTest.Client.Connector)impl.get((int)index);
+    }
+    set
+    {
+        APlayTest.Client.Connector item =value;
+        impl.setAt(index,item);
+    }
+}
+
+public void Add(APlayTest.Client.Connector item)
+{
+    impl.add(item);
+}
+
+public void Clear()
+{
+    impl.clear();
+}
+
+public bool Contains(APlayTest.Client.Connector item)
+{
+    return impl.contains(item);
+}
+
+public void CopyTo(APlayTest.Client.Connector[] array, int arrayIndex)
+{
+    int i=arrayIndex;
+    foreach (APlayTest.Client.Connector item in this)
+    {
+        array[i++]=item;
+    }
+}
+
+public int Count
+{
+    get { return (int)impl.length(); }
+}
+
+public bool IsReadOnly
+{
+    get { return false; }
+}
+
+public bool Remove(APlayTest.Client.Connector item)
+{
+    return impl.remove(item);
+}
+System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+{
+    return GetEnumerator();
+}
+
+    public IEnumerator<APlayTest.Client.Connector> GetEnumerator()
+    {
+        return new ConnectorListEnumerator(impl.GetEnumerator());
+    }
+    
+  }
+  
+}
+namespace APlayTest.Client
+{
+  public partial class ConnectorListEnumerator : IEnumerator<APlayTest.Client.Connector>
+  {
+    
+        IEnumerator<APlay.Generated.Intern.Client.__Connector> intern;
+        public ConnectorListEnumerator(IEnumerator<APlay.Generated.Intern.Client.__Connector> intern)
+        {
+            this.intern = intern;
+        }
+        public APlayTest.Client.Connector Current
+        {
+            get { APlay.Generated.Intern.Client.__Connector item = (APlay.Generated.Intern.Client.__Connector)intern.Current; return ((APlayTest.Client.Connector) ((item==null)?null:item.__GetExternConnector()));}
+        }
+
+        public void Dispose()
+        {
+            intern.Dispose();
+        }
+
+        object System.Collections.IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public bool MoveNext()
+        {
+            return intern.MoveNext();
+        }
+
+        public void Reset()
+        {
+            intern.Reset();
+        }
+
+  }
+  
+}
+namespace APlayTest.Client
+{
+  public partial class ConnectionList : IList<APlayTest.Client.Connection>, APlay.Generated.Intern.Client.IConnectionListEvents
+  {
+    public ConnectionList()
+    {
+      APlay.Generated.Intern.Client.IConnectionListImpl impl_=null;
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Client.ConnectionList();
+      }
+    }
+    public ConnectionList(APlay.Generated.Intern.Client.IConnectionListImpl impl_)
+    {
+      if(impl_!=null)
+      {
+        impl = impl_;
+      }
+      else
+      {
+        impl = new APlay.Generated.Intern.Client.ConnectionList();
+      }
+    }
+    public static APlayTest.Client.ConnectionList CreateForAPlay(APlay.Generated.Intern.Client.IConnectionListImpl impl)
+    {
+      APlayTest.Client.ConnectionList ob = new APlayTest.Client.ConnectionList(impl);
+      return (ob);
+    }
+    public APlay.Generated.Intern.Client.IConnectionListImpl getConnectionObject()
+    {
+      return (impl);
+    }
+    private APlay.Generated.Intern.Client.IConnectionListImpl impl;
+    
+public int IndexOf(APlayTest.Client.Connection item)
+{
+    return (int)impl.indexOf(item);
+}
+
+public void Insert(int index, APlayTest.Client.Connection item)
+{
+    impl.insertAt(index, item);
+}
+
+public void RemoveAt(int index)
+{
+    impl.removeAt(index);
+}
+
+public APlayTest.Client.Connection this[int index]
+{
+    get
+    {
+         
+        return (APlayTest.Client.Connection)impl.get((int)index);
+    }
+    set
+    {
+        APlayTest.Client.Connection item =value;
+        impl.setAt(index,item);
+    }
+}
+
+public void Add(APlayTest.Client.Connection item)
+{
+    impl.add(item);
+}
+
+public void Clear()
+{
+    impl.clear();
+}
+
+public bool Contains(APlayTest.Client.Connection item)
+{
+    return impl.contains(item);
+}
+
+public void CopyTo(APlayTest.Client.Connection[] array, int arrayIndex)
+{
+    int i=arrayIndex;
+    foreach (APlayTest.Client.Connection item in this)
+    {
+        array[i++]=item;
+    }
+}
+
+public int Count
+{
+    get { return (int)impl.length(); }
+}
+
+public bool IsReadOnly
+{
+    get { return false; }
+}
+
+public bool Remove(APlayTest.Client.Connection item)
+{
+    return impl.remove(item);
+}
+System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+{
+    return GetEnumerator();
+}
+
+    public IEnumerator<APlayTest.Client.Connection> GetEnumerator()
+    {
+        return new ConnectionListEnumerator(impl.GetEnumerator());
+    }
+    
+  }
+  
+}
+namespace APlayTest.Client
+{
+  public partial class ConnectionListEnumerator : IEnumerator<APlayTest.Client.Connection>
+  {
+    
+        IEnumerator<APlay.Generated.Intern.Client.__Connection> intern;
+        public ConnectionListEnumerator(IEnumerator<APlay.Generated.Intern.Client.__Connection> intern)
+        {
+            this.intern = intern;
+        }
+        public APlayTest.Client.Connection Current
+        {
+            get { APlay.Generated.Intern.Client.__Connection item = (APlay.Generated.Intern.Client.__Connection)intern.Current; return ((APlayTest.Client.Connection) ((item==null)?null:item.__GetExternConnection()));}
+        }
+
+        public void Dispose()
+        {
+            intern.Dispose();
+        }
+
+        object System.Collections.IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public bool MoveNext()
+        {
+            return intern.MoveNext();
+        }
+
+        public void Reset()
+        {
+            intern.Reset();
+        }
+
+  }
+  
+}
+namespace APlayTest.Client
+{
   public partial class ProjectList : IList<APlayTest.Client.Project>, APlay.Generated.Intern.Client.IProjectListEvents
   {
     public ProjectList()
@@ -3507,6 +5063,8 @@ namespace APlayTest.Client
     {
       BlockSymbol_ = factory;
       Client_ = factory;
+      Connection_ = factory;
+      Connector_ = factory;
       Project_ = factory;
       ProjectManager_ = factory;
       Sheet_ = factory;
@@ -3518,6 +5076,8 @@ namespace APlayTest.Client
     {
       BlockSymbol_ = null;
       Client_ = null;
+      Connection_ = null;
+      Connector_ = null;
       Project_ = null;
       ProjectManager_ = null;
       Sheet_ = null;
@@ -3563,6 +5123,46 @@ namespace APlayTest.Client
       else
       {
         return (APlay.Generated.Intern.Client.APlayInternalFactory.CreateClient());
+      }
+    }
+    public static void SetConnectionUserFactory(APlayTest.Client.IConnectionUserFactory factory)
+    {
+      Connection_ = factory;
+    }
+    public static void SetConnectionAPlayDefaultFactory()
+    {
+      Connection_ = null;
+    }
+    public static APlay.Generated.Intern.Client.__IConnectionAPImpl CreateConnectionImpl()
+    {
+      if(Connection_!=null)
+      {
+        APlay.Common.Logging.Logger.LogDesigned(6,"event adapters are temporarily disabled","Client.Designed");
+        return (null);
+      }
+      else
+      {
+        return (APlay.Generated.Intern.Client.APlayInternalFactory.CreateConnection());
+      }
+    }
+    public static void SetConnectorUserFactory(APlayTest.Client.IConnectorUserFactory factory)
+    {
+      Connector_ = factory;
+    }
+    public static void SetConnectorAPlayDefaultFactory()
+    {
+      Connector_ = null;
+    }
+    public static APlay.Generated.Intern.Client.__IConnectorAPImpl CreateConnectorImpl()
+    {
+      if(Connector_!=null)
+      {
+        APlay.Common.Logging.Logger.LogDesigned(6,"event adapters are temporarily disabled","Client.Designed");
+        return (null);
+      }
+      else
+      {
+        return (APlay.Generated.Intern.Client.APlayInternalFactory.CreateConnector());
       }
     }
     public static void SetProjectUserFactory(APlayTest.Client.IProjectUserFactory factory)
@@ -3687,6 +5287,8 @@ namespace APlayTest.Client
     }
     static private APlayTest.Client.IBlockSymbolUserFactory BlockSymbol_;
     static private APlayTest.Client.IClientUserFactory Client_;
+    static private APlayTest.Client.IConnectionUserFactory Connection_;
+    static private APlayTest.Client.IConnectorUserFactory Connector_;
     static private APlayTest.Client.IProjectUserFactory Project_;
     static private APlayTest.Client.IProjectManagerUserFactory ProjectManager_;
     static private APlayTest.Client.ISheetUserFactory Sheet_;
@@ -3711,6 +5313,20 @@ namespace APlayTest.Client
     {
       APlay.Common.APlayInitializer.SetInitializer(impl);
       APlay.Generated.Intern.Client.__IClientAPEvents retu__ = ((APlay.Generated.Intern.Client.__IClientAPEvents) (new APlayTest.Client.Client()));
+      APlay.Common.APlayInitializer.SetInitializer(null);
+      return (retu__);
+    }
+    public APlay.Generated.Intern.Client.__IConnectionAPEvents CreateConnectionEvents(APlay.Generated.Intern.Client.__IConnectionAPImpl impl)
+    {
+      APlay.Common.APlayInitializer.SetInitializer(impl);
+      APlay.Generated.Intern.Client.__IConnectionAPEvents retu__ = ((APlay.Generated.Intern.Client.__IConnectionAPEvents) (new APlayTest.Client.Connection()));
+      APlay.Common.APlayInitializer.SetInitializer(null);
+      return (retu__);
+    }
+    public APlay.Generated.Intern.Client.__IConnectorAPEvents CreateConnectorEvents(APlay.Generated.Intern.Client.__IConnectorAPImpl impl)
+    {
+      APlay.Common.APlayInitializer.SetInitializer(impl);
+      APlay.Generated.Intern.Client.__IConnectorAPEvents retu__ = ((APlay.Generated.Intern.Client.__IConnectorAPEvents) (new APlayTest.Client.Connector()));
       APlay.Common.APlayInitializer.SetInitializer(null);
       return (retu__);
     }
@@ -3756,6 +5372,14 @@ namespace APlayTest.Client
       APlay.Common.APlayInitializer.SetInitializer(null);
       return (retu__);
     }
+    public APlay.Generated.Intern.Client.IConnectorListEvents CreateConnectorListEvents(APlay.Generated.Intern.Client.IConnectorListImpl impl)
+    {
+      return (((APlay.Generated.Intern.Client.IConnectorListEvents) (APlayTest.Client.ConnectorList.CreateForAPlay(impl))));
+    }
+    public APlay.Generated.Intern.Client.IConnectionListEvents CreateConnectionListEvents(APlay.Generated.Intern.Client.IConnectionListImpl impl)
+    {
+      return (((APlay.Generated.Intern.Client.IConnectionListEvents) (APlayTest.Client.ConnectionList.CreateForAPlay(impl))));
+    }
     public APlay.Generated.Intern.Client.IProjectListEvents CreateProjectListEvents(APlay.Generated.Intern.Client.IProjectListImpl impl)
     {
       return (((APlay.Generated.Intern.Client.IProjectListEvents) (APlayTest.Client.ProjectList.CreateForAPlay(impl))));
@@ -3792,8 +5416,17 @@ namespace APlayTest.Client
 {
   public partial class Delegates
   {
+    public delegate void void_ConnectionList(APlayTest.Client.ConnectionList returnValue);
     public delegate void void_int32(int NewId__);
     public delegate void void_int32_BlockSymbol(int NewId__, APlayTest.Client.BlockSymbol this_);
+    public delegate void void_ConnectorList(APlayTest.Client.ConnectorList InputConnectors__);
+    public delegate void void_ConnectorList_BlockSymbol(APlayTest.Client.ConnectorList InputConnectors__, APlayTest.Client.BlockSymbol this_);
+    public delegate void void_Connector(APlayTest.Client.Connector element);
+    public delegate void void_Connector_BlockSymbol(APlayTest.Client.Connector element, APlayTest.Client.BlockSymbol this_);
+    public delegate void void_();
+    public delegate void void_BlockSymbol(APlayTest.Client.BlockSymbol this_);
+    public delegate void void_int32_Connector(int pos, APlayTest.Client.Connector element);
+    public delegate void void_int32_Connector_BlockSymbol(int pos, APlayTest.Client.Connector element, APlayTest.Client.BlockSymbol this_);
     public delegate void void_float64(double NewPositionX__);
     public delegate void void_float64_BlockSymbol(double NewPositionX__, APlayTest.Client.BlockSymbol this_);
     public delegate void void_AplaySize(APlayTest.Client.AplaySize NewSize__);
@@ -3806,6 +5439,19 @@ namespace APlayTest.Client
     public delegate void void_ProjectManager_Client(APlayTest.Client.ProjectManager NewProjectManager__, APlayTest.Client.Client this_);
     public delegate void void_UndoManager(APlayTest.Client.UndoManager NewUndoManager__);
     public delegate void void_UndoManager_Client(APlayTest.Client.UndoManager NewUndoManager__, APlayTest.Client.Client this_);
+    public delegate void void_int32_Connection(int NewId__, APlayTest.Client.Connection this_);
+    public delegate void void_uint32(uint NewColor__);
+    public delegate void void_uint32_Connection(uint NewColor__, APlayTest.Client.Connection this_);
+    public delegate void void_Connector_Connection(APlayTest.Client.Connector NewFrom__, APlayTest.Client.Connection this_);
+    public delegate void void_AplayPoint(APlayTest.Client.AplayPoint NewFromPosition__);
+    public delegate void void_AplayPoint_Connection(APlayTest.Client.AplayPoint NewFromPosition__, APlayTest.Client.Connection this_);
+    public delegate void void_ConnectorDirection(APlayTest.Client.ConnectorDirection NewDirection__);
+    public delegate void void_ConnectorDirection_Connector(APlayTest.Client.ConnectorDirection NewDirection__, APlayTest.Client.Connector this_);
+    public delegate void void_ConnectionList_Connector(APlayTest.Client.ConnectionList Connections__, APlayTest.Client.Connector this_);
+    public delegate void void_Connection(APlayTest.Client.Connection element);
+    public delegate void void_Connection_Connector(APlayTest.Client.Connection element, APlayTest.Client.Connector this_);
+    public delegate void void_int32_Connection_Connector(int pos, APlayTest.Client.Connection element, APlayTest.Client.Connector this_);
+    public delegate void void_AplayPoint_Connector(APlayTest.Client.AplayPoint NewPosition__, APlayTest.Client.Connector this_);
     public delegate void void_int32_Project(int NewId__, APlayTest.Client.Project this_);
     public delegate void void_ProjectDetail(APlayTest.Client.ProjectDetail NewProjectDetail__);
     public delegate void void_ProjectDetail_Project(APlayTest.Client.ProjectDetail NewProjectDetail__, APlayTest.Client.Project this_);
@@ -3815,11 +5461,9 @@ namespace APlayTest.Client
     public delegate void void_ProjectList(APlayTest.Client.ProjectList Projects__);
     public delegate void void_ProjectList_ProjectManager(APlayTest.Client.ProjectList Projects__, APlayTest.Client.ProjectManager this_);
     public delegate void void_Project_ProjectManager(APlayTest.Client.Project element, APlayTest.Client.ProjectManager this_);
-    public delegate void void_();
     public delegate void void_int32_Project_ProjectManager(int pos, APlayTest.Client.Project element, APlayTest.Client.ProjectManager this_);
     public delegate void void_Client(APlayTest.Client.Client NewDataClient__);
     public delegate void void_Client_ProjectManager(APlayTest.Client.Client NewDataClient__, APlayTest.Client.ProjectManager this_);
-    public delegate void void_BlockSymbol(APlayTest.Client.BlockSymbol returnValue);
     public delegate void void_WString(String NewName__);
     public delegate void void_WString_Sheet(String NewName__, APlayTest.Client.Sheet this_);
     public delegate void void_BlockSymbolList(APlayTest.Client.BlockSymbolList BlockSymbols__);
@@ -3827,6 +5471,9 @@ namespace APlayTest.Client
     public delegate void void_BlockSymbol_Sheet(APlayTest.Client.BlockSymbol element, APlayTest.Client.Sheet this_);
     public delegate void void_Sheet(APlayTest.Client.Sheet this_);
     public delegate void void_int32_BlockSymbol_Sheet(int pos, APlayTest.Client.BlockSymbol element, APlayTest.Client.Sheet this_);
+    public delegate void void_ConnectionList_Sheet(APlayTest.Client.ConnectionList Connections__, APlayTest.Client.Sheet this_);
+    public delegate void void_Connection_Sheet(APlayTest.Client.Connection element, APlayTest.Client.Sheet this_);
+    public delegate void void_int32_Connection_Sheet(int pos, APlayTest.Client.Connection element, APlayTest.Client.Sheet this_);
     public delegate void void_int32_Sheet(int NewId__, APlayTest.Client.Sheet this_);
     public delegate void void_SheetList(APlayTest.Client.SheetList Sheets__);
     public delegate void void_SheetList_SheetManager(APlayTest.Client.SheetList Sheets__, APlayTest.Client.SheetManager this_);

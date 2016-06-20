@@ -4,8 +4,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using APlayTest.Client.Modules.Inspector;
+using APlayTest.Client.Modules.Inspector.Inspectors;
+using APlayTest.Client.Modules.SheetTree.Factories;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
 {
@@ -14,20 +18,26 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
     {
         private readonly BlockSymbol _blockSymbol;
         private readonly Client _client;
+        private readonly IConnectionViewModelFactory _connectionViewModelFactory;
+        private readonly IInspectorTool _inspectorTool;
         private double _x;
         private double _y;
-        private double _inspectableX;
-        private double _inspectableY;
+        private InputConnectorViewModel _selectedInputConnector;
 
         public BlockVm()
         {
             
         }
 
-        public BlockVm(BlockSymbol blockSymbol, Client client)
+        public BlockVm(BlockSymbol blockSymbol, Client client, IConnectionViewModelFactory connectionViewModelFactory, IInspectorTool inspectorTool)
+            :base(connectionViewModelFactory)
         {
+            Id = blockSymbol.Id;
+
             _blockSymbol = blockSymbol;
             _client = client;
+            _connectionViewModelFactory = connectionViewModelFactory;
+            _inspectorTool = inspectorTool;
 
             _x = _blockSymbol.PositionX;
             _y = _blockSymbol.PositionY;
@@ -35,15 +45,40 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
             _blockSymbol.PositionXChangeEventHandler += x => X = x;
             _blockSymbol.PositionYChangeEventHandler += y => Y = y;
 
-            Id = blockSymbol.Id;
-            
+        
+            foreach (var inputConnector in blockSymbol.InputConnectors)
+            {
+                AddInputConnector(inputConnector);
+            }
 
-            AddInputConnector("Input1", Colors.BlueViolet);
-            AddInputConnector("Input2", Colors.BlueViolet);
-            OutputConnector = new OutputConnectorViewModel(this, "Output1", Colors.Black);
+            if (blockSymbol.OutputConnector != null)
+            {
+                OutputConnector = new OutputConnectorViewModel(this, blockSymbol.OutputConnector, _connectionViewModelFactory);
+            }
+            
+            
         }
         
         public int Id { get; private set; }
+
+        public override InputConnectorViewModel SelectedInputConnector
+        {
+            get { return _selectedInputConnector; }
+            set
+            {
+                if (Equals(value, _selectedInputConnector)) return;
+                _selectedInputConnector = value;
+
+                _inspectorTool.SelectedObject = new InspectableObjectBuilder()
+                    .WithObjectProperties(_selectedInputConnector, x => true)
+                    //.WithEditor(_selectedInputConnector, x => x.Position, new TextBoxEditorViewModel<string>())
+                    //.WithEditor(_selectedInputConnector, viewModel => viewModel.Id, new TextBoxEditorViewModel<int>())
+                    //.WithEditor(_selectedInputConnector, viewModel => viewModel.Position, new TextBoxEditorViewModel<Point>())
+                    .ToInspectableObject();
+
+                NotifyOfPropertyChange(() => SelectedInputConnector);
+            }
+        }
 
         [Browsable(false)]
         public override double X

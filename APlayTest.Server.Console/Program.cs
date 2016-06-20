@@ -21,12 +21,25 @@ namespace APlayTest.Server.Console
             var undoManagerCache = new UndoManagerCache(undoService);
             
             var projectManagerService = new ProjectManagerService();
-           
-            var server = new APlayServer(Int32.Parse(Properties.Settings.Default.ServerPort),
-                new ProjectManagerFactory(projectManagerService, undoService, undoManagerCache),
+            
+
+            var connectionFactory = new ConnectionFactory(undoService);
+            var connectorFactory = new ConnectorFactory(undoService, connectionFactory);
+            connectionFactory.ConnectorFactory = connectorFactory; //Make sure to inject the connectorFactory.
+
+            var blockSymbolFactory = new BlockSymbolFactory(undoService, connectorFactory);
+            var sheetFactory = new SheetFactory(undoService, connectionFactory, blockSymbolFactory);
+            
+            connectionFactory.SheetFactory = sheetFactory;
+            blockSymbolFactory.SheetFactory = sheetFactory;
+            connectorFactory.SheetFactory = sheetFactory;
+
+            var projectManager = new ProjectManagerFactory(projectManagerService, undoService, undoManagerCache,
+                connectorFactory, connectionFactory, blockSymbolFactory, sheetFactory);
+
+            var server = new APlayServer(Int32.Parse(Properties.Settings.Default.ServerPort), projectManager,
                 clientStateService);
-
-
+            
         }
     }
 }

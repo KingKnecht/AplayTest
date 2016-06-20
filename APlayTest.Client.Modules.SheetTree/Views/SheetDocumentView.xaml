@@ -49,6 +49,7 @@
                         </Style>
                     </controls:GraphControl.ElementItemContainerStyle>
 
+                    
                     <controls:GraphControl.ElementItemTemplate>
                         <DataTemplate DataType="vm:ElementViewModel">
                             <DataTemplate.Resources>
@@ -95,11 +96,12 @@
                                                     <ColumnDefinition Width="1" />
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
-                                                <ItemsControl Grid.Column="0"
+                                                <ListBox Grid.Column="0"
                                                               ItemsSource="{Binding InputConnectors}"
+                                                              SelectedItem="{Binding SelectedInputConnector}"
                                                               VerticalAlignment="Top"
                                                               Padding="0 5 5 0">
-                                                    <ItemsControl.ItemTemplate>
+                                                    <ListBox.ItemTemplate>
                                                         <DataTemplate>
                                                             <StackPanel Orientation="Horizontal"
                                                                         Height="20">
@@ -110,8 +112,8 @@
                                                                            Margin="3 0 0 0" />
                                                             </StackPanel>
                                                         </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
+                                                    </ListBox.ItemTemplate>
+                                                </ListBox>
                                                 <Border Grid.Column="1"
                                                         Background="LightGray" />
                                                 <Border Grid.Column="2"
@@ -160,11 +162,11 @@
                         <DataTemplate DataType="vm:ConnectionViewModel">
                             <controls:BezierLine Stroke="LightSkyBlue"
                                               StrokeThickness="1"
-                                              X1="{Binding FromPosition.X}"
-                                              Y1="{Binding FromPosition.Y}"
-                                              X2="{Binding ToPosition.X}"
-                                              Y2="{Binding ToPosition.Y}" />
-                        </DataTemplate>
+                                              X1="{Binding FromPosition.X, Mode=OneWay}"
+                                                 Y1="{Binding FromPosition.Y, Mode=OneWay}"
+                                                 X2="{Binding ToPosition.X, Mode=OneWay}"
+                                                 Y2="{Binding ToPosition.Y, Mode=OneWay}" />
+                          </DataTemplate>
                     </controls:GraphControl.ConnectionItemTemplate>
                 </controls:GraphControl>
             </controls:ZoomAndPanControl>

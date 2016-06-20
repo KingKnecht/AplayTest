@@ -22,13 +22,30 @@
       <access role="Client" read="true" write="true"/>
       <access role="Server" read="true" write="true"/>
     </permissionGroup>
+    <permissionGroup name="AllToServer">
+      <access role="Client" read="false" write="true"/>
+      <access role="Server" read="true" write="true"/>
+    </permissionGroup>
     <communicationObject name="BlockSymbol" persistable="false">
       <permissionGroup baseType="ServerToAll">
         <data type="int32" name="Id" persistable="false"/>
+        <list type="Connector" name="InputConnectors" persistable="false"/>
       </permissionGroup>
       <permissionGroup baseType="ClientToServer">
         <event name="SetPosition">
           <data type="AplayPoint" name="position" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="AddInputConnector">
+          <data type="Connector" name="connector" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="RemoveInputConnector">
+          <data type="int32" name="connectorId" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="SetOutputConnector">
+          <data type="Connector" name="connector" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
         </event>
       </permissionGroup>
@@ -36,6 +53,10 @@
         <data type="float64" name="PositionX" persistable="false"/>
         <data type="float64" name="PositionY" persistable="false"/>
         <data type="AplaySize" name="Size" persistable="false"/>
+        <data type="Connector" name="OutputConnector" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="AllToServer">
+        <event name="GetAttachedConnections" returnType="List&lt;Connection>"/>
       </permissionGroup>
     </communicationObject>
     <permissionGroup name="ServerToClient">
@@ -57,6 +78,54 @@
         </event>
       </permissionGroup>
     </communicationObject>
+    <communicationObject name="Connection" persistable="false">
+      <permissionGroup baseType="ServerToAll">
+        <data type="int32" name="Id" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="AllToAll">
+        <data type="uint32" name="Color" persistable="false"/>
+        <data type="Connector" name="From" persistable="false"/>
+        <data type="Connector" name="To" persistable="false"/>
+        <data type="AplayPoint" name="FromPosition" persistable="false"/>
+        <data type="AplayPoint" name="ToPosition" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="ClientToServer">
+        <event name="SetFromPosition">
+          <data type="AplayPoint" name="position" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="SetToPosition">
+          <data type="AplayPoint" name="position" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="SetFrom">
+          <data type="Connector" name="connector" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="SetTo">
+          <data type="Connector" name="connector" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="SetColor">
+          <data type="uint32" name="Color" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+      </permissionGroup>
+    </communicationObject>
+    <communicationObject name="Connector" persistable="false">
+      <permissionGroup baseType="ServerToAll">
+        <data type="int32" name="Id" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="AllToAll">
+        <data type="ConnectorDirection" name="Direction" persistable="false"/>
+        <list type="Connection" name="Connections" persistable="false"/>
+        <data type="AplayPoint" name="Position" persistable="false"/>
+      </permissionGroup>
+    </communicationObject>
+    <enum name="ConnectorDirection">
+      <item name="Input" value="1"/>
+      <item name="Output" value="2"/>
+    </enum>
     <primitive name="HistoryEntry" persistable="true">
       <data type="int32" name="Id" persistable="false"/>
       <data type="WString" name="Description" persistable="false"/>
@@ -107,6 +176,10 @@
     </communicationObject>
     <communicationObject name="Sheet" userCreated="servers" persistable="false">
       <permissionGroup baseType="ClientToServer">
+        <event name="SetName">
+          <data type="WString" name="name" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
         <event name="CreateBlockSymbol" returnType="BlockSymbol"/>
         <event name="Add">
           <data type="BlockSymbol" name="blockSymbol" persistable="false"/>
@@ -116,16 +189,20 @@
           <data type="BlockSymbol" name="blockSymbol" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
         </event>
-        <event name="SetName">
-          <data type="WString" name="name" persistable="false"/>
+        <event name="CreateConnection" returnType="Connection"/>
+        <event name="AddConnection">
+          <data type="Connection" name="connection" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="RemoveConnection">
+          <data type="Connection" name="connection" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
         </event>
       </permissionGroup>
       <permissionGroup baseType="ServerToAll">
         <data type="WString" name="Name" persistable="false"/>
-      </permissionGroup>
-      <permissionGroup baseType="ServerToAll">
         <list type="BlockSymbol" name="BlockSymbols" persistable="false"/>
+        <list type="Connection" name="Connections" persistable="false"/>
         <data type="int32" name="Id" persistable="false"/>
       </permissionGroup>
     </communicationObject>

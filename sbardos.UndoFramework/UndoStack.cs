@@ -147,6 +147,9 @@ namespace sbardos.UndoFramework
 
         private void DumpStack()
         {
+
+            //return;
+
             Console.WriteLine("Undo Stack #: " + UndoStackCount);
             foreach (var changeSet in _undoStack)
             {

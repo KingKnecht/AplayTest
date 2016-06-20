@@ -31,9 +31,12 @@ namespace APlayTest.Server
         private readonly IAplayProjectsCache _aplayProjectsCache;
         private readonly IUndoService _undoService;
         private readonly IUndoManagerCache _undoManagerCache;
-        private readonly IClientIdLookup _clientIdLookup;
+        private readonly Factories.IConnectionFactory _connectionFactory;
+        private readonly Factories.IConnectorFactory _connectorFactory;
+        private readonly Factories.IBlockSymbolFactory _blockSymbolFactory;
+        private readonly Factories.ISheetFactory _sheetFactory;
         private string _searchString = String.Empty;
-        private CompositeDisposable _cleanUp = new CompositeDisposable();
+        private readonly CompositeDisposable _cleanUp = new CompositeDisposable();
         /// <summary>
         /// Use this constructor to create instances in your code.
         /// Note: leave the APInitOb null. Aplay sets this object if initialized by aplay.
@@ -50,13 +53,27 @@ namespace APlayTest.Server
         /// <param name="aplayProjectsCache">A cache of transformed projects. Contains Aplay-Projects. These projects must be the same over all ProjectManagers.</param>
         /// <param name="undoService">A service for undo/redo. Same for all clients.</param>
         /// <param name="undoManagerCache"></param>
-        public ProjectManager(IProjectManagerService projectManagerService, IAplayProjectsCache aplayProjectsCache, IUndoService undoService, IUndoManagerCache undoManagerCache)
+        /// <param name="connectionFactory"></param>
+        /// <param name="connectorFactory"></param>
+        /// <param name="blockSymbolFactory"></param>
+        /// <param name="sheetFactory"></param>
+        public ProjectManager(IProjectManagerService projectManagerService,
+           IAplayProjectsCache aplayProjectsCache, IUndoService undoService,
+           IUndoManagerCache undoManagerCache, 
+            Factories.IConnectionFactory connectionFactory, //Todo: A ProjectFactory is needed here instead of creating projects here directly.
+            Factories.IConnectorFactory connectorFactory,
+            Factories.IBlockSymbolFactory blockSymbolFactory,
+            Factories.ISheetFactory sheetFactory) 
         {
             _projectManagerService = projectManagerService;
             _aplayProjectsCache = aplayProjectsCache;
             _undoService = undoService;
             _undoManagerCache = undoManagerCache;
-     
+            _connectionFactory = connectionFactory;
+            _connectorFactory = connectorFactory;
+            _blockSymbolFactory = blockSymbolFactory;
+            _sheetFactory = sheetFactory;
+
 
             //Subscribe for newly added, deleted projects from the service.
             var serviceUpdates = _projectManagerService.ProjectsDelta.Connect()
@@ -102,10 +119,10 @@ namespace APlayTest.Server
                         sender.CurrentProject = joinedProject;
 
                         //this.SyncedWithClient( sender);
-                        sender.UndoManager =  _undoManagerCache.GetUndoManager(sender.Id, joinedProject.Id);
+                        sender.UndoManager = _undoManagerCache.GetUndoManager(sender.Id, joinedProject.Id);
 
                         JoinedProject(joinedProject);
-                        
+
                         APlay.Common.Logging.Logger.LogDesigned(2,
                             "User: " + sender.CurrentUser.Name + " has joined project: " +
                             SelectedProject.ProjectDetail.Name + "[ClientId: " + sender.Id + "]",
@@ -210,21 +227,44 @@ namespace APlayTest.Server
                 SheetManager = new SheetManager()
             };
 
-            aplayProject.SheetManager.Sheets.Add(new Sheet(_undoService) { Name = "Sheet 1 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
-            aplayProject.SheetManager.Sheets.Add(new Sheet(_undoService) { Name = "Sheet 2 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
-            aplayProject.SheetManager.Sheets.Add(new Sheet(_undoService) { Name = "Sheet 3 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
-            aplayProject.SheetManager.Sheets.Add(new Sheet(_undoService) { Name = "Sheet 4 " + DateTime.Now.ToLongTimeString(), Id = IdGenerator.GetNextId() });
+            var sheet = _sheetFactory.Create();
+            sheet.Name = "Sheet 1 " + DateTime.Now.ToLongTimeString();
+            aplayProject.SheetManager.Sheets.Add(sheet);
+            
 
-            aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId() });
-            aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId(), PositionX = 200, PositionY = 0 });
-            aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId(), PositionX = 200, PositionY = 200 });
+            var blockFrom = _blockSymbolFactory.Create(sheet);
+            blockFrom.PositionX = 100.0;
+            blockFrom.PositionY = 100.0;
 
-            aplayProject.SheetManager.Sheets[1].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId() });
-            aplayProject.SheetManager.Sheets[1].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId(), PositionX = 200, PositionY = 200 });
+            var outputConnectorFrom = _connectorFactory.Create(sheet);
+            outputConnectorFrom.Direction = ConnectorDirection.Output;
 
-            aplayProject.SheetManager.Sheets[2].BlockSymbols.Add(new BlockSymbol(_undoService) { Id = IdGenerator.GetNextId() });
+            var blockTo = _blockSymbolFactory.Create(sheet);
+            blockTo.PositionX = 400;
+            blockTo.PositionY = 100;
 
-            return aplayProject;
+            var inputConnectorTo = _connectorFactory.Create(sheet);
+
+            inputConnectorTo.Direction = ConnectorDirection.Input;
+            
+            var connection = _connectionFactory.Create(sheet);
+            connection.From = outputConnectorFrom;
+            connection.To = inputConnectorTo;
+
+            //inputConnectorTo.Connections.Add(connection);
+            //outputConnectorFrom.Connections.Add(connection);
+
+            blockTo.InputConnectors.Add(inputConnectorTo);
+            blockFrom.OutputConnector = outputConnectorFrom;
+
+            //aplayProject.SheetManager.Sheets[0].Connections.Add(connection);
+
+            aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(blockFrom);
+            aplayProject.SheetManager.Sheets[0].BlockSymbols.Add(blockTo);
+
+
+
+                return aplayProject;
         }
 
         private static bool Filter(string searchString, Services.Project project)

@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\DeleteCommandDefinition.cs" />
+    <Compile Include="Factories\ConnectionViewModelFactory.cs" />
     <Compile Include="MenuDefinitions.cs" />
     <Compile Include="Commands\ViewSheetTreeCommandDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

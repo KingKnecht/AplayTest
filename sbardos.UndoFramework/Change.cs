@@ -61,6 +61,9 @@ namespace sbardos.UndoFramework
         IUndoable RedoObjectState { get; set; }
         int IndexAt { get; set; }
         string Dump();
+
+        bool Handled { get; set; }
+        
     }
 
     public class Change : IChange
@@ -128,6 +131,8 @@ namespace sbardos.UndoFramework
             dump += "\tNewState: " + RedoObjectState.Dump() + "\n";
             return dump;
         }
+
+        public bool Handled { get; set; }
     }
 
 

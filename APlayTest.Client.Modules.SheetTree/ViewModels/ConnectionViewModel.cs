@@ -2,21 +2,40 @@
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using APlay.Generated.Intern.Client;
 using Caliburn.Micro;
+using APlayTest.Client.Extensions;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {
     public class ConnectionViewModel : PropertyChangedBase
     {
         private OutputConnectorViewModel _from;
+        private InputConnectorViewModel _to;
+        private Point _fromPosition;
+        private Point _toPosition;
+        private Connection _connection;
+        public ConnectionViewModel(Connection connection)
+        {
+
+            _connection = connection;
+            Id = connection.Id;
+            FromPosition = new Point(_connection.FromPosition.X, _connection.FromPosition.Y);
+            ToPosition = new Point(_connection.ToPosition.X, _connection.ToPosition.Y);
+
+            //Register for changes triggerd by the model.
+            _connection.FromPositionChangeEventHandler += ConnectionOnFromPositionChangeEventHandler;
+            _connection.ToPositionChangeEventHandler += ConnectionOnToPositionChangeEventHandler;
+        }
+
+
         public OutputConnectorViewModel From
         {
             get { return _from; }
-            private set
+            set
             {
                 if (_from != null)
                 {
-                    _from.PositionChanged -= OnFromPositionChanged;
                     _from.Connections.Remove(this);
                 }
 
@@ -24,16 +43,14 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
                 if (_from != null)
                 {
-                    _from.PositionChanged += OnFromPositionChanged;
-                    _from.Connections.Add(this);
-                    FromPosition = value.Position;
+                    _connection.From = From.GetInternalConnector();
+                    _from.Add(_connection);
                 }
 
                 NotifyOfPropertyChange(() => From);
             }
         }
 
-        private InputConnectorViewModel _to;
         public InputConnectorViewModel To
         {
             get { return _to; }
@@ -41,7 +58,6 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             {
                 if (_to != null)
                 {
-                    _to.PositionChanged -= OnToPositionChanged;
                     _to.Connection = null;
                 }
 
@@ -49,57 +65,79 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
                 if (_to != null)
                 {
-                    _to.PositionChanged += OnToPositionChanged;
+                    _connection.To = To.GetInternalConnector();
+                    _connection.To.Connections.Add(_connection);
                     _to.Connection = this;
-                    ToPosition = _to.Position;
                 }
 
                 NotifyOfPropertyChange(() => To);
             }
         }
 
-        private Point _fromPosition;
+
+
+
         public Point FromPosition
         {
             get { return _fromPosition; }
             set
             {
-                _fromPosition = value;
-                NotifyOfPropertyChange(() => FromPosition);
+                if (_fromPosition != value)
+                {
+                    _fromPosition = value;
+                    NotifyOfPropertyChange();
+                }
+
+                //Todo: Catch on server-side? Or both? To reduce traffic, do it here as well...
+                var aplayPoint = new AplayPoint(_fromPosition.X, _fromPosition.Y);
+                if (!_connection.FromPosition.SameAs(aplayPoint))
+                {
+                    _connection.FromPosition = aplayPoint;
+                }
             }
         }
 
-        private Point _toPosition;
+
         public Point ToPosition
         {
             get { return _toPosition; }
             set
             {
-                _toPosition = value;
-                NotifyOfPropertyChange(() => ToPosition);
+                if (_toPosition != value)
+                {
+                    _toPosition = value;
+                    //NotifyOfPropertyChange(() => ToPosition);
+                    NotifyOfPropertyChange();
+                    //Console.WriteLine("Connection ToPos: " + _toPosition);
+                }
+
+
+                //Todo: Catch on server-side? Or both? To reduce traffic, do it here as well...
+                var aplayPoint = new AplayPoint(_toPosition.X, _toPosition.Y);
+                if (!_connection.ToPosition.SameAs(aplayPoint))
+                {
+                    _connection.ToPosition = aplayPoint;
+
+                }
+
+
             }
         }
 
-        public ConnectionViewModel(OutputConnectorViewModel from, InputConnectorViewModel to)
+        private void ConnectionOnFromPositionChangeEventHandler(AplayPoint newFromPosition)
         {
-            From = from;
-            To = to;
+            FromPosition = new Point(newFromPosition.X, newFromPosition.Y);
+            //Console.WriteLine("Connection FromPos: " + FromPosition);
         }
 
-        public ConnectionViewModel(OutputConnectorViewModel from)
+        private void ConnectionOnToPositionChangeEventHandler(AplayPoint newToPosition)
         {
-            From = from;
+            ToPosition = new Point(newToPosition.X, newToPosition.Y);
+            //Console.WriteLine("Connection ToPos: " + ToPosition);
         }
 
-        private void OnFromPositionChanged(object sender, EventArgs e)
-        {
-            FromPosition = From.Position;
-        }
+        public int Id { get; private set; }
 
-        private void OnToPositionChanged(object sender, EventArgs e)
-        {
-            ToPosition = To.Position;
-        }
     }
 
     public enum ConnectorDataType

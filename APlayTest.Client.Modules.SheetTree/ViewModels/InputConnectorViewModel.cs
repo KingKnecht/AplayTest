@@ -1,12 +1,38 @@
 using System;
+using System.Linq;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using APlayTest.Client.Modules.SheetTree.Factories;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {
     public class InputConnectorViewModel : ConnectorViewModel
     {
+        private readonly IConnectionViewModelFactory _connectionViewModelFactory;
         public event EventHandler SourceChanged;
+
+        public InputConnectorViewModel(ElementViewModel element, Connector connector, IConnectionViewModelFactory connectionViewModelFactory)
+            : base(element, "Input", Colors.Coral, connector)
+        {
+            _connectionViewModelFactory = connectionViewModelFactory;
+
+            if (connector.Connections.Any())
+            {
+                Connection = _connectionViewModelFactory.Create(connector.Connections.First());
+                connector.Connections.First().To.ConnectionsRemoveEventHandler += ToOnConnectionsRemoveEventHandler;
+            }
+
+
+        }
+
+        private void ToOnConnectionsRemoveEventHandler(Connection element)
+        {
+            Connector.Connections.First().To.ConnectionsRemoveEventHandler -= ToOnConnectionsRemoveEventHandler;
+            //Todo: reagieren auf Zieltausch!!!
+
+        }
+
 
         public override ConnectorDirection ConnectorDirection
         {
@@ -19,11 +45,22 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             get { return _connection; }
             set
             {
-                if (_connection != null)
-                    _connection.From.Element.OutputChanged -= OnSourceElementOutputChanged;
+                //if (_connection != null)
+                //    _connection.From.Element.OutputChanged -= OnSourceElementOutputChanged;
+
                 _connection = value;
+
                 if (_connection != null)
-                    _connection.From.Element.OutputChanged += OnSourceElementOutputChanged;
+                {
+                    //_connection.From.Element.OutputChanged += OnSourceElementOutputChanged;
+
+                    if (_connection.To != this)
+                    {
+                        _connection.To = this;
+                    }
+
+                }
+
                 RaiseSourceChanged();
                 NotifyOfPropertyChange(() => Connection);
             }
@@ -45,11 +82,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             }
         }
 
-        public InputConnectorViewModel(ElementViewModel element, string name, Color color)
-            : base(element, name, color)
-        {
 
-        }
 
         private void RaiseSourceChanged()
         {
@@ -57,5 +90,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             if (handler != null)
                 handler(this, EventArgs.Empty);
         }
+
+
     }
 }

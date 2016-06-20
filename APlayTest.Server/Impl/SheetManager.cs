@@ -17,6 +17,7 @@ namespace APlayTest.Server
     public class SheetManager : APlayTest.Server.SheetManagerSkeleton
     {
         private readonly IUndoService _undoService;
+        private readonly Factories.ISheetFactory _sheetFactory;
 
         /// <summary>
         /// Use this constructor to create instances in your code.
@@ -29,15 +30,16 @@ namespace APlayTest.Server
         }
 
 
-        public SheetManager(IUndoService undoService)
+        public SheetManager(IUndoService undoService, Factories.ISheetFactory sheetFactory)
         {
             _undoService = undoService;
+            _sheetFactory = sheetFactory;
             /// TODO: add your code here
         }
 
         public override Sheet onCreateSheet()
         {
-            return new Sheet(_undoService){Id = IdGenerator.GetNextId()};
+            return _sheetFactory.Create();
         }
 
         public override void onAddSheet(Sheet sheet__)

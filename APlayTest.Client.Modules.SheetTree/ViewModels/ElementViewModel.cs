@@ -4,12 +4,16 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using APlayTest.Client.Modules.SheetTree.Factories;
 using Caliburn.Micro;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {
     public abstract class ElementViewModel : PropertyChangedBase
     {
+        private OutputConnectorViewModel _outputConnector;
+   
+        protected readonly IConnectionViewModelFactory ConnectionViewModelFactory;
         public event EventHandler OutputChanged;
 
         public const double PreviewSize = 100;
@@ -17,7 +21,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         public abstract double X { get; set; }
         public abstract double Y { get; set; }
 
-        
+
         private string _name;
 
         [Browsable(false)]
@@ -43,15 +47,27 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
                 NotifyOfPropertyChange(() => IsSelected);
             }
         }
-
-      
+        
         private readonly BindableCollection<InputConnectorViewModel> _inputConnectors;
+        private InputConnectorViewModel _selectedInputConnector;
+
         public IList<InputConnectorViewModel> InputConnectors
         {
             get { return _inputConnectors; }
         }
 
-        private OutputConnectorViewModel _outputConnector;
+        public virtual InputConnectorViewModel SelectedInputConnector
+        {
+            get { return _selectedInputConnector; }
+            set
+            {
+                if (Equals(value, _selectedInputConnector)) return;
+                _selectedInputConnector = value;
+                NotifyOfPropertyChange(() => SelectedInputConnector);
+            }
+        }
+
+
         public OutputConnectorViewModel OutputConnector
         {
             get { return _outputConnector; }
@@ -61,34 +77,33 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
                 NotifyOfPropertyChange(() => OutputConnector);
             }
         }
-
-        public IEnumerable<ConnectionViewModel> AttachedConnections
-        {
-            get
-            {
-                return _inputConnectors.Select(x => x.Connection)
-                    .Union(_outputConnector.Connections)
-                    .Where(x => x != null);
-            }
-        }
-
+        
+        //This constructor is used i.e. for drag&drop (Activator.CreateInstance(..))
         protected ElementViewModel()
         {
             _inputConnectors = new BindableCollection<InputConnectorViewModel>();
+        }
+
+        protected ElementViewModel(IConnectionViewModelFactory connectionViewModelFactory)
+            : this()
+        {
+            ConnectionViewModelFactory = connectionViewModelFactory;
+
             _name = GetType().Name;
         }
 
-        protected void AddInputConnector(string name, Color color)
+        protected void AddInputConnector(Connector connector)
         {
-            var inputConnector = new InputConnectorViewModel(this, name, color);
+            var inputConnector = new InputConnectorViewModel(this, connector, ConnectionViewModelFactory);
+
             inputConnector.SourceChanged += (sender, e) => OnInputConnectorConnectionChanged();
             _inputConnectors.Add(inputConnector);
         }
 
-        protected void SetOutputConnector(string name, Color color)
-        {
-            OutputConnector = new OutputConnectorViewModel(this, name, color);
-        }
+        //protected void SetOutputConnector(string name, Color color)
+        //{
+        //    //OutputConnector = new OutputConnectorViewModel(this, name, color);
+        //}
 
         protected virtual void OnInputConnectorConnectionChanged()
         {

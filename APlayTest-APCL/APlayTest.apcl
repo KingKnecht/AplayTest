@@ -18,15 +18,26 @@ float32 Height;]]></code>
       <code><![CDATA[[ Server -> All ]
 
 int32 Id;
+List<Connector> InputConnectors;
 
 [Client -> Server]
 
 void SetPosition(AplayPoint position, Client client);
+void AddInputConnector(Connector connector, Client client);
+void RemoveInputConnector(int32 connectorId, Client client);
+void SetOutputConnector(Connector connector, Client client);
 
 [All -> All]
+//Do only use those properties for undo/redo purposes.
+//Use the setter functions to have Undo/Redo.
 float64 PositionX;
 float64 PositionY;
 AplaySize Size;
+Connector OutputConnector;
+
+[All -> Server]
+List<Connection> GetAttachedConnections();
+
 ]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
@@ -46,6 +57,56 @@ boolean TryGetId(int32 id, Client client);
         <y>13</y>
       </__designerPresentation>
     </class>
+    <class name="Connection">
+      <code><![CDATA[[ Server -> All ]
+
+int32 Id;
+
+[All -> All]
+//Do only use those properties for undo/redo purposes.
+//Use the setter functions to have Undo/Redo.
+uint32 Color;
+
+Connector From;
+Connector To;
+
+AplayPoint FromPosition;
+AplayPoint ToPosition;
+
+[Client -> Server]
+
+void SetFromPosition(AplayPoint position, Client client);
+void SetToPosition(AplayPoint position, Client client);
+
+void SetFrom(Connector connector, Client client);
+void SetTo(Connector connector, Client client);
+
+void SetColor(uint32 Color, Client client);]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </class>
+    <class name="Connector">
+      <code><![CDATA[[ Server -> All ]
+
+int32 Id;
+
+[All -> All]
+//Do only use those properties for undo/redo purposes.
+//Use the setter functions to have Undo/Redo.
+ConnectorDirection Direction;
+List<Connection> Connections;
+AplayPoint Position;
+
+
+
+]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </class>
+    <enum name="ConnectorDirection">
+      <code><![CDATA[//TODO: Your Enum Values here:
+Input=1;
+Output=2;]]></code>
+      <__designerPresentation>null</__designerPresentation>
+    </enum>
     <struct name="HistoryEntry">
       <code><![CDATA[int32 Id;
 
@@ -94,19 +155,29 @@ Client DataClient;]]></code>
     <class name="Sheet" userCreated="servers">
       <code><![CDATA[//TODO: Your class based communication here:
 
-[ Client -> Server ]
 
+[ Client -> Server ]
+  
+void SetName(WString name, Client client);
+
+//Blocks handling  
 BlockSymbol CreateBlockSymbol();
 void Add(BlockSymbol blockSymbol, Client client);
 void Remove(BlockSymbol blockSymbol, Client client);
-void SetName(WString name, Client client);
+
+//Connections handling
+Connection CreateConnection();
+void AddConnection(Connection connection, Client client);
+void RemoveConnection(Connection connection, Client client);
+
 
 [Server  -> All]
 WString Name;
-
-[Server -> All]
 List<BlockSymbol> BlockSymbols;
-int32 Id;]]></code>
+List<Connection> Connections;
+int32 Id;
+
+]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
     <class name="SheetManager" userCreated="servers">

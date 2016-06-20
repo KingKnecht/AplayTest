@@ -99,10 +99,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Factories\AplayProjectsCache.cs" />
+    <Compile Include="Factories\BlockSymbolFactory.cs" />
+    <Compile Include="Factories\IObjectFactory.cs" />
+    <Compile Include="Factories\ProjectFactory.cs" />
+    <Compile Include="Factories\SheetFactory.cs" />
+    <Compile Include="Factories\ConnectionFactory.cs" />
+    <Compile Include="Factories\ConnectorFactory.cs" />
     <Compile Include="Factories\ProjectManagerFactory.cs" />
     <Compile Include="Impl\APlayServer.cs" />
     <Compile Include="Impl\BlockSymbol.cs" />
     <Compile Include="Impl\Client.cs" />
+    <Compile Include="Impl\Connection.cs" />
+    <Compile Include="Impl\Connector.cs" />
     <Compile Include="Impl\Project.cs" />
     <Compile Include="Impl\ProjectManager.cs" />
     <Compile Include="Impl\Sheet.cs" />

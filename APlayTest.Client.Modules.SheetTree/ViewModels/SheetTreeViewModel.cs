@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 using APlayTest.Client.Contracts;
 using APlayTest.Client.Modules.Inspector;
 using APlayTest.Client.Modules.Inspector.Inspectors;
+using APlayTest.Client.Modules.SheetTree.Factories;
 using Caliburn.Micro;
 using DynamicData;
 using Gemini.Framework;
@@ -26,15 +27,17 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
     {
         private readonly IAPlayAwareShell _shell;
         private readonly IInspectorTool _inspectorTool;
+        private readonly IConnectionViewModelFactory _connectionViewModelFactory;
         private IObservableCollection<SheetDocumentViewModel> _sheets;
         private SheetDocumentViewModel _selectedSheet;
 
 
         [ImportingConstructor]
-        public SheetTreeViewModel(IAPlayAwareShell shell, IInspectorTool inspectorTool)
+        public SheetTreeViewModel(IAPlayAwareShell shell, IInspectorTool inspectorTool, IConnectionViewModelFactory connectionViewModelFactory)
         {
             _shell = shell;
             _inspectorTool = inspectorTool;
+            _connectionViewModelFactory = connectionViewModelFactory;
 
 
             DisplayName = "Sheet Tree";
@@ -46,7 +49,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             {
                 if (shell.Project.SheetManager.Sheets != null)
                 {
-                    Sheets.AddRange(shell.Project.SheetManager.Sheets.Select(sheet => new SheetDocumentViewModel(sheet, inspectorTool, shell, OnOpenedChanged, _shell.Client)));
+                    Sheets.AddRange(shell.Project.SheetManager.Sheets.Select(sheet => new SheetDocumentViewModel(sheet, inspectorTool, shell, OnOpenedChanged, _shell.Client, _connectionViewModelFactory)));
                 }
             }
 
@@ -68,7 +71,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         void OnProjectChanged(object sender, Project e)
         {
-            Sheets.AddRange(e.SheetManager.Sheets.Select(s => new SheetDocumentViewModel(s, _inspectorTool, _shell, OnOpenedChanged, _shell.Client)));
+            Sheets.AddRange(e.SheetManager.Sheets.Select(s => new SheetDocumentViewModel(s, _inspectorTool, _shell, OnOpenedChanged, _shell.Client, _connectionViewModelFactory)));
         }
 
 
@@ -102,6 +105,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
                           new InspectableObjectBuilder()
                        .WithEditor(_selectedSheet, x => x.Name, new TextBoxEditorViewModel<string>())
                        .WithEditor(_selectedSheet, s => s.SheetId, new TextBoxEditorViewModel<int>())
+                       .WithEditor(_selectedSheet, s => s.ConnectionCount, new TextBoxEditorViewModel<int>())
                         .ToInspectableObject();
 
                     if (_selectedSheet.IsOpen && _selectedSheet.IsActive == false)

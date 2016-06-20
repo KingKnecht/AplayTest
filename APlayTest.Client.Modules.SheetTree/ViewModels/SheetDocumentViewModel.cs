@@ -10,6 +10,7 @@ using System.Windows.Input;
 using APlayTest.Client.Contracts;
 using APlayTest.Client.Modules.Inspector;
 using APlayTest.Client.Modules.SheetTree.Commands;
+using APlayTest.Client.Modules.SheetTree.Factories;
 using APlayTest.Client.Modules.SheetTree.ViewModels.Elements;
 using Caliburn.Micro;
 using Gemini.Framework;
@@ -33,9 +34,10 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         private readonly IAPlayAwareShell _shell;
         private readonly Action<SheetDocumentViewModel> _onOpenedChanged;
         private readonly Client _client;
+        private readonly IConnectionViewModelFactory _connectionViewModelFactory;
         private bool _isOpen;
 
-        public SheetDocumentViewModel(Sheet sheet, IInspectorTool inspectorTool, IAPlayAwareShell shell, Action<SheetDocumentViewModel> onOpenedChanged, Client client)
+        public SheetDocumentViewModel(Sheet sheet, IInspectorTool inspectorTool, IAPlayAwareShell shell, Action<SheetDocumentViewModel> onOpenedChanged, Client client, IConnectionViewModelFactory connectionViewModelFactory)
         {
             _sheet = sheet;
             _inspectorTool = inspectorTool;
@@ -43,35 +45,64 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
             _onOpenedChanged = onOpenedChanged;
             _client = client;
+            _connectionViewModelFactory = connectionViewModelFactory;
 
             _name = _sheet.Name;
-            _sheet.NameChangeEventHandler += _sheet_NameChangeEventHandler;
-            _sheet.BlockSymbolsAddEventHandler += OnBlockSymbolsAddEventHandler;
+
+
             SheetId = _sheet.Id;
             DisplayName = _name;
 
             _elements = new BindableCollection<ElementViewModel>();
             _connections = new BindableCollection<ConnectionViewModel>();
 
-
-
             foreach (var blockSymbol in _sheet.BlockSymbols)
             {
                 var block = AddBlock(blockSymbol);
             }
 
-            _sheet.NameChangeEventHandler += name => DisplayName = name;
+            foreach (var connection in _sheet.Connections)
+            {
+                _connections.Add(_connectionViewModelFactory.Create(connection));
+            }
 
-            _sheet.BlockSymbolsInsertAtEventHandler += SheetOnBlockSymbolsInsertAtEventHandler;
+
+            _sheet.NameChangeEventHandler += _sheet_NameChangeEventHandler;
+
+            _sheet.BlockSymbolsAddEventHandler += OnBlockSymbolsAddEventHandler;
+            _sheet.BlockSymbolsInsertAtEventHandler += OnBlockSymbolsInsertAtEventHandler;
             _sheet.BlockSymbolsRemoveAtEventHandler += SheetOnBlockSymbolsRemoveAtEventHandler;
+
+            _sheet.ConnectionsAddEventHandler += OnConnectionsAddEventHandler;
+            _sheet.ConnectionsRemoveEventHandler += OnConnectionsRemoveEventHandler;
+        }
+
+        private void OnConnectionsRemoveEventHandler(Connection connection)
+        {
+            var toBeRemoved = _connections.FirstOrDefault(b => b.Id == connection.Id);
+            if (toBeRemoved != null)
+            {
+                Connections.Remove(toBeRemoved);
+                _connectionViewModelFactory.Remove(toBeRemoved.Id);
+            }
+        }
+
+        private void OnConnectionsAddEventHandler(Connection connection)
+        {
+            if (_connections.All(c => c.Id != connection.Id))
+            {
+                _connections.Add(_connectionViewModelFactory.Create(connection));
+            }
+
+            NotifyOfPropertyChange(() => ConnectionCount);
         }
 
         private void OnBlockSymbolsAddEventHandler(BlockSymbol blockSymbol)
         {
-            Elements.Add(new BlockVm(blockSymbol, _client));
+            Elements.Add(new BlockVm(blockSymbol, _client, _connectionViewModelFactory, _inspectorTool));
         }
 
-        private void SheetOnBlockSymbolsInsertAtEventHandler(int insertAt, BlockSymbol newBlockSymbol)
+        private void OnBlockSymbolsInsertAtEventHandler(int insertAt, BlockSymbol newBlockSymbol)
         {
             AddBlock(newBlockSymbol);
         }
@@ -91,13 +122,13 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             blockSymbol.PositionX = blockVm.X;
             blockSymbol.PositionY = blockVm.Y;
 
-            _sheet.Add(blockSymbol,_client);
+            _sheet.Add(blockSymbol, _client);
         }
 
 
         private ElementViewModel AddBlock(BlockSymbol blockSymbol)
         {
-            var block = new BlockVm(blockSymbol, _client);
+            var block = new BlockVm(blockSymbol, _client, _connectionViewModelFactory, _inspectorTool);
 
             _elements.Add(block);
 
@@ -107,6 +138,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         void _sheet_NameChangeEventHandler(string NewName__)
         {
             Name = NewName__;
+            DisplayName = NewName__;
         }
 
         private readonly BindableCollection<ElementViewModel> _elements;
@@ -155,21 +187,25 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             if (!(sourceConnector is OutputConnectorViewModel))
                 return null;
 
-            var connection = new ConnectionViewModel((OutputConnectorViewModel)sourceConnector)
-            {
-                ToPosition = currentDragPoint
-            };
+            var connection = _sheet.CreateConnection();
 
-            Connections.Add(connection);
+            connection.FromPosition = new AplayPoint(sourceConnector.Position.X, sourceConnector.Position.Y);
+            connection.ToPosition = new AplayPoint(currentDragPoint.X, currentDragPoint.Y);
 
-            return connection;
+            _sheet.AddConnection(connection, _client);
+
+            var connectionViewModel = _connectionViewModelFactory.Create(connection);
+            connectionViewModel.From = (OutputConnectorViewModel)sourceConnector;
+            connectionViewModel.ToPosition = currentDragPoint;
+
+            return connectionViewModel;
         }
 
-        public void OnConnectionDragging(Point currentDragPoint, ConnectionViewModel connection)
+        public void OnConnectionDragging(Point currentDragPoint, ConnectionViewModel connectionViewModel)
         {
             // If current drag point is close to an input connector, show its snapped position.
             var nearbyConnector = FindNearbyInputConnector(currentDragPoint);
-            connection.ToPosition = (nearbyConnector != null)
+            connectionViewModel.ToPosition = (nearbyConnector != null)
                 ? nearbyConnector.Position
                 : currentDragPoint;
         }
@@ -189,6 +225,8 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
                 Connections.Remove(existingConnection);
 
             newConnection.To = nearbyConnector;
+            nearbyConnector.Connection = newConnection;
+            
         }
 
         private InputConnectorViewModel FindNearbyInputConnector(Point mousePosition)
@@ -204,7 +242,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         public void DeleteElement(ElementViewModel element)
         {
-            //Connections.RemoveRange(element.AttachedConnections);
+            //Connections.RemoveRange(connectionViewModel.AttachedConnections);
 
             var block = element as BlockVm;
             if (block != null)
@@ -233,8 +271,8 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
                 _inspectorTool.SelectedObject = new InspectableObjectBuilder()
                     .WithObjectProperties(selectedElements[0], x => true)
                     .ToInspectableObject();
-            else
-                _inspectorTool.SelectedObject = null;
+            //else
+            //    _inspectorTool.SelectedObject = null;
         }
 
         public string Name
@@ -293,5 +331,12 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             DeleteSelectedElements();
             return TaskUtility.Completed;
         }
+
+        public int ConnectionCount
+        {
+            get { return _connections.Count; }
+        }
+
+     
     }
 }

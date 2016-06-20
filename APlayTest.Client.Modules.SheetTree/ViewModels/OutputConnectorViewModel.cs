@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using APlayTest.Client.Modules.SheetTree.Factories;
+using APlayTest.Client.Modules.SheetTree.ViewModels.Elements;
 using Caliburn.Micro;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {
     public class OutputConnectorViewModel : ConnectorViewModel
     {
+        private readonly IConnectionViewModelFactory _connectionViewModelFactory;
         private readonly Func<BitmapSource> _valueCallback;
 
         public override ConnectorDirection ConnectorDirection
@@ -22,13 +26,28 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         public BitmapSource Value
         {
-            get { return _valueCallback(); }
+            get { return null; } //_valueCallback(); }
+        }
+        
+        public OutputConnectorViewModel(ElementViewModel element, Connector connector, IConnectionViewModelFactory connectionFactory)
+            : base(element, "Output", Colors.Brown, connector)
+        {
+            _connectionViewModelFactory = connectionFactory;
+            _connections = new BindableCollection<ConnectionViewModel>();
+            
+            foreach (var connection in connector.Connections)
+            {
+                var connectionVm = _connectionViewModelFactory.Create(connection);
+                connectionVm.From = this;
+                _connections.Add(connectionVm);
+            }
         }
 
-        public OutputConnectorViewModel(ElementViewModel element, string name, Color color)
-            : base(element, name, color)
+
+        public void Add(Connection connection)
         {
-            _connections = new BindableCollection<ConnectionViewModel>();
+            Connector.Connections.Add(connection);
         }
+        
     }
 }

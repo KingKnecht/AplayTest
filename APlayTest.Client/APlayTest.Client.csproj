@@ -80,11 +80,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\AplayPointExtensions.cs" />
     <Compile Include="Factories\AplayClientFactory.cs" />
     <Compile Include="Factories\APlayUserFactory.cs" />
     <Compile Include="Impl\APlayClient.cs" />
     <Compile Include="Impl\BlockSymbol.cs" />
     <Compile Include="Impl\Client.cs" />
+    <Compile Include="Impl\Connection.cs" />
+    <Compile Include="Impl\Connector.cs" />
     <Compile Include="Impl\ProjectManager.cs" />
     <Compile Include="Impl\UndoManager.cs" />
     <Compile Include="Impl\User.cs" />
