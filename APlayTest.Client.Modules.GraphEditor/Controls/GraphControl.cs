@@ -126,7 +126,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
             add { AddHandler(ConnectionDragCompletedEvent, value); }
             remove { RemoveHandler(ConnectionDragCompletedEvent, value); }
         }
-
+        
         /*ElementItem dragging events*/
         public static readonly RoutedEvent ElementItemDragStartedEvent = EventManager.RegisterRoutedEvent(
             "ElementItemDragStarted", RoutingStrategy.Bubble, typeof(ElementItemDragStartedEventHandler),

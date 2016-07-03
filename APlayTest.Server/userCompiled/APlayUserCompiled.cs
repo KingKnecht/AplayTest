@@ -213,11 +213,11 @@ namespace APlayTest.Server
     void onToChange (APlayTest.Server.Connector NewTo__);
     void onFromPositionChange (APlayTest.Server.AplayPoint NewFromPosition__);
     void onToPositionChange (APlayTest.Server.AplayPoint NewToPosition__);
-    void onSetFromPosition (APlayTest.Server.AplayPoint position, APlayTest.Server.Client client);
-    void onSetToPosition (APlayTest.Server.AplayPoint position, APlayTest.Server.Client client);
-    void onSetFrom (APlayTest.Server.Connector connector, APlayTest.Server.Client client);
-    void onSetTo (APlayTest.Server.Connector connector, APlayTest.Server.Client client);
-    void onSetColor (uint color, APlayTest.Server.Client client);
+    void onSetFromPosition (APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__);
+    void onSetToPosition (APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__);
+    void onSetFrom (APlayTest.Server.Connector connector__, APlayTest.Server.Client client__);
+    void onSetTo (APlayTest.Server.Connector connector__, APlayTest.Server.Client client__);
+    void onSetColor (uint Color__, APlayTest.Server.Client client__);
   };
 }
 namespace APlayTest.Server
@@ -479,9 +479,9 @@ namespace APlayTest.Server
     void onConnectionsSetAt (int pos, APlayTest.Server.Connection element);
     void onConnectionsRemoveAt (int pos, APlayTest.Server.Connection element);
     void onIdChange (int NewId__);
-    void onSetName (String name, APlayTest.Server.Client client);
+    void onSetName (String name__, APlayTest.Server.Client client__);
     APlayTest.Server.BlockSymbol onCreateBlockSymbol ();
-    void onAdd (APlayTest.Server.BlockSymbol blockSymbol, APlayTest.Server.Client client__);
+    void onAdd (APlayTest.Server.BlockSymbol blockSymbol__, APlayTest.Server.Client client__);
     void onRemove (APlayTest.Server.BlockSymbol blockSymbol__, APlayTest.Server.Client client__);
     APlayTest.Server.Connection onCreateConnection ();
     void onAddConnection (APlayTest.Server.Connection connection__, APlayTest.Server.Client client__);
@@ -2220,7 +2220,7 @@ namespace APlayTest.Server
         }
       }
     }
-    public abstract void onSetFromPosition(APlayTest.Server.AplayPoint position, APlayTest.Server.Client client);
+    public abstract void onSetFromPosition(APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__);
     public void onInternSetFromPosition(APlay.Generated.Intern.Server.__AplayPoint position__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
     {
       if(SetFromPositionEventHandler!=null)
@@ -2239,7 +2239,7 @@ namespace APlayTest.Server
         }
       }
     }
-    public abstract void onSetToPosition(APlayTest.Server.AplayPoint position, APlayTest.Server.Client client);
+    public abstract void onSetToPosition(APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__);
     public void onInternSetToPosition(APlay.Generated.Intern.Server.__AplayPoint position__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
     {
       if(SetToPositionEventHandler!=null)
@@ -2258,7 +2258,7 @@ namespace APlayTest.Server
         }
       }
     }
-    public abstract void onSetFrom(APlayTest.Server.Connector connector, APlayTest.Server.Client client);
+    public abstract void onSetFrom(APlayTest.Server.Connector connector__, APlayTest.Server.Client client__);
     public void onInternSetFrom(APlay.Generated.Intern.Server.__IConnectorAPEvents connector__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
     {
       if(SetFromEventHandler!=null)
@@ -2277,7 +2277,7 @@ namespace APlayTest.Server
         }
       }
     }
-    public abstract void onSetTo(APlayTest.Server.Connector connector, APlayTest.Server.Client client);
+    public abstract void onSetTo(APlayTest.Server.Connector connector__, APlayTest.Server.Client client__);
     public void onInternSetTo(APlay.Generated.Intern.Server.__IConnectorAPEvents connector__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
     {
       if(SetToEventHandler!=null)
@@ -2296,7 +2296,7 @@ namespace APlayTest.Server
         }
       }
     }
-    public abstract void onSetColor(uint color, APlayTest.Server.Client client);
+    public abstract void onSetColor(uint Color__, APlayTest.Server.Client client__);
     public void onInternSetColor(uint Color__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
     {
       if(SetColorEventHandler!=null)
@@ -3913,7 +3913,7 @@ namespace APlayTest.Server
         }
       }
     }
-    public abstract void onSetName(String name, APlayTest.Server.Client client);
+    public abstract void onSetName(String name__, APlayTest.Server.Client client__);
     public void onInternSetName(String name__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
     {
       if(SetNameEventHandler!=null)
@@ -3954,7 +3954,7 @@ namespace APlayTest.Server
         }
       }
     }
-    public abstract void onAdd(APlayTest.Server.BlockSymbol blockSymbol, APlayTest.Server.Client client__);
+    public abstract void onAdd(APlayTest.Server.BlockSymbol blockSymbol__, APlayTest.Server.Client client__);
     public void onInternAdd(APlay.Generated.Intern.Server.__IBlockSymbolAPEvents blockSymbol__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
     {
       if(AddEventHandler!=null)

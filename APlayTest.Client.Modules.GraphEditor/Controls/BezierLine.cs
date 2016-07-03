@@ -1,13 +1,15 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Gemini.Framework;
 
 namespace APlayTest.Client.Modules.GraphEditor.Controls
 {
     public class BezierLine : Shape
     {
         private const FrameworkPropertyMetadataOptions MetadataOptions =
-            FrameworkPropertyMetadataOptions.AffectsMeasure | 
+            FrameworkPropertyMetadataOptions.AffectsMeasure |
             FrameworkPropertyMetadataOptions.AffectsRender;
 
         private Geometry _geometry;
@@ -18,7 +20,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public double X1
         {
-            get { return (double) GetValue(X1Property); }
+            get { return (double)GetValue(X1Property); }
             set { SetValue(X1Property, value); }
         }
 
@@ -28,7 +30,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public double X2
         {
-            get { return (double) GetValue(X2Property); }
+            get { return (double)GetValue(X2Property); }
             set { SetValue(X2Property, value); }
         }
 
@@ -38,7 +40,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public double Y1
         {
-            get { return (double) GetValue(Y1Property); }
+            get { return (double)GetValue(Y1Property); }
             set { SetValue(Y1Property, value); }
         }
 
@@ -48,13 +50,44 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
         public double Y2
         {
-            get { return (double) GetValue(Y2Property); }
+            get { return (double)GetValue(Y2Property); }
             set { SetValue(Y2Property, value); }
+        }
+
+        public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register(
+            "IsSelected", typeof(bool), typeof(BezierLine), new PropertyMetadata(default(bool)));
+
+        public bool IsSelected
+        {
+            get { return (bool)GetValue(IsSelectedProperty); }
+            set { SetValue(IsSelectedProperty, value); }
         }
 
         protected override Geometry DefiningGeometry
         {
             get { return _geometry; }
+        }
+
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            DoSelection();
+            base.OnMouseLeftButtonDown(e);
+        }
+
+        private void DoSelection()
+        {
+            var parentGraphControl = ParentGraphControl;
+            if (parentGraphControl == null)
+                return;
+
+            parentGraphControl.SelectedElements.Clear();
+            IsSelected = true;
+        }
+
+        private GraphControl ParentGraphControl
+        {
+            // get { return _parentControl ?? (_parentControl = VisualTreeUtility.FindParent<GraphControl>(this)); }
+            get { return VisualTreeUtility.FindParent<GraphControl>(this); }
         }
 
         protected override Size MeasureOverride(Size constraint)

@@ -166,6 +166,7 @@ namespace APlayTest.Client.Modules.SheetTree.Views
                e.VerticalChange, e.PositionX, e.PositionY);
         }
 
+        
         private Point GetContentPoint(Point zoomAndPanPoint, double scale)
         {
             return new Point(zoomAndPanPoint.X * (1.0 / scale), zoomAndPanPoint.Y * (1.0 / scale));

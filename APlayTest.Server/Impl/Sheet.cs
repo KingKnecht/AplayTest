@@ -104,9 +104,9 @@ namespace APlayTest.Server
                         }
                         else if (change.RedoObjectState is ConnectionUndoable)
                         {
-                            //change.Handled = true;
-                            //Connections.Insert(change.IndexAt,
-                            //    _connectionFactory.Create((ConnectionUndoable)change.RedoObjectState, e.ChangeSet));
+                            change.Handled = true;
+                            Connections.Insert(change.IndexAt,
+                                _connectionFactory.Create((ConnectionUndoable)change.RedoObjectState, e.ChangeSet));
                         }
 
                     }
@@ -147,8 +147,8 @@ namespace APlayTest.Server
 
         private void Dump()
         {
-            var dump = "Sheet:" + Name + ", Conns. #: " + Connections.Count + ", BlockSymbol #: " +BlockSymbols.Count;
-            
+            var dump = "Sheet:" + Name + ", Conns. #: " + Connections.Count + ", BlockSymbol #: " + BlockSymbols.Count;
+
             foreach (var blockSymbol in BlockSymbols)
             {
                 dump += "\n" + blockSymbol.Dump();
@@ -194,35 +194,35 @@ namespace APlayTest.Server
             blockSymbol.PrepareForRemove(client.Id);
 
             _undoService.AddRemove(Id, undoableBlockSymbol, index, "Removing Block [" + toBeDeleted.Id + "]", client.Id);
-            
+
             BlockSymbols.RemoveAt(index);
-            
+
             var connections = blockSymbol.onGetAttachedConnections().ToList();
 
-            var indexList = new List<int>();
+            var connectionsindexList = new List<int>();
             foreach (var connection in connections)
             {
                 index = Connections.IndexOf(connection);
                 if (index >= 0)
                 {
-                    indexList.Add(index);
+                    connectionsindexList.Add(index);
                 }
             }
 
-            indexList.Sort();
+            connectionsindexList.Sort();
 
-            for (int i = indexList.Count - 1; i >= 0; i--)
+            for (int i = connectionsindexList.Count - 1; i >= 0; i--)
             {
-                connections[indexList[i]].PrepareForRemove(client.Id);
-                var undoableConnection = connections[indexList[i]].CreateUndoble();
+                connections[connectionsindexList[i]].PrepareForRemove(client.Id);
+                var undoableConnection = connections[connectionsindexList[i]].CreateUndoble();
 
-                connections[indexList[i]].Disconnect();
+                connections[connectionsindexList[i]].Disconnect();
 
-                _undoService.AddRemove(Id, undoableConnection, indexList[i], "Removing connection [" + undoableConnection.Id + "]", client.Id);
-                Connections.Remove(connections[indexList[i]]);
+                _undoService.AddRemove(Id, undoableConnection, connectionsindexList[i], "Removing connection [" + undoableConnection.Id + "]", client.Id);
+                Connections.Remove(connections[connectionsindexList[i]]);
             }
 
-          
+
             _undoService.EndTransaction(client.Id);
         }
 
@@ -233,16 +233,37 @@ namespace APlayTest.Server
 
         public override void onAddConnection(Connection connection, Client client)
         {
-            //Todo: Undo.
+            APlay.Common.Logging.Logger.LogDesigned(2, "Sheet.onAddConnection called", "AplayTest.Server.Sheet");
             connection.Sheet = this;
+
+            _undoService.StartTransaction(client.Id, "Add connection [" + connection.Id + "]");
+
+            var undoableConnection = new ConnectionUndoable(connection);
+            _undoService.AddInsert(Id, undoableConnection, Connections.Count, "Adding connection [" + undoableConnection.Id + "]", client.Id);
+            
+            //Connections.Insert(Connections.Count,connection);
             Connections.Add(connection);
+
+            _undoService.EndTransaction(client.Id);
         }
 
         public override void onRemoveConnection(Connection connection, Client client)
         {
-            //Todo: Undo.
+            APlay.Common.Logging.Logger.LogDesigned(2, "Sheet.onRemoveConnection called", "AplayTest.Server.Sheet");
+
+            _undoService.StartTransaction(client.Id, "Remove connection [" + connection.Id + "]");
+
             connection.PrepareForRemove(client.Id);
-            Connections.Remove(connection);
+            connection.Disconnect();
+
+            var undoableConnection = new ConnectionUndoable(connection);
+
+            var index = Connections.IndexOf(connection);
+            _undoService.AddRemove(Id, undoableConnection, index, "Removing connection [" + undoableConnection.Id + "]", client.Id);
+
+            Connections.RemoveAt(index);
+
+            _undoService.EndTransaction(client.Id);
         }
 
 

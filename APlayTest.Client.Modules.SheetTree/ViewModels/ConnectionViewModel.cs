@@ -15,6 +15,8 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         private Point _fromPosition;
         private Point _toPosition;
         private Connection _connection;
+        private bool _isSelected;
+
         public ConnectionViewModel(Connection connection)
         {
 
@@ -28,6 +30,11 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             _connection.ToPositionChangeEventHandler += ConnectionOnToPositionChangeEventHandler;
         }
 
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { _isSelected = value; }
+        }
 
         public OutputConnectorViewModel From
         {

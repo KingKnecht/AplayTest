@@ -165,7 +165,8 @@
                                               X1="{Binding FromPosition.X, Mode=OneWay}"
                                                  Y1="{Binding FromPosition.Y, Mode=OneWay}"
                                                  X2="{Binding ToPosition.X, Mode=OneWay}"
-                                                 Y2="{Binding ToPosition.Y, Mode=OneWay}" />
+                                                 Y2="{Binding ToPosition.Y, Mode=OneWay}"
+                                                 IsSelected="{Binding IsSelected, Mode=TwoWay}"/>
                           </DataTemplate>
                     </controls:GraphControl.ConnectionItemTemplate>
                 </controls:GraphControl>

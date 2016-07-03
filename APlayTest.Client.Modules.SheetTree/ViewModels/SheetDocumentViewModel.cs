@@ -75,6 +75,24 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
             _sheet.ConnectionsAddEventHandler += OnConnectionsAddEventHandler;
             _sheet.ConnectionsRemoveEventHandler += OnConnectionsRemoveEventHandler;
+            _sheet.ConnectionsRemoveAtEventHandler += SheetOnConnectionsRemoveAtEventHandler;
+            _sheet.ConnectionsInsertAtEventHandler += SheetOnConnectionsInsertAtEventHandler;
+        }
+
+        private void SheetOnConnectionsInsertAtEventHandler(int indexAt, Connection connection)
+        {
+            if (_connections.All(c => c.Id != connection.Id))
+            {
+                _connections.Add(_connectionViewModelFactory.Create(connection));
+            }
+
+            NotifyOfPropertyChange(() => ConnectionCount);
+        }
+
+        private void SheetOnConnectionsRemoveAtEventHandler(int indexAt, Connection connection)
+        {
+            Connections.RemoveAt(indexAt);
+            _connectionViewModelFactory.Remove(connection.Id);
         }
 
         private void OnConnectionsRemoveEventHandler(Connection connection)
@@ -261,6 +279,16 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             Elements.Where(x => x.IsSelected)
                 .ToList()
                 .ForEach(DeleteElement);
+            Connections.Where(x => x.IsSelected)
+                .ToList()
+                .ForEach(DeleteConnection);
+        }
+
+        private void DeleteConnection(ConnectionViewModel connection)
+        {
+            var toBeDeleted = _sheet.Connections.FirstOrDefault(c => c.Id == connection.Id);
+            
+            _sheet.RemoveConnection(toBeDeleted,_client);
         }
 
         public void OnSelectionChanged()
@@ -323,7 +351,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         public void Update(Command command)
         {
-            command.Enabled = SelectedElements.Any();
+            command.Enabled = SelectedElements.Any() || Connections.Any(x => x.IsSelected);
         }
 
         public Task Run(Command command)
