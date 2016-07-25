@@ -17,14 +17,19 @@ namespace APlayTest.Server.Factories
         private readonly Dictionary<int, Connection> _cache = new Dictionary<int, Connection>();
 
         private readonly IUndoService _undoService;
-
+        private IConnectorFactory _connectorFactory;
 
         public ConnectionFactory(IUndoService undoService)
         {
             _undoService = undoService;
         }
 
-        public IConnectorFactory ConnectorFactory { get; set; }
+        public IConnectorFactory ConnectorFactory
+        {
+            get { return _connectorFactory; }
+            set { _connectorFactory = value; }
+        }
+
         public Factories.SheetFactory SheetFactory { get; set; }
 
         public Connection Create(Sheet sheet)
@@ -52,26 +57,19 @@ namespace APlayTest.Server.Factories
             return connection;
         }
 
-        public Connection Create(int id, ChangeSet changeSet, Sheet sheet)
+        public Connection Create(int id, ExternalChangeSet changeSet, Sheet sheet)
         {
             var connection = Create(id, sheet);
 
             //Todo: Shouldn't there be only one change? Check this..
-            foreach (IChange change in changeSet.Where(c => c.OwnerId == id && c.Handled == false))
+            foreach (ExternalChange change in changeSet.Where(c => c.OwnerId == id))
             {
-                change.Handled = true;
                 if (change.ChangeReason == ChangeReason.Update)
                 {
-                    var undoable = (ConnectionUndoable)change.UndoObjectState;
+                    var undoable = (ConnectionUndoable)change.Undoable;
                     //connection.Color = undoable.Color Todo
                     connection.FromPosition = undoable.FromPosition;
                     connection.ToPosition = undoable.ToPosition;
-
-                    connection.From = ConnectorFactory.Create(undoable.From, changeSet);
-                    //connection.From = ConnectorFactory.Create(undoable.FromId, changeSet, sheet);
-
-                    //connection.To = ConnectorFactory.Create(undoable.ToId, changeSet, sheet);
-                    connection.To = ConnectorFactory.Create(undoable.To, changeSet);
                 }
 
             }
@@ -79,11 +77,11 @@ namespace APlayTest.Server.Factories
             return connection;
         }
 
-        public Connection Create(ConnectionUndoable undoable, ChangeSet changeSet)
+        public Connection Create(ConnectionUndoable undoable, ExternalChangeSet changeSet)
         {
             if (_cache.ContainsKey(undoable.Id))
                 throw new InvalidOperationException("Id already exists in cache. This state is not correct. Id: " +
-                                                    undoable.Id);
+                                                    undoable.Id); //todo: still correct?
 
             if (ConnectorFactory == null)
                 throw new InvalidOperationException("IConnectorFactory not injected.");
@@ -94,19 +92,8 @@ namespace APlayTest.Server.Factories
             connection.FromPosition = undoable.FromPosition;
             connection.ToPosition = undoable.ToPosition;
 
-            if (undoable.From != null)
-            {
-                connection.From = ConnectorFactory.Create(undoable.From, changeSet);
-                connection.From.Connections.Add(connection);
-            }
-
-            if (undoable.To != null)
-            {
-                connection.To = ConnectorFactory.Create(undoable.To, changeSet);
-                connection.To.Connections.Add(connection);
-            }
-
-            //sheet.Connections.Add(connection);
+            connection.From = _connectorFactory.Create(undoable.FromId, sheet);
+            connection.To = _connectorFactory.Create(undoable.ToId, sheet);
 
             return connection;
         }

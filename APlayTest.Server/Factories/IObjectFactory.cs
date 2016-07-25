@@ -8,8 +8,8 @@ namespace APlayTest.Server.Factories
     {
         TResult Create(Sheet sheet);
         TResult Create(int id, Sheet sheet);
-        TResult Create(int id, ChangeSet changeSet, Sheet sheet);
-        TResult Create(TUndoable undoable, ChangeSet changeSet);
+        TResult Create(int id, ExternalChangeSet changeSet, Sheet sheet);
+        TResult Create(TUndoable undoable, ExternalChangeSet changeSet);
         void Remove(int id);
     }
 
@@ -17,8 +17,8 @@ namespace APlayTest.Server.Factories
     {
         TResult Create();
         TResult Create(int id);
-        TResult Create(int id, ChangeSet changeSet);
-        TResult Create(TUndoable undoable, ChangeSet changeSet);
+        TResult Create(int id, ExternalChangeSet changeSet);
+        TResult Create(TUndoable undoable, ExternalChangeSet changeSet);
         void Remove(int id);
     }
 }

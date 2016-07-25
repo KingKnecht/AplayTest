@@ -33,7 +33,7 @@ namespace APlayTest.Server.Factories
         {
 
             var id = IdGenerator.GetNextId();
-            var connection = new Connector(id, _undoService, c => Remove(c.Id), sheet);
+            var connection = new Connector(id, _undoService, c => Remove(c.Id), sheet, _connectionFactory);
 
             _cache[id] = connection;
 
@@ -48,25 +48,24 @@ namespace APlayTest.Server.Factories
                return connector;
             }
 
-            connector = new Connector(id, _undoService, c => Remove(c.Id),sheet);
+            connector = new Connector(id, _undoService, c => Remove(c.Id),sheet, _connectionFactory);
             _cache[id] = connector;
 
             return connector;
         }
 
-        public Connector Create(int id, ChangeSet changeSet,Sheet sheet)
+        public Connector Create(int id, ExternalChangeSet changeSet,Sheet sheet)
         {
             var connector = Create(id,sheet);
 
             //Todo: Shouldn't there onyl one change? Check this..
-            foreach (IChange change in changeSet.Where(c => c.OwnerId == id && c.Handled == false))
+            foreach (ExternalChange change in changeSet.Where(c => c.OwnerId == id))
             {
-                change.Handled = true;
-
+              
                 //Todo: Do we need change direction in this case? Direction should be part of the changeset in future.
                 if (change.ChangeReason == ChangeReason.Update)
                 {
-                    var undoable = (ConnectorUndoable)change.UndoObjectState;
+                    var undoable = (ConnectorUndoable)change.Undoable;
                     connector.Direction = undoable.Direction;
                     connector.Position = undoable.Position;
 
@@ -86,7 +85,7 @@ namespace APlayTest.Server.Factories
             return connector;
         }
 
-        public Connector Create(ConnectorUndoable undoable, ChangeSet changeSet)
+        public Connector Create(ConnectorUndoable undoable, ExternalChangeSet changeSet)
         {
             if (_cache.ContainsKey(undoable.Id))
             {
@@ -97,11 +96,6 @@ namespace APlayTest.Server.Factories
             var connector = Create(undoable.Id, SheetFactory.Create(undoable.SheetId));
             connector.Direction = undoable.Direction;
             connector.Position = undoable.Position;
-
-            //foreach (var connection in undoable.Connections)
-            //{
-            //    connector.Connections.Add(_connectionFactory.Create(connection, changeSet));
-            //}
             
             return connector;
         }

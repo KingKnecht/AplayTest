@@ -54,9 +54,8 @@ namespace APlayTest.Server
         {
             foreach (var change in e.ChangeSet.Where(c => c.OwnerId == Id))
             {
-                var storedObject = e.ChangeDirection == StateChangeDirection.Undo
-                  ? (BlockSymbolUndoable)change.UndoObjectState
-                  : (BlockSymbolUndoable)change.RedoObjectState;
+                var storedObject = (BlockSymbolUndoable) change.Undoable;
+                  
                 switch (change.ChangeReason)
                 {
                     case ChangeReason.InsertAt:
@@ -194,10 +193,7 @@ namespace APlayTest.Server
 
         public IEnumerable<ConnectorUndoable> InputConnectors { get; set; }
 
-        //public int? OutputConnectorId { get; set; }
-
-        //public IEnumerable<int> InputConnectorIds { get; set; }
-
+      
         public BlockSymbolUndoable(int id, double positionX, double positionY)
         {
             Id = id;

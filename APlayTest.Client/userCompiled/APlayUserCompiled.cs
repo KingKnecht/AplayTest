@@ -127,8 +127,6 @@ namespace APlayTest.Client
     bool RequiresInit ();
     void SetFromPosition (APlayTest.Client.AplayPoint position__, APlayTest.Client.Client client__);
     void SetToPosition (APlayTest.Client.AplayPoint position__, APlayTest.Client.Client client__);
-    void SetFrom (APlayTest.Client.Connector connector__, APlayTest.Client.Client client__);
-    void SetTo (APlayTest.Client.Connector connector__, APlayTest.Client.Client client__);
     void SetColor (uint Color__, APlayTest.Client.Client client__);
   };
 }
@@ -167,6 +165,7 @@ namespace APlayTest.Client
     APlayTest.Client.AplayPoint Position {get; set; }
     ulong APlayEntityId {get; }
     bool RequiresInit ();
+    void AddConnection (APlayTest.Client.Connection connection__, APlayTest.Client.Client client__);
   };
 }
 namespace APlayTest.Client
@@ -1473,14 +1472,6 @@ namespace APlayTest.Client
     {
       implConnection.SetToPosition(new APlay.Generated.Intern.Client.__AplayPoint(position__.X, position__.Y), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
     }
-    public void SetFrom(APlayTest.Client.Connector connector__, APlayTest.Client.Client client__)
-    {
-      implConnection.SetFrom(((APlay.Generated.Intern.Client.__IConnectorAPEvents) (connector__)), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
-    }
-    public void SetTo(APlayTest.Client.Connector connector__, APlayTest.Client.Client client__)
-    {
-      implConnection.SetTo(((APlay.Generated.Intern.Client.__IConnectorAPEvents) (connector__)), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
-    }
     public void SetColor(uint Color__, APlayTest.Client.Client client__)
     {
       implConnection.SetColor(Color__, ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
@@ -1815,6 +1806,10 @@ namespace APlayTest.Client
     {
       bool retu = implConnector.RequiresInit();
       return (((bool) (retu)));
+    }
+    public void AddConnection(APlayTest.Client.Connection connection__, APlayTest.Client.Client client__)
+    {
+      implConnector.AddConnection(((APlay.Generated.Intern.Client.__IConnectionAPEvents) (connection__)), ((APlay.Generated.Intern.Client.__IClientAPEvents) (client__)));
     }
     public APlay.Generated.Intern.Client.__IConnectorAPImpl getConnectorObject()
     {

@@ -7,9 +7,6 @@ using sbardos.UndoFramework.Annotations;
 
 namespace sbardos.UndoFramework
 {
-
-
-
     public interface IUndoStack
     {
         event EventHandler<ActiveStateChangedEventArgs> ActiveStateChanged;
@@ -38,12 +35,12 @@ namespace sbardos.UndoFramework
         public UndoStack(int clientId)
         {
             _clientId = clientId;
-            
+
             History = new List<HistoryEntry>();
 
             _undoStack.CollectionChanged += sender =>
             {
-                UndoStackCount = ((C5.LinkedList<ChangeSet>)sender).Count -1;
+                UndoStackCount = ((C5.LinkedList<ChangeSet>)sender).Count - 1;
                 CanUndo = UndoStackCount > 0;
             };
 
@@ -124,7 +121,10 @@ namespace sbardos.UndoFramework
 #if DEBUG
                 DumpStack();
 #endif
-                OnActiveChangeSetChanged(new ActiveStateChangedEventArgs(_redoStack.Last.AsReversed(), StateChangeDirection.Undo, _clientId));
+                OnActiveChangeSetChanged(
+                    new ActiveStateChangedEventArgs(
+                        new ExternalChangeSet(_redoStack.Last.AsReversed(), StateChangeDirection.Undo), _clientId));
+
                 OnStackChanged(new StackChangedEventArgs(new List<HistoryChange>(), _undoStack.Last.Id, _clientId));
             }
         }
@@ -140,7 +140,10 @@ namespace sbardos.UndoFramework
                 DumpStack();
 #endif
 
-                OnActiveChangeSetChanged(new ActiveStateChangedEventArgs(_undoStack.Last, StateChangeDirection.Redo, _clientId));
+                OnActiveChangeSetChanged(
+                    new ActiveStateChangedEventArgs(new ExternalChangeSet(_undoStack.Last, StateChangeDirection.Redo),
+                        _clientId));
+
                 OnStackChanged(new StackChangedEventArgs(new List<HistoryChange>(), _undoStack.Last.Id, _clientId));
             }
         }
@@ -207,15 +210,15 @@ namespace sbardos.UndoFramework
                 {
                     Undo();
                 }
-               
+
                 return;
             }
 
             //Search the redo stack if needed.
             var foundRedoState = _redoStack.FirstOrDefault(cs => cs.Id == destinationEntry.Id);
-            if (foundRedoState == null) 
+            if (foundRedoState == null)
                 return;
-            
+
             while (_undoStack.Last.Id != foundRedoState.Id)
             {
                 Redo();
@@ -223,5 +226,5 @@ namespace sbardos.UndoFramework
         }
     }
 
-    
+
 }

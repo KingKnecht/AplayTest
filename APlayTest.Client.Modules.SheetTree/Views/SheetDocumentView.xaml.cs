@@ -120,7 +120,13 @@ namespace APlayTest.Client.Modules.SheetTree.Views
         private void OnGraphControlDragEnter(object sender, DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(ToolboxDragDrop.DataFormat))
+            {
                 e.Effects = DragDropEffects.None;
+            }
+            else
+            {
+                
+            }
         }
 
         private void OnGraphControlDrop(object sender, DragEventArgs e)

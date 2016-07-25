@@ -45,8 +45,7 @@ namespace Undo.Server
                       "ActiveStateChanged received and updated state. OwnerId: " + change.OwnerId,
                       "Undo.Server.TaskManager");
 
-                if (e.ChangeDirection == StateChangeDirection.Undo)
-                {
+                
                     if (change.ChangeReason == ChangeReason.InsertAt)
                     {
                         Tasks.RemoveAt(change.IndexAt);
@@ -54,21 +53,10 @@ namespace Undo.Server
                     else if (change.ChangeReason == ChangeReason.RemoveAt)
                     {
                         Tasks.Insert(change.IndexAt,
-                            new Task(change.RedoObjectState.Id, e.ChangeSet, _undoService));
+                            new Task(change.Undoable.Id, e.ChangeSet, _undoService));
                     }
-                }
-                else if (e.ChangeDirection == StateChangeDirection.Redo)
-                {
-                    if (change.ChangeReason == ChangeReason.InsertAt)
-                    {
-                        Tasks.Insert(change.IndexAt,
-                             new Task(change.RedoObjectState.Id, e.ChangeSet, _undoService));
-                    }
-                    else if (change.ChangeReason == ChangeReason.RemoveAt)
-                    {
-                        Tasks.RemoveAt(change.IndexAt);
-                    }
-                }
+               
+                
             }
         }
 

@@ -215,8 +215,6 @@ namespace APlayTest.Server
     void onToPositionChange (APlayTest.Server.AplayPoint NewToPosition__);
     void onSetFromPosition (APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__);
     void onSetToPosition (APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__);
-    void onSetFrom (APlayTest.Server.Connector connector__, APlayTest.Server.Client client__);
-    void onSetTo (APlayTest.Server.Connector connector__, APlayTest.Server.Client client__);
     void onSetColor (uint Color__, APlayTest.Server.Client client__);
   };
 }
@@ -285,6 +283,7 @@ namespace APlayTest.Server
     void onConnectionsSetAt (int pos, APlayTest.Server.Connection element);
     void onConnectionsRemoveAt (int pos, APlayTest.Server.Connection element);
     void onPositionChange (APlayTest.Server.AplayPoint NewPosition__);
+    void onAddConnection (APlayTest.Server.Connection connection__, APlayTest.Server.Client client__);
   };
 }
 namespace APlayTest.Server
@@ -2258,44 +2257,6 @@ namespace APlayTest.Server
         }
       }
     }
-    public abstract void onSetFrom(APlayTest.Server.Connector connector__, APlayTest.Server.Client client__);
-    public void onInternSetFrom(APlay.Generated.Intern.Server.__IConnectorAPEvents connector__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
-    {
-      if(SetFromEventHandler!=null)
-      {
-        SetFromEventHandler(((APlayTest.Server.Connector) (connector__)), ((APlayTest.Server.Client) (client__)));
-      }
-      else
-      {
-        if(APlayTest.Server.ConnectionSkeleton.StaticSetFromEventHandler!=null)
-        {
-          APlayTest.Server.ConnectionSkeleton.StaticSetFromEventHandler(((APlayTest.Server.Connector) (connector__)), ((APlayTest.Server.Client) (client__)), ((APlayTest.Server.Connection) (this)));
-        }
-        else
-        {
-          this.onSetFrom(((APlayTest.Server.Connector) (connector__)), ((APlayTest.Server.Client) (client__)));
-        }
-      }
-    }
-    public abstract void onSetTo(APlayTest.Server.Connector connector__, APlayTest.Server.Client client__);
-    public void onInternSetTo(APlay.Generated.Intern.Server.__IConnectorAPEvents connector__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
-    {
-      if(SetToEventHandler!=null)
-      {
-        SetToEventHandler(((APlayTest.Server.Connector) (connector__)), ((APlayTest.Server.Client) (client__)));
-      }
-      else
-      {
-        if(APlayTest.Server.ConnectionSkeleton.StaticSetToEventHandler!=null)
-        {
-          APlayTest.Server.ConnectionSkeleton.StaticSetToEventHandler(((APlayTest.Server.Connector) (connector__)), ((APlayTest.Server.Client) (client__)), ((APlayTest.Server.Connection) (this)));
-        }
-        else
-        {
-          this.onSetTo(((APlayTest.Server.Connector) (connector__)), ((APlayTest.Server.Client) (client__)));
-        }
-      }
-    }
     public abstract void onSetColor(uint Color__, APlayTest.Server.Client client__);
     public void onInternSetColor(uint Color__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
     {
@@ -2450,10 +2411,6 @@ namespace APlayTest.Server
     static public event APlayTest.Server.Delegates.void_AplayPoint_Client_Connection StaticSetFromPositionEventHandler;
     public event APlayTest.Server.Delegates.void_AplayPoint_Client SetToPositionEventHandler;
     static public event APlayTest.Server.Delegates.void_AplayPoint_Client_Connection StaticSetToPositionEventHandler;
-    public event APlayTest.Server.Delegates.void_Connector_Client SetFromEventHandler;
-    static public event APlayTest.Server.Delegates.void_Connector_Client_Connection StaticSetFromEventHandler;
-    public event APlayTest.Server.Delegates.void_Connector_Client SetToEventHandler;
-    static public event APlayTest.Server.Delegates.void_Connector_Client_Connection StaticSetToEventHandler;
     public event APlayTest.Server.Delegates.void_uint32_Client SetColorEventHandler;
     static public event APlayTest.Server.Delegates.void_uint32_Client_Connection StaticSetColorEventHandler;
     private APlay.Generated.Intern.Server.__IConnectionAPImpl implConnection;
@@ -2769,6 +2726,25 @@ namespace APlayTest.Server
         }
       }
     }
+    public abstract void onAddConnection(APlayTest.Server.Connection connection__, APlayTest.Server.Client client__);
+    public void onInternAddConnection(APlay.Generated.Intern.Server.__IConnectionAPEvents connection__, APlay.Generated.Intern.Server.__IClientAPEvents client__)
+    {
+      if(AddConnectionEventHandler!=null)
+      {
+        AddConnectionEventHandler(((APlayTest.Server.Connection) (connection__)), ((APlayTest.Server.Client) (client__)));
+      }
+      else
+      {
+        if(APlayTest.Server.ConnectorSkeleton.StaticAddConnectionEventHandler!=null)
+        {
+          APlayTest.Server.ConnectorSkeleton.StaticAddConnectionEventHandler(((APlayTest.Server.Connection) (connection__)), ((APlayTest.Server.Client) (client__)), ((APlayTest.Server.Connector) (this)));
+        }
+        else
+        {
+          this.onAddConnection(((APlayTest.Server.Connection) (connection__)), ((APlayTest.Server.Client) (client__)));
+        }
+      }
+    }
     public bool RequiresInit()
     {
       bool retu = implConnector.RequiresInit();
@@ -2908,6 +2884,8 @@ namespace APlayTest.Server
     static public event APlayTest.Server.Delegates.void_int32_Connection_Connector StaticConnectionsRemoveAtEventHandler;
     public event APlayTest.Server.Delegates.void_AplayPoint PositionChangeEventHandler;
     static public event APlayTest.Server.Delegates.void_AplayPoint_Connector StaticPositionChangeEventHandler;
+    public event APlayTest.Server.Delegates.void_Connection_Client AddConnectionEventHandler;
+    static public event APlayTest.Server.Delegates.void_Connection_Client_Connector StaticAddConnectionEventHandler;
     private APlay.Generated.Intern.Server.__IConnectorAPImpl implConnector;
   }
   
@@ -6750,7 +6728,6 @@ namespace APlayTest.Server
     public delegate void void_AplayPoint(APlayTest.Server.AplayPoint NewFromPosition__);
     public delegate void void_AplayPoint_Connection(APlayTest.Server.AplayPoint NewFromPosition__, APlayTest.Server.Connection this_);
     public delegate void void_AplayPoint_Client_Connection(APlayTest.Server.AplayPoint position__, APlayTest.Server.Client client__, APlayTest.Server.Connection this_);
-    public delegate void void_Connector_Client_Connection(APlayTest.Server.Connector connector__, APlayTest.Server.Client client__, APlayTest.Server.Connection this_);
     public delegate void void_uint32_Client(uint Color__, APlayTest.Server.Client client__);
     public delegate void void_uint32_Client_Connection(uint Color__, APlayTest.Server.Client client__, APlayTest.Server.Connection this_);
     public delegate void void_ConnectorDirection(APlayTest.Server.ConnectorDirection NewDirection__);
@@ -6760,6 +6737,8 @@ namespace APlayTest.Server
     public delegate void void_Connection_Connector(APlayTest.Server.Connection element, APlayTest.Server.Connector this_);
     public delegate void void_int32_Connection_Connector(int pos, APlayTest.Server.Connection element, APlayTest.Server.Connector this_);
     public delegate void void_AplayPoint_Connector(APlayTest.Server.AplayPoint NewPosition__, APlayTest.Server.Connector this_);
+    public delegate void void_Connection_Client(APlayTest.Server.Connection connection__, APlayTest.Server.Client client__);
+    public delegate void void_Connection_Client_Connector(APlayTest.Server.Connection connection__, APlayTest.Server.Client client__, APlayTest.Server.Connector this_);
     public delegate void void_int32_Project(int NewId__, APlayTest.Server.Project this_);
     public delegate void void_ProjectDetail(APlayTest.Server.ProjectDetail NewProjectDetail__);
     public delegate void void_ProjectDetail_Project(APlayTest.Server.ProjectDetail NewProjectDetail__, APlayTest.Server.Project this_);
@@ -6788,7 +6767,6 @@ namespace APlayTest.Server
     public delegate void void_BlockSymbol_Client_Sheet(APlayTest.Server.BlockSymbol blockSymbol__, APlayTest.Server.Client client__, APlayTest.Server.Sheet this_);
     public delegate APlayTest.Server.Connection Connection_();
     public delegate APlayTest.Server.Connection Connection_Sheet(APlayTest.Server.Sheet this_);
-    public delegate void void_Connection_Client(APlayTest.Server.Connection connection__, APlayTest.Server.Client client__);
     public delegate void void_Connection_Client_Sheet(APlayTest.Server.Connection connection__, APlayTest.Server.Client client__, APlayTest.Server.Sheet this_);
     public delegate APlayTest.Server.Sheet Sheet_();
     public delegate APlayTest.Server.Sheet Sheet_SheetManager(APlayTest.Server.SheetManager this_);

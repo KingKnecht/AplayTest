@@ -23,7 +23,7 @@ namespace sbardos.UndoFramework
 
         public UndoStackManager()
         {
-            
+
         }
 
         public void Push(ChangeSet changeSet, int clientId)
@@ -38,7 +38,7 @@ namespace sbardos.UndoFramework
         {
             lock (_myLock)
             {
-                OnActiveStateChanged(new ActiveStateChangedEventArgs(changeSet.AsReversed(), StateChangeDirection.Undo,
+                OnActiveStateChanged(new ActiveStateChangedEventArgs(new ExternalChangeSet(changeSet.AsReversed(), StateChangeDirection.Undo),
                     clientId));
             }
         }
@@ -89,7 +89,7 @@ namespace sbardos.UndoFramework
 
         public event EventHandler<ActiveStateChangedEventArgs> ActiveStateChanged;
         public event EventHandler<StackChangedEventArgs> StackChanged;
-       
+
         public IUndoStack GetStackOfClient(int clientId)
         {
             CreateStackForClient(clientId);

@@ -53,7 +53,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
 
             if (blockSymbol.OutputConnector != null)
             {
-                OutputConnector = new OutputConnectorViewModel(this, blockSymbol.OutputConnector, _connectionViewModelFactory);
+                OutputConnector = new OutputConnectorViewModel(this, blockSymbol.OutputConnector, _connectionViewModelFactory, client);
             }
             
             

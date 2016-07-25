@@ -78,9 +78,6 @@ AplayPoint ToPosition;
 void SetFromPosition(AplayPoint position, Client client);
 void SetToPosition(AplayPoint position, Client client);
 
-void SetFrom(Connector connector, Client client);
-void SetTo(Connector connector, Client client);
-
 void SetColor(uint32 Color, Client client);]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
@@ -96,7 +93,8 @@ ConnectorDirection Direction;
 List<Connection> Connections;
 AplayPoint Position;
 
-
+[Client -> Server]
+void AddConnection(Connection connection, Client client);
 
 ]]></code>
       <__designerPresentation>null</__designerPresentation>

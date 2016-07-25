@@ -98,14 +98,6 @@
           <data type="AplayPoint" name="position" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
         </event>
-        <event name="SetFrom">
-          <data type="Connector" name="connector" persistable="false"/>
-          <data type="Client" name="client" persistable="false"/>
-        </event>
-        <event name="SetTo">
-          <data type="Connector" name="connector" persistable="false"/>
-          <data type="Client" name="client" persistable="false"/>
-        </event>
         <event name="SetColor">
           <data type="uint32" name="Color" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
@@ -120,6 +112,12 @@
         <data type="ConnectorDirection" name="Direction" persistable="false"/>
         <list type="Connection" name="Connections" persistable="false"/>
         <data type="AplayPoint" name="Position" persistable="false"/>
+      </permissionGroup>
+      <permissionGroup baseType="ClientToServer">
+        <event name="AddConnection">
+          <data type="Connection" name="connection" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
       </permissionGroup>
     </communicationObject>
     <enum name="ConnectorDirection">

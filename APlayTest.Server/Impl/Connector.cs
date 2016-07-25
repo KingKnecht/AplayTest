@@ -6,10 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using APlay.Common;
-using APlay.Common.Utils;
-using APlay.Common.DataTypes;
-using APlayTest.Server;
 using sbardos.UndoFramework;
 
 namespace APlayTest.Server
@@ -19,6 +15,7 @@ namespace APlayTest.Server
         public Sheet Sheet { get; set; }
         private readonly IUndoService _undoService;
         private readonly Action<Connector> _onPrepareRemoveCallBack;
+        private readonly Factories.IConnectionFactory _connectionFactory;
         private readonly Action<int> _prepareRemoveCallback;
 
         /// <summary>
@@ -32,19 +29,39 @@ namespace APlayTest.Server
             /// TODO: add your code here
         }
 
-        public Connector(int id, IUndoService undoService, Action<Connector> onPrepareRemoveCallBack, Sheet sheet)
+        public Connector(int id, IUndoService undoService, Action<Connector> onPrepareRemoveCallBack, Sheet sheet, Factories.IConnectionFactory connectionFactory)
         {
             Sheet = sheet;
             Id = id;
             _undoService = undoService;
             _onPrepareRemoveCallBack = onPrepareRemoveCallBack;
+            _connectionFactory = connectionFactory;
 
             _undoService.ActiveStateChanged += UndoServiceOnActiveStateChanged;
         }
 
         private void UndoServiceOnActiveStateChanged(object sender, ActiveStateChangedEventArgs e)
         {
+            foreach (var change in e.ChangeSet.Where(c => c.OwnerId == Id))
+            {
+                if (change.ChangeReason == ChangeReason.Update)
+                {
+                    Connections.Clear();
+                    var undoObject = (ConnectorUndoable)change.Undoable;
+                    foreach (var connectionUndoable in undoObject.Connections)
+                    {
+                        Connections.Add(_connectionFactory.Create(connectionUndoable, e.ChangeSet));
+                    }
+                }
 
+
+            }
+        }
+
+        public void Disconnect(Connection connection)
+        {
+            //Todo: Undo-Transaction?
+            Connections.Remove(connection);
         }
 
 
@@ -55,6 +72,19 @@ namespace APlayTest.Server
             //                   "Undo.Server.Connector");
 
             UpdateConnectionPositions(position);
+        }
+
+        public override void onAddConnection(Connection connection, Client client)
+        {
+
+            APlay.Common.Logging.Logger.LogDesigned(2,
+                               "Connector: onAddConnection(): ConnectionId: " + connection.Id,
+                               "Undo.Server.Connector");
+        }
+
+        public void AddConnection(Connection connection, int clientId)
+        {
+            _undoService.AddInsert(Id,new ConnectionUndoable(connection),Connections.Count -1,"",1234 );
         }
 
         private void UpdateConnectionPositions(AplayPoint position)
@@ -97,6 +127,8 @@ namespace APlayTest.Server
 
             return dump;
         }
+
+      
     }
 
     public class ConnectorUndoable : IUndoable
@@ -107,14 +139,14 @@ namespace APlayTest.Server
             Position = connector.Position;
             Direction = connector.Direction;
 
-            //Connections = connector.Connections.Select(c => c.CreateUndoble()).ToList();
+            Connections = connector.Connections.Select(c => new ConnectionUndoable(c)).ToList();
 
             SheetId = connector.Sheet.Id;
         }
 
         public IEnumerable<ConnectionUndoable> Connections { get; set; }
 
-      
+
         public ConnectorDirection Direction { get; set; }
 
         public AplayPoint Position { get; set; }

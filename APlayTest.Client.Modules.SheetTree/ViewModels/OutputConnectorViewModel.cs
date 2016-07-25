@@ -11,6 +11,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
     public class OutputConnectorViewModel : ConnectorViewModel
     {
         private readonly IConnectionViewModelFactory _connectionViewModelFactory;
+        private readonly Client _client;
         private readonly Func<BitmapSource> _valueCallback;
 
         public override ConnectorDirection ConnectorDirection
@@ -29,10 +30,11 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             get { return null; } //_valueCallback(); }
         }
         
-        public OutputConnectorViewModel(ElementViewModel element, Connector connector, IConnectionViewModelFactory connectionFactory)
+        public OutputConnectorViewModel(ElementViewModel element, Connector connector, IConnectionViewModelFactory connectionFactory, Client client)
             : base(element, "Output", Colors.Brown, connector)
         {
             _connectionViewModelFactory = connectionFactory;
+            _client = client;
             _connections = new BindableCollection<ConnectionViewModel>();
             
             foreach (var connection in connector.Connections)
@@ -46,7 +48,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         public void Add(Connection connection)
         {
-            Connector.Connections.Add(connection);
+            Connector.AddConnection(connection, _client);
         }
         
     }

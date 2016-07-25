@@ -39,7 +39,7 @@ namespace Undo.Server
             Description = description;
         }
 
-        public Task(int id, ChangeSet changeSet, IUndoService undoService)
+        public Task(int id, ExternalChangeSet changeSet, IUndoService undoService)
         {
             _undoService = undoService;
             _undoService.ActiveStateChanged += _undoService_ActiveStateChanged;
@@ -48,8 +48,8 @@ namespace Undo.Server
             
             foreach (var change in changeSet.Where(c => c.ItemId == id))
             {
-                IsDone = ((UndoObject) change.RedoObjectState).IsDone;
-                Description = ((UndoObject)change.RedoObjectState).Description;
+                IsDone = ((UndoObject) change.Undoable).IsDone;
+                Description = ((UndoObject)change.Undoable).Description;
             }
         }
 
@@ -57,13 +57,10 @@ namespace Undo.Server
         {
             foreach (var change in e.ChangeSet.Where(c => c.OwnerId == Id))
             {
-                var storedObject = e.ChangeDirection == StateChangeDirection.Undo
-                    ? (UndoObject)change.UndoObjectState
-                    : (UndoObject)change.RedoObjectState;
-
+                var storedObject = (UndoObject)change.Undoable;
+                    
                 if (change.ChangeReason == ChangeReason.Update)
                 {
-
                     IsDone = storedObject.IsDone;
                     Description = storedObject.Description;
 

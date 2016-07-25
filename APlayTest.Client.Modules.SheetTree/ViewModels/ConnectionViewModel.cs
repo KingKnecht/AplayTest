@@ -14,7 +14,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         private InputConnectorViewModel _to;
         private Point _fromPosition;
         private Point _toPosition;
-        private Connection _connection;
+        private readonly Connection _connection;
         private bool _isSelected;
 
         public ConnectionViewModel(Connection connection)
@@ -50,7 +50,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
                 if (_from != null)
                 {
-                    _connection.From = From.GetInternalConnector();
+                   
                     _from.Add(_connection);
                 }
 

@@ -55,88 +55,42 @@ namespace APlayTest.Server
                       "ActiveStateChanged received and updated state. OwnerId: " + change.OwnerId,
                       "AplayTest.Server.Sheet");
 
-                if (e.ChangeDirection == StateChangeDirection.Undo)
+
+                if (change.ChangeReason == ChangeReason.InsertAt)
                 {
-                    if (change.ChangeReason == ChangeReason.InsertAt)
+                    if (change.Undoable is BlockSymbolUndoable)
                     {
-                        if (change.RedoObjectState is BlockSymbolUndoable)
-                        {
-                            change.Handled = true;
-
-                            BlockSymbols.RemoveAt(change.IndexAt);
-                            _blockSymbolFactory.Remove(change.RedoObjectState.Id);
-                        }
-                        else if (change.RedoObjectState is ConnectionUndoable)
-                        {
-                            change.Handled = true;
-                            Connections.RemoveAt(change.IndexAt);
-                            _connectionFactory.Remove(change.RedoObjectState.Id);
-                        }
-
+                        BlockSymbols.Insert(change.IndexAt,
+                            _blockSymbolFactory.Create((BlockSymbolUndoable)change.Undoable, e.ChangeSet));
                     }
-                    else if (change.ChangeReason == ChangeReason.RemoveAt)
+                    else if (change.Undoable is ConnectionUndoable)
                     {
-                        if (change.RedoObjectState is BlockSymbolUndoable)
-                        {
-                            change.Handled = true;
-                            BlockSymbols.Insert(change.IndexAt,
-                                _blockSymbolFactory.Create((BlockSymbolUndoable)change.RedoObjectState, e.ChangeSet));
-                        }
-                        else if (change.RedoObjectState is ConnectionUndoable)
-                        {
-                            change.Handled = true;
-                            Connections.Insert(change.IndexAt,
-                                _connectionFactory.Create((ConnectionUndoable)change.RedoObjectState, e.ChangeSet));
-                        }
-
+                        Connections.Insert(change.IndexAt,
+                           _connectionFactory.Create((ConnectionUndoable)change.Undoable, e.ChangeSet));
                     }
+
                 }
-                //Redo ---------------------
-                else if (e.ChangeDirection == StateChangeDirection.Redo)
+                else if (change.ChangeReason == ChangeReason.RemoveAt)
                 {
-                    if (change.ChangeReason == ChangeReason.InsertAt)
+                    if (change.Undoable is BlockSymbolUndoable)
                     {
-                        if (change.RedoObjectState is BlockSymbolUndoable)
-                        {
-                            change.Handled = true;
-                            BlockSymbols.Insert(change.IndexAt,
-                                _blockSymbolFactory.Create((BlockSymbolUndoable)change.RedoObjectState, e.ChangeSet));
-                        }
-                        else if (change.RedoObjectState is ConnectionUndoable)
-                        {
-                            change.Handled = true;
-                            Connections.Insert(change.IndexAt,
-                                _connectionFactory.Create((ConnectionUndoable)change.RedoObjectState, e.ChangeSet));
-                        }
-
+                        BlockSymbols.RemoveAt(change.IndexAt);
+                        _blockSymbolFactory.Remove(change.Undoable.Id);
                     }
-                    else if (change.ChangeReason == ChangeReason.RemoveAt)
+                    else if (change.Undoable is ConnectionUndoable)
                     {
-                        if (change.RedoObjectState is BlockSymbolUndoable)
-                        {
-                            change.Handled = true;
-                            BlockSymbols.RemoveAt(change.IndexAt);
-                            _blockSymbolFactory.Remove(change.RedoObjectState.Id);
-                        }
-                        else if (change.RedoObjectState is ConnectionUndoable)
-                        {
-                            change.Handled = true;
-                            Connections.RemoveAt(change.IndexAt);
-                            _connectionFactory.Remove(change.RedoObjectState.Id);
-                        }
-
+                        Connections.RemoveAt(change.IndexAt);
+                        _connectionFactory.Remove(change.Undoable.Id);
                     }
+
                 }
 
-                var storedObject = e.ChangeDirection == StateChangeDirection.Undo
-                                     ? change.UndoObjectState as SheetUndoable
-                                     : change.RedoObjectState as SheetUndoable;
+                var storedObject = change.Undoable as SheetUndoable;
 
                 if (storedObject != null)
                 {
                     if (change.ChangeReason == ChangeReason.Update)
                     {
-                        change.Handled = true;
                         Name = storedObject.Name;
                     }
                 }
@@ -166,23 +120,27 @@ namespace APlayTest.Server
         public override BlockSymbol onCreateBlockSymbol()
         {
             var blockSymbol = _blockSymbolFactory.Create(this);
-
+            
+            this.SyncedWithBlockSymbol(blockSymbol); //Todo: Ask the APlay guys. Without this, Postion in onAdd() is not set everytime.
+            
             return blockSymbol;
         }
 
         public override void onAdd(BlockSymbol blockSymbol, Client client)
         {
-            APlay.Common.Logging.Logger.LogDesigned(2, "Sheet.onAdd called", "AplayTest.Server.Sheet");
-
+            APlay.Common.Logging.Logger.LogDesigned(2, "OnAdd(blockSymbol) Pos: " + blockSymbol.PositionX + "/" + blockSymbol.PositionY, "AplayTest.Server.Sheet");
+           
             var undoObject = new BlockSymbolUndoable(blockSymbol);
+           
             _undoService.AddInsert(Id, undoObject, BlockSymbols.Count, "Adding new Block", client.Id);
 
             BlockSymbols.Add(blockSymbol);
-
         }
 
         public override void onRemove(BlockSymbol blockSymbol, Client client)
         {
+            //this.SyncedWithBlockSymbol(blockSymbol);
+
             APlay.Common.Logging.Logger.LogDesigned(2, "Sheet.onRemove called", "AplayTest.Server.Sheet");
 
             var toBeDeleted = BlockSymbols.First(t => t.Id == blockSymbol.Id);
@@ -213,13 +171,15 @@ namespace APlayTest.Server
 
             for (int i = connectionsindexList.Count - 1; i >= 0; i--)
             {
-                connections[connectionsindexList[i]].PrepareForRemove(client.Id);
-                var undoableConnection = connections[connectionsindexList[i]].CreateUndoble();
+                var connection = connections[connectionsindexList[i]];
 
-                connections[connectionsindexList[i]].Disconnect();
+                connection.PrepareForRemove(client.Id);
+
+                var undoableConnection = connection.CreateUndoble();
+
 
                 _undoService.AddRemove(Id, undoableConnection, connectionsindexList[i], "Removing connection [" + undoableConnection.Id + "]", client.Id);
-                Connections.Remove(connections[connectionsindexList[i]]);
+                Connections.Remove(connection);
             }
 
 
@@ -240,7 +200,7 @@ namespace APlayTest.Server
 
             var undoableConnection = new ConnectionUndoable(connection);
             _undoService.AddInsert(Id, undoableConnection, Connections.Count, "Adding connection [" + undoableConnection.Id + "]", client.Id);
-            
+
             //Connections.Insert(Connections.Count,connection);
             Connections.Add(connection);
 
@@ -253,10 +213,21 @@ namespace APlayTest.Server
 
             _undoService.StartTransaction(client.Id, "Remove connection [" + connection.Id + "]");
 
-            connection.PrepareForRemove(client.Id);
-            connection.Disconnect();
+            var from = connection.From;
+            var fromUndoable = new ConnectorUndoable(from);
+
+            var to = connection.To;
+            var toUndoable = new ConnectorUndoable(to);
+
+            from.Disconnect(connection);
+            to.Disconnect(connection);
+
+            _undoService.AddUpdate(fromUndoable, new ConnectorUndoable(from), "", client.Id);
+            _undoService.AddUpdate(toUndoable, new ConnectorUndoable(to), "", client.Id);
 
             var undoableConnection = new ConnectionUndoable(connection);
+
+            connection.PrepareForRemove(client.Id);
 
             var index = Connections.IndexOf(connection);
             _undoService.AddRemove(Id, undoableConnection, index, "Removing connection [" + undoableConnection.Id + "]", client.Id);
@@ -265,6 +236,8 @@ namespace APlayTest.Server
 
             _undoService.EndTransaction(client.Id);
         }
+
+
 
 
         public override void onSetName(string name, Client client)

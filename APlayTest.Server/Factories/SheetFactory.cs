@@ -55,12 +55,12 @@ namespace APlayTest.Server.Factories
             return sheet;
         }
 
-        public Sheet Create(int id, ChangeSet changeSet)
+        public Sheet Create(int id, ExternalChangeSet changeSet)
         {
             throw new NotImplementedException();
         }
 
-        public Sheet Create(SheetUndoable undoable, ChangeSet changeSet)
+        public Sheet Create(SheetUndoable undoable, ExternalChangeSet changeSet)
         {
             if (_cache.ContainsKey(undoable.Id))
                 throw new InvalidOperationException("Id already exists in cache. This state is not correct. Id: " +

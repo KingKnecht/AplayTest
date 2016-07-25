@@ -46,10 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActiveStateChangedEventArgs.cs" />
     <Compile Include="ChangeSet.cs" />
     <Compile Include="Change.cs" />
     <Compile Include="Events.cs" />
+    <Compile Include="ExternalChange.cs" />
+    <Compile Include="ExternalChangeSet.cs" />
     <Compile Include="HistoryChange.cs" />
+    <Compile Include="HistoryEntry.cs" />
     <Compile Include="UndoService.cs" />
     <Compile Include="UndoStackManager.cs" />
     <Compile Include="Properties\Annotations.cs" />

@@ -53,12 +53,12 @@ namespace APlayTest.Server.Factories
             return blockSymbol;
         }
 
-        public BlockSymbol Create(int id, ChangeSet changeSet, Sheet sheet)
+        public BlockSymbol Create(int id, ExternalChangeSet changeSet, Sheet sheet)
         {
             throw new NotImplementedException();
         }
 
-        public BlockSymbol Create(BlockSymbolUndoable undoable, ChangeSet changeSet)
+        public BlockSymbol Create(BlockSymbolUndoable undoable, ExternalChangeSet changeSet)
         {
             if (_cache.ContainsKey(undoable.Id))
                 throw new InvalidOperationException("Id already exists in cache. This state is not correct. Id: " +
@@ -71,8 +71,7 @@ namespace APlayTest.Server.Factories
 
             blockSymbol.InputConnectors.Clear();
             blockSymbol.OutputConnector = null;
-
-
+            
             foreach (var connectorUndoable in undoable.InputConnectors)
             {
                 blockSymbol.InputConnectors.Add(_connectorFactory.Create(connectorUndoable, changeSet));
