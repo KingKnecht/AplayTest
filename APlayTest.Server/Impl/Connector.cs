@@ -80,13 +80,13 @@ namespace APlayTest.Server
             APlay.Common.Logging.Logger.LogDesigned(2,
                                "Connector: onAddConnection(): ConnectionId: " + connection.Id,
                                "Undo.Server.Connector");
-        }
 
-        public void AddConnection(Connection connection, int clientId)
-        {
-            _undoService.AddInsert(Id,new ConnectionUndoable(connection),Connections.Count -1,"",1234 );
-        }
+            Connections.Insert(Connections.Count, connection);
 
+            _undoService.AddInsert(Id, new ConnectionUndoable(connection), Connections.Count,
+                "Adding connection (" + connection.Id + ") to connector: " + Id, client.Id);
+        }
+        
         private void UpdateConnectionPositions(AplayPoint position)
         {
             foreach (var connection in Connections)

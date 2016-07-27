@@ -17,7 +17,7 @@ using Gemini.Framework.Services;
 
 using Gemini.Modules.UndoRedo;
 using Reactive.Bindings.Extensions;
-using sbardos.UndoFramework;
+
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {
@@ -30,15 +30,16 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         private readonly IConnectionViewModelFactory _connectionViewModelFactory;
         private IObservableCollection<SheetDocumentViewModel> _sheets;
         private SheetDocumentViewModel _selectedSheet;
-
+     
 
         [ImportingConstructor]
-        public SheetTreeViewModel(IAPlayAwareShell shell, IInspectorTool inspectorTool, IConnectionViewModelFactory connectionViewModelFactory)
+        public SheetTreeViewModel(IAPlayAwareShell shell, IInspectorTool inspectorTool, 
+            IConnectionViewModelFactory connectionViewModelFactory)
         {
             _shell = shell;
             _inspectorTool = inspectorTool;
             _connectionViewModelFactory = connectionViewModelFactory;
-
+     
 
             DisplayName = "Sheet Tree";
             Sheets = new BindableCollection<SheetDocumentViewModel>();
@@ -49,7 +50,9 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             {
                 if (shell.Project.SheetManager.Sheets != null)
                 {
-                    Sheets.AddRange(shell.Project.SheetManager.Sheets.Select(sheet => new SheetDocumentViewModel(sheet, inspectorTool, shell, OnOpenedChanged, _shell.Client, _connectionViewModelFactory)));
+                    Sheets.AddRange(shell.Project.SheetManager.Sheets.Select(sheet => new SheetDocumentViewModel(sheet, 
+                        inspectorTool, shell, OnOpenedChanged, _shell.Client,
+                        _connectionViewModelFactory)));
                 }
             }
 
@@ -71,7 +74,8 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         void OnProjectChanged(object sender, Project e)
         {
-            Sheets.AddRange(e.SheetManager.Sheets.Select(s => new SheetDocumentViewModel(s, _inspectorTool, _shell, OnOpenedChanged, _shell.Client, _connectionViewModelFactory)));
+            Sheets.AddRange(e.SheetManager.Sheets.Select(s => new SheetDocumentViewModel(s, _inspectorTool, _shell, OnOpenedChanged, 
+                _shell.Client, _connectionViewModelFactory)));
         }
 
 

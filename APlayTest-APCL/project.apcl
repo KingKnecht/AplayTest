@@ -98,6 +98,14 @@
           <data type="AplayPoint" name="position" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
         </event>
+        <event name="SetTo">
+          <data type="Connector" name="connector" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="SetFrom">
+          <data type="Connector" name="connector" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
         <event name="SetColor">
           <data type="uint32" name="Color" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
@@ -201,6 +209,7 @@
         <data type="WString" name="Name" persistable="false"/>
         <list type="BlockSymbol" name="BlockSymbols" persistable="false"/>
         <list type="Connection" name="Connections" persistable="false"/>
+        <list type="Connector" name="Connectors" persistable="false"/>
         <data type="int32" name="Id" persistable="false"/>
       </permissionGroup>
     </communicationObject>

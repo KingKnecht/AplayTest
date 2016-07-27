@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\DeleteCommandDefinition.cs" />
+    <Compile Include="Commands\DrawConnectLineCommandDefinition.cs" />
     <Compile Include="Factories\ConnectionViewModelFactory.cs" />
     <Compile Include="MenuDefinitions.cs" />
     <Compile Include="Commands\ViewSheetTreeCommandDefinition.cs" />
@@ -167,10 +168,6 @@
     <ProjectReference Include="..\Gemini.Core\Gemini.csproj">
       <Project>{13dbfc87-c152-4a86-94b0-d9944beef647}</Project>
       <Name>Gemini</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\sbardos.UndoFramework\sbardos.UndoFramework.csproj">
-      <Project>{168D777A-BAA6-4694-810C-B028A811318D}</Project>
-      <Name>sbardos.UndoFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

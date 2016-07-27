@@ -9,12 +9,14 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {
     public class InputConnectorViewModel : ConnectorViewModel
     {
+        private readonly Connector _connector;
         private readonly IConnectionViewModelFactory _connectionViewModelFactory;
         public event EventHandler SourceChanged;
 
         public InputConnectorViewModel(ElementViewModel element, Connector connector, IConnectionViewModelFactory connectionViewModelFactory)
             : base(element, "Input", Colors.Coral, connector)
         {
+            _connector = connector;
             _connectionViewModelFactory = connectionViewModelFactory;
 
             if (connector.Connections.Any())
@@ -43,22 +45,17 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         public ConnectionViewModel Connection
         {
             get { return _connection; }
-            set
+            private set
             {
-                //if (_connection != null)
-                //    _connection.From.Element.OutputChanged -= OnSourceElementOutputChanged;
-
                 _connection = value;
 
                 if (_connection != null)
                 {
-                    //_connection.From.Element.OutputChanged += OnSourceElementOutputChanged;
-
                     if (_connection.To != this)
                     {
                         _connection.To = this;
-                    }
 
+                    }
                 }
 
                 RaiseSourceChanged();
@@ -92,5 +89,9 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         }
 
 
+        public void AddConnection(ConnectionViewModel connection, Client client)
+        {
+            this.Connection = connection;
+        }
     }
 }

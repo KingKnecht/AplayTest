@@ -78,6 +78,9 @@ AplayPoint ToPosition;
 void SetFromPosition(AplayPoint position, Client client);
 void SetToPosition(AplayPoint position, Client client);
 
+void SetTo(Connector connector, Client client);
+void SetFrom(Connector connector, Client client);
+
 void SetColor(uint32 Color, Client client);]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
@@ -168,12 +171,18 @@ Connection CreateConnection();
 void AddConnection(Connection connection, Client client);
 void RemoveConnection(Connection connection, Client client);
 
+//Connecor handling
+//Connector CreateConnector();
+//void AddConnector(Connector connector, Client client);
+//void RemoveConnector(Connector connector, Client client);
+
 
 [Server  -> All]
 WString Name;
 List<BlockSymbol> BlockSymbols;
 List<Connection> Connections;
-int32 Id;
+List<Connector> Connectors;
+int32 Id;
 
 ]]></code>
       <__designerPresentation>null</__designerPresentation>

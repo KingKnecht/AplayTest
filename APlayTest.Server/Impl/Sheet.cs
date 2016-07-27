@@ -101,13 +101,26 @@ namespace APlayTest.Server
 
         private void Dump()
         {
-            var dump = "Sheet:" + Name + ", Conns. #: " + Connections.Count + ", BlockSymbol #: " + BlockSymbols.Count;
+            var dump = "Sheet:" + Name + ", Conns. #: " + Connections.Count + ", BlockSymbol #: " + BlockSymbols.Count +
+                       ", Connectors #: " +
+                       BlockSymbols.SelectMany(b => b.InputConnectors)
+                           .Concat(BlockSymbols.Select(b => b.OutputConnector));
 
             foreach (var blockSymbol in BlockSymbols)
             {
                 dump += "\n" + blockSymbol.Dump();
             }
 
+            foreach (var connector in BlockSymbols.SelectMany(b => b.InputConnectors))
+            {
+                dump += "\n" + connector.Dump();
+            }
+
+            foreach (var connector in BlockSymbols.Where(b => b.OutputConnector != null).Select(b => b.OutputConnector))
+            {
+                dump += "\n" + connector.Dump();
+            }
+            
             foreach (var connection in Connections)
             {
                 dump += "\n" + connection.Dump();
@@ -212,6 +225,7 @@ namespace APlayTest.Server
             APlay.Common.Logging.Logger.LogDesigned(2, "Sheet.onRemoveConnection called", "AplayTest.Server.Sheet");
 
             _undoService.StartTransaction(client.Id, "Remove connection [" + connection.Id + "]");
+
 
             var from = connection.From;
             var fromUndoable = new ConnectorUndoable(from);

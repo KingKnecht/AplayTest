@@ -17,7 +17,7 @@ using Gemini.Framework;
 using Gemini.Framework.Commands;
 using Gemini.Framework.Threading;
 using Reactive.Bindings;
-using sbardos.UndoFramework;
+
 
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
@@ -25,7 +25,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
     [Export(typeof(SheetDocumentViewModel))]
     [PartCreationPolicy(CreationPolicy.NonShared)]
-    public class SheetDocumentViewModel : Document, ICommandHandler<DeleteCommandDefinition>
+    public class SheetDocumentViewModel : Document, ICommandHandler<DeleteCommandDefinition>, ICommandHandler<DrawConnectLineCommandDefinition>
     {
         private readonly Sheet _sheet;
         private string _name;
@@ -36,8 +36,16 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         private readonly Client _client;
         private readonly IConnectionViewModelFactory _connectionViewModelFactory;
         private bool _isOpen;
+        private readonly BindableCollection<ElementViewModel> _elements;
+        private bool _isConnectionDrawMode;
 
-        public SheetDocumentViewModel(Sheet sheet, IInspectorTool inspectorTool, IAPlayAwareShell shell, Action<SheetDocumentViewModel> onOpenedChanged, Client client, IConnectionViewModelFactory connectionViewModelFactory)
+        [ImportingConstructor]
+        public SheetDocumentViewModel(Sheet sheet,
+            IInspectorTool inspectorTool,
+            IAPlayAwareShell shell,
+            Action<SheetDocumentViewModel> onOpenedChanged,
+            Client client,
+            IConnectionViewModelFactory connectionViewModelFactory)
         {
             _sheet = sheet;
             _inspectorTool = inspectorTool;
@@ -46,7 +54,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             _onOpenedChanged = onOpenedChanged;
             _client = client;
             _connectionViewModelFactory = connectionViewModelFactory;
-
+         
             _name = _sheet.Name;
 
 
@@ -159,7 +167,6 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             DisplayName = NewName__;
         }
 
-        private readonly BindableCollection<ElementViewModel> _elements;
         public IObservableCollection<ElementViewModel> Elements
         {
             get { return _elements; }
@@ -205,6 +212,8 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             if (!(sourceConnector is OutputConnectorViewModel))
                 return null;
 
+            _client.UndoManager.StartTransaction("New connection drag started");
+            
             var connection = _sheet.CreateConnection();
 
             connection.FromPosition = new AplayPoint(sourceConnector.Position.X, sourceConnector.Position.Y);
@@ -232,19 +241,16 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         {
             var nearbyConnector = FindNearbyInputConnector(currentDragPoint);
 
-            if (nearbyConnector == null || sourceConnector.Element == nearbyConnector.Element)
+            if (nearbyConnector == null)
             {
-                Connections.Remove(newConnection);
+                _client.UndoManager.CancelTransaction();
                 return;
             }
-
-            var existingConnection = nearbyConnector.Connection;
-            if (existingConnection != null)
-                Connections.Remove(existingConnection);
-
-            newConnection.To = nearbyConnector;
-            nearbyConnector.Connection = newConnection;
             
+            //newConnection.AddToConnector(nearbyConnector, _client);
+            nearbyConnector.AddConnection(newConnection, _client);
+            
+            _client.UndoManager.EndTransaction();
         }
 
         private InputConnectorViewModel FindNearbyInputConnector(Point mousePosition)
@@ -287,8 +293,8 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         private void DeleteConnection(ConnectionViewModel connection)
         {
             var toBeDeleted = _sheet.Connections.FirstOrDefault(c => c.Id == connection.Id);
-            
-            _sheet.RemoveConnection(toBeDeleted,_client);
+
+            _sheet.RemoveConnection(toBeDeleted, _client);
         }
 
         public void OnSelectionChanged()
@@ -351,13 +357,40 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         public void Update(Command command)
         {
-            command.Enabled = SelectedElements.Any() || Connections.Any(x => x.IsSelected);
+            if (command.CommandDefinition is DeleteCommandDefinition)
+            {
+                command.Enabled = SelectedElements.Any() || Connections.Any(x => x.IsSelected);    
+            }
+            else if (command.CommandDefinition is DrawConnectLineCommandDefinition)
+            {
+                command.Enabled = true;
+            }
+            
         }
 
         public Task Run(Command command)
         {
-            DeleteSelectedElements();
+            if (command.CommandDefinition is DeleteCommandDefinition)
+            {
+                DeleteSelectedElements();
+            }
+            else if (command.CommandDefinition is DrawConnectLineCommandDefinition)
+            {
+                IsConnectionDrawMode = !IsConnectionDrawMode;
+            }
+
             return TaskUtility.Completed;
+        }
+
+        public bool IsConnectionDrawMode
+        {
+            get { return _isConnectionDrawMode; }
+            set
+            {
+                if (value == _isConnectionDrawMode) return;
+                _isConnectionDrawMode = value;
+                NotifyOfPropertyChange(() => IsConnectionDrawMode);
+            }
         }
 
         public int ConnectionCount
@@ -365,6 +398,6 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             get { return _connections.Count; }
         }
 
-     
+
     }
 }

@@ -9,7 +9,7 @@ namespace sbardos.UndoFramework
     /// </summary>
     public interface IUndoService
     {
-        Transaction StartTransaction(int clientId, string description);
+        Transaction StartTransaction(int clientId, string description); //Todo: Why does StartTransaction return a transaction? 
         void EndTransaction(int clientId);
         //void Add(Change change, int clientId);
         void AddUpdate(IUndoable oldState, IUndoable newState, string description, int clientId);

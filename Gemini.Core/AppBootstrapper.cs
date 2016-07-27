@@ -67,6 +67,7 @@ namespace Gemini
 
 	    protected virtual void BindServices(CompositionBatch batch)
         {
+            
             batch.AddExportedValue<IWindowManager>(new WindowManager());
             batch.AddExportedValue<IEventAggregator>(new EventAggregator());
             batch.AddExportedValue(Container);

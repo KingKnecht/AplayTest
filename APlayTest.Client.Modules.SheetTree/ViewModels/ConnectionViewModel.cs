@@ -65,7 +65,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             {
                 if (_to != null)
                 {
-                    _to.Connection = null;
+                    //_to.Connection = null;
                 }
 
                 _to = value;
@@ -74,15 +74,12 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
                 {
                     _connection.To = To.GetInternalConnector();
                     _connection.To.Connections.Add(_connection);
-                    _to.Connection = this;
+                    //_to.Connection = this;
                 }
 
                 NotifyOfPropertyChange(() => To);
             }
         }
-
-
-
 
         public Point FromPosition
         {
@@ -134,7 +131,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         private void ConnectionOnFromPositionChangeEventHandler(AplayPoint newFromPosition)
         {
             FromPosition = new Point(newFromPosition.X, newFromPosition.Y);
-            //Console.WriteLine("Connection FromPos: " + FromPosition);
+            Console.WriteLine("Connection FromPos: " + FromPosition);
         }
 
         private void ConnectionOnToPositionChangeEventHandler(AplayPoint newToPosition)
@@ -145,6 +142,10 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         public int Id { get; private set; }
 
+        public void AddToConnector(InputConnectorViewModel connector, Client client)
+        {
+            _connection.SetTo(connector.GetInternalConnector(),client);
+        }
     }
 
     public enum ConnectorDataType

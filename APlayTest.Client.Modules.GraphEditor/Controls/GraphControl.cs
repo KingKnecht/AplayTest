@@ -177,11 +177,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
             AddHandler(ElementItem.DraggingEvent, new ElementItemDraggingEventHandler(OnElementItemDragging));
             AddHandler(ElementItem.DragCompletedEvent, new ElementItemDragCompletedEventHandler(OnElementItemDragCompleted));
         }
-
-
-
-
-
+        
         public override void OnApplyTemplate()
         {
             _elementItemsControl = (ElementItemsControl)Template.FindName("PART_ElementItemsControl", this);
