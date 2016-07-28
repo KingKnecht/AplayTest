@@ -28,7 +28,7 @@ namespace APlayTest.Server.Console
             connectionFactory.ConnectorFactory = connectorFactory; //Make sure to inject the connectorFactory.
 
             var blockSymbolFactory = new BlockSymbolFactory(undoService, connectorFactory);
-            var sheetFactory = new SheetFactory(undoService, connectionFactory, blockSymbolFactory);
+            var sheetFactory = new SheetFactory(undoService, connectionFactory, blockSymbolFactory, connectorFactory);
             
             connectionFactory.SheetFactory = sheetFactory;
             blockSymbolFactory.SheetFactory = sheetFactory;

@@ -5,22 +5,22 @@ using System.Windows;
 using APlay.Generated.Intern.Client;
 using Caliburn.Micro;
 using APlayTest.Client.Extensions;
+using APlayTest.Client.Modules.Inspector;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels
 {
     public class ConnectionViewModel : PropertyChangedBase
-    {
-        private OutputConnectorViewModel _from;
-        private InputConnectorViewModel _to;
-        private Point _fromPosition;
+    {   private Point _fromPosition;
         private Point _toPosition;
         private readonly Connection _connection;
+        private readonly Client _client;
         private bool _isSelected;
 
-        public ConnectionViewModel(Connection connection)
+        public ConnectionViewModel(Connection connection, Client client,IInspectorTool inspectorTool)
         {
 
             _connection = connection;
+            _client = client;
             Id = connection.Id;
             FromPosition = new Point(_connection.FromPosition.X, _connection.FromPosition.Y);
             ToPosition = new Point(_connection.ToPosition.X, _connection.ToPosition.Y);
@@ -34,51 +34,6 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         {
             get { return _isSelected; }
             set { _isSelected = value; }
-        }
-
-        public OutputConnectorViewModel From
-        {
-            get { return _from; }
-            set
-            {
-                if (_from != null)
-                {
-                    _from.Connections.Remove(this);
-                }
-
-                _from = value;
-
-                if (_from != null)
-                {
-                   
-                    _from.Add(_connection);
-                }
-
-                NotifyOfPropertyChange(() => From);
-            }
-        }
-
-        public InputConnectorViewModel To
-        {
-            get { return _to; }
-            set
-            {
-                if (_to != null)
-                {
-                    //_to.Connection = null;
-                }
-
-                _to = value;
-
-                if (_to != null)
-                {
-                    _connection.To = To.GetInternalConnector();
-                    _connection.To.Connections.Add(_connection);
-                    //_to.Connection = this;
-                }
-
-                NotifyOfPropertyChange(() => To);
-            }
         }
 
         public Point FromPosition
@@ -110,10 +65,8 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
                 if (_toPosition != value)
                 {
                     _toPosition = value;
-                    //NotifyOfPropertyChange(() => ToPosition);
                     NotifyOfPropertyChange();
-                    //Console.WriteLine("Connection ToPos: " + _toPosition);
-                }
+                 }
 
 
                 //Todo: Catch on server-side? Or both? To reduce traffic, do it here as well...
@@ -123,15 +76,13 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
                     _connection.ToPosition = aplayPoint;
 
                 }
-
-
             }
         }
 
         private void ConnectionOnFromPositionChangeEventHandler(AplayPoint newFromPosition)
         {
             FromPosition = new Point(newFromPosition.X, newFromPosition.Y);
-            Console.WriteLine("Connection FromPos: " + FromPosition);
+           // Console.WriteLine("Connection FromPos: " + FromPosition);
         }
 
         private void ConnectionOnToPositionChangeEventHandler(AplayPoint newToPosition)
@@ -141,15 +92,7 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         }
 
         public int Id { get; private set; }
-
-        public void AddToConnector(InputConnectorViewModel connector, Client client)
-        {
-            _connection.SetTo(connector.GetInternalConnector(),client);
-        }
+        
     }
 
-    public enum ConnectorDataType
-    {
-
-    }
-}
+   }

@@ -1,0 +1,104 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:elements="clr-namespace:APlayTest.Client.Modules.SheetTree.ViewModels.Elements"
+                    xmlns:controls="clr-namespace:APlayTest.Client.Modules.GraphEditor.Controls;assembly=APlayTest.Client.Modules.GraphEditor"
+                    xmlns:viewModels="clr-namespace:APlayTest.Client.Modules.SheetTree.ViewModels">
+
+    <DataTemplate  x:Key="BlockTemplate"
+                   DataType="elements:BlockViewModel">
+        <Border x:Name="HighlightBorder"
+                BorderThickness="2"
+                Padding="2"
+                CornerRadius="4">
+            <Border CornerRadius="4"
+                    Background="WhiteSmoke">
+                <Border.Effect>
+                    <DropShadowEffect Color="DarkGray"
+                                      ShadowDepth="0"
+                                      BlurRadius="10" />
+                </Border.Effect>
+                <StackPanel Orientation="Vertical">
+                    <Border Background="LightSkyBlue"
+                            Padding="5 2 2 2"
+                            BorderBrush="DodgerBlue"
+                            BorderThickness="0 0 0 1"
+                            CornerRadius="2 2 0 0">
+                        <TextBlock HorizontalAlignment="Stretch"
+                                   Text="{Binding Name}" />
+                    </Border>
+                    <Border>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"
+                                                  MinWidth="50" />
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="1"
+                                    Background="LightGray" />
+                            <Border Grid.Column="2"
+                                    VerticalAlignment="Top">
+                                <StackPanel Orientation="Vertical">
+                                    <Border Padding="5"
+                                            BorderBrush="LightGray"
+                                            BorderThickness="0 0 0 1">
+                                        <Border BorderBrush="Black"
+                                                BorderThickness="1"
+                                                Width="{x:Static elements:BlockViewModel.PreviewSize}"
+                                                Height="{x:Static elements:BlockViewModel.PreviewSize}">
+                                        </Border>
+                                    </Border>
+
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Border>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding IsSelected}"
+                         Value="True">
+                <Setter TargetName="HighlightBorder"
+                        Property="BorderBrush"
+                        Value="Yellow" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ConnectorTemplate"
+                  DataType="elements:ConnectorViewModel">
+        <Border x:Name="HighlightBorder"
+                BorderThickness="2"
+                Padding="2"
+                CornerRadius="2">
+
+            <Canvas Width="{x:Static elements:ConnectorViewModel.PreviewSizeX}"
+                    Height="{x:Static elements:ConnectorViewModel.PreviewSizeY}">
+                <Path Stroke="Black"
+                      StrokeThickness="2"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center">
+                    <Path.Data>
+                        <PathGeometry Figures="{Binding Path}" />
+                    </Path.Data>
+                </Path>
+                <Canvas.Background>
+                    <SolidColorBrush Color="Black"
+                                     Opacity="0"></SolidColorBrush>
+                </Canvas.Background>
+            </Canvas>
+            
+        </Border>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding IsSelected}"
+                         Value="True">
+                <Setter TargetName="HighlightBorder"
+                        Property="BorderBrush"
+                        Value="Yellow" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+</ResourceDictionary>

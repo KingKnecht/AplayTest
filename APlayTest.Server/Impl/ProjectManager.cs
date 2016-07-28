@@ -237,15 +237,13 @@ namespace APlayTest.Server
             blockFrom.PositionY = 100.0;
 
             var outputConnectorFrom = _connectorFactory.Create(sheet);
-            outputConnectorFrom.Direction = ConnectorDirection.Output;
-
+            
             var blockTo = _blockSymbolFactory.Create(sheet);
             blockTo.PositionX = 400;
             blockTo.PositionY = 100;
 
             var inputConnectorTo = _connectorFactory.Create(sheet);
 
-            inputConnectorTo.Direction = ConnectorDirection.Input;
             
             var connection = _connectionFactory.Create(sheet);
             connection.From = outputConnectorFrom;
@@ -254,8 +252,8 @@ namespace APlayTest.Server
             //inputConnectorTo.Connections.Add(connection);
             //outputConnectorFrom.Connections.Add(connection);
 
-            blockTo.InputConnectors.Add(inputConnectorTo);
-            blockFrom.OutputConnector = outputConnectorFrom;
+            blockTo.Connectors.Add(inputConnectorTo);
+            blockFrom.Connectors.Add(outputConnectorFrom); 
 
             //aplayProject.SheetManager.Sheets[0].Connections.Add(connection);
 

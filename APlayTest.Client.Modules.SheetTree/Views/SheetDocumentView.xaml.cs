@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using APlayTest.Client.Modules.GraphEditor.Controls;
 using APlayTest.Client.Modules.SheetTree.ViewModels;
+using APlayTest.Client.Modules.SheetTree.ViewModels.Elements;
 using Gemini.Modules.Toolbox;
 using Gemini.Modules.Toolbox.Models;
 
@@ -30,6 +31,19 @@ namespace APlayTest.Client.Modules.SheetTree.Views
         public SheetDocumentView()
         {
             InitializeComponent();
+        }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            //Xaml version of loading this template is not working...
+            ResourceDictionary dict = new ResourceDictionary();
+            Uri dataTemplatesAbsoluteUri = new Uri("pack://application:,,,/APlayTest.Client.Modules.SheetTree;component/DataTemplates/ElementDataTemplates.xaml", UriKind.Absolute);
+            dict.Source = dataTemplatesAbsoluteUri;
+            Application.Current.Resources.MergedDictionaries.Add(dict);
+
+
         }
 
         private SheetDocumentViewModel ViewModel
@@ -95,15 +109,14 @@ namespace APlayTest.Client.Modules.SheetTree.Views
 
         private void OnGraphControlConnectionDragStarted(object sender, ConnectionDragStartedEventArgs e)
         {
-            var sourceConnector = (ConnectorViewModel)e.SourceConnector.DataContext;
             var currentDragPoint = Mouse.GetPosition(GraphControl);
-            var connection = ViewModel.OnConnectionDragStarted(sourceConnector, currentDragPoint);
+            var connection = ViewModel.OnConnectionDragStarted(currentDragPoint);
             e.Connection = connection;
         }
 
         private void OnGraphControlConnectionDragging(object sender, ConnectionDraggingEventArgs e)
         {
-            
+
             var currentDragPoint = Mouse.GetPosition(GraphControl);
             var connection = (ConnectionViewModel)e.Connection;
             ViewModel.OnConnectionDragging(currentDragPoint, connection);
@@ -112,9 +125,8 @@ namespace APlayTest.Client.Modules.SheetTree.Views
         private void OnGraphControlConnectionDragCompleted(object sender, ConnectionDragCompletedEventArgs e)
         {
             var currentDragPoint = Mouse.GetPosition(GraphControl);
-            var sourceConnector = (ConnectorViewModel)e.SourceConnector.DataContext;
             var newConnection = (ConnectionViewModel)e.Connection;
-            ViewModel.OnConnectionDragCompleted(currentDragPoint, newConnection, sourceConnector);
+            ViewModel.OnConnectionDragCompleted(currentDragPoint, newConnection);
         }
 
         private void OnGraphControlDragEnter(object sender, DragEventArgs e)
@@ -125,7 +137,29 @@ namespace APlayTest.Client.Modules.SheetTree.Views
             }
             else
             {
-                
+                var toolboxItem = (ToolboxItem)e.Data.GetData(ToolboxDragDrop.DataFormat);
+                var mousePosition = e.GetPosition(GraphControl);
+
+                if (toolboxItem.ItemType == typeof(BlockViewModel))
+                {
+                    var element = (BlockViewModel)Activator.CreateInstance(toolboxItem.ItemType);
+
+                    element.X = mousePosition.X - BlockViewModel.PreviewSize / 2;
+                    element.Y = mousePosition.Y - BlockViewModel.PreviewSize / 2;
+                    element.IsSelected = true;
+
+                    ViewModel.AddGhost(element);
+                }
+                else if (toolboxItem.ItemType == typeof(ConnectorViewModel))
+                {
+                    var element = (ConnectorViewModel)Activator.CreateInstance(toolboxItem.ItemType);
+
+                    element.X = mousePosition.X - ConnectorViewModel.PreviewSizeX / 2;
+                    element.Y = mousePosition.Y - ConnectorViewModel.PreviewSizeY / 2;
+                    element.IsSelected = true;
+                    
+                    ViewModel.AddGhost(element);
+                }
             }
         }
 
@@ -136,28 +170,67 @@ namespace APlayTest.Client.Modules.SheetTree.Views
                 var mousePosition = e.GetPosition(GraphControl);
 
                 var toolboxItem = (ToolboxItem)e.Data.GetData(ToolboxDragDrop.DataFormat);
-                var element = (ElementViewModel)Activator.CreateInstance(toolboxItem.ItemType);
-                element.X = mousePosition.X;
-                element.Y = mousePosition.Y;
 
-                ViewModel.DropElement(element);
-                
+                if (toolboxItem.ItemType == typeof(BlockViewModel))
+                {
+                    var element = (BlockViewModel)Activator.CreateInstance(toolboxItem.ItemType);
+
+                    element.X = mousePosition.X - BlockViewModel.PreviewSize / 2;
+                    element.Y = mousePosition.Y - BlockViewModel.PreviewSize / 2;
+                   
+                    ViewModel.DropElement(element);
+                }
+                else if (toolboxItem.ItemType == typeof(ConnectorViewModel))
+                {
+                    var element = (ConnectorViewModel)Activator.CreateInstance(toolboxItem.ItemType);
+
+                    element.X = mousePosition.X - ConnectorViewModel.PreviewSizeX / 2;
+                    element.Y = mousePosition.Y - ConnectorViewModel.PreviewSizeY / 2;
+
+                    ViewModel.DropElement(element);
+                }
+
+            }
+        }
+
+        private void OnGraphControlDragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(ToolboxDragDrop.DataFormat))
+            {
+                var mousePosition = e.GetPosition(GraphControl);
+
+                var ghost = ViewModel.GetGhost();
+                if (ghost is BlockViewModel)
+                {
+                   
+                    ((BlockViewModel)ghost).X = mousePosition.X - BlockViewModel.PreviewSize / 2;
+                    ((BlockViewModel)ghost).Y = mousePosition.Y - BlockViewModel.PreviewSize / 2;
+
+                }
+                else if (ghost is ConnectorViewModel)
+                {
+                    ((ConnectorViewModel)ghost).X = mousePosition.X - ConnectorViewModel.PreviewSizeX / 2;
+                    ((ConnectorViewModel)ghost).Y = mousePosition.Y - ConnectorViewModel.PreviewSizeY / 2;
+
+                }
             }
         }
 
         private void OnElementItemDragStarted(object sender, ElementItemDragStartedEventArgs e)
         {
             var dataContext = ((ElementItem)e.OriginalSource).DataContext;
-            var itemViewModel = (ElementViewModel)dataContext;
             var currentDragPoint = Mouse.GetPosition(GraphControl);
-            
+
+
+            var itemViewModel = (SymbolBaseViewModel)dataContext;
+
             ViewModel.OnElementItemDragStarted(itemViewModel, currentDragPoint);
         }
 
         private void OnElementItemDragCompleted(object sender, ElementItemDragCompletedEventArgs e)
         {
             var dataContext = ((ElementItem)e.OriginalSource).DataContext;
-            var itemViewModel = (ElementViewModel)dataContext;
+            var itemViewModel = (SymbolBaseViewModel)dataContext;
             var currentDragPoint = Mouse.GetPosition(GraphControl);
 
             ViewModel.OnElementItemDragCompleted(itemViewModel, currentDragPoint);
@@ -166,16 +239,18 @@ namespace APlayTest.Client.Modules.SheetTree.Views
         private void OnElementItemDragging(object sender, ElementItemDraggingEventArgs e)
         {
             var dataContext = ((ElementItem)e.OriginalSource).DataContext;
-            var itemViewModel = (ElementViewModel)dataContext;
-            
+            var itemViewModel = (SymbolBaseViewModel)dataContext;
+
             ViewModel.OnElementItemDragging(itemViewModel, e.HorizontalChange,
                e.VerticalChange, e.PositionX, e.PositionY);
         }
 
-        
+
         private Point GetContentPoint(Point zoomAndPanPoint, double scale)
         {
             return new Point(zoomAndPanPoint.X * (1.0 / scale), zoomAndPanPoint.Y * (1.0 / scale));
         }
+
+
     }
 }

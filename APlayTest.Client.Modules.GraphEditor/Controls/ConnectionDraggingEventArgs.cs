@@ -12,8 +12,8 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
         }
 
         internal ConnectionDraggingEventArgs(RoutedEvent routedEvent, object source,
-            ElementItem elementItem, object connection, ConnectorItem connectorItem)
-            : base(routedEvent, source, elementItem, connectorItem)
+            ElementItem elementItem, object connection)
+            : base(routedEvent, source, elementItem)
         {
             _connection = connection;
         }

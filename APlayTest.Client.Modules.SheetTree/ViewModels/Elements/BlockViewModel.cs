@@ -10,33 +10,61 @@ using System.Windows.Media.Imaging;
 using APlayTest.Client.Modules.Inspector;
 using APlayTest.Client.Modules.Inspector.Inspectors;
 using APlayTest.Client.Modules.SheetTree.Factories;
+using Caliburn.Micro;
 
 namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
 {
-    [Gemini.Modules.Toolbox.ToolboxItem(typeof(SheetDocumentViewModel),"Block","Items")]
-    public class BlockVm : ElementViewModel
+
+    public abstract class SymbolBaseViewModel : PropertyChangedBase
+    {
+        private bool _isSelected;
+        private string _name;
+        public int Id { get; protected set; }
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                if (value == _isSelected) return;
+                _isSelected = value;
+                NotifyOfPropertyChange(() => IsSelected);
+            }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (value == _name) return;
+                _name = value;
+                NotifyOfPropertyChange(() => Name);
+            }
+        }
+    }
+
+
+    [Gemini.Modules.Toolbox.ToolboxItem(typeof(SheetDocumentViewModel), "Block", "Items")]
+    public class BlockViewModel : SymbolBaseViewModel
     {
         private readonly BlockSymbol _blockSymbol;
         private readonly Client _client;
-        private readonly IConnectionViewModelFactory _connectionViewModelFactory;
         private readonly IInspectorTool _inspectorTool;
         private double _x;
         private double _y;
-        private InputConnectorViewModel _selectedInputConnector;
 
-        public BlockVm()
+        public BlockViewModel()
         {
-            
+
         }
 
-        public BlockVm(BlockSymbol blockSymbol, Client client, IConnectionViewModelFactory connectionViewModelFactory, IInspectorTool inspectorTool)
-            :base(connectionViewModelFactory)
+        public BlockViewModel(BlockSymbol blockSymbol, Client client, IInspectorTool inspectorTool)
         {
             Id = blockSymbol.Id;
 
             _blockSymbol = blockSymbol;
             _client = client;
-            _connectionViewModelFactory = connectionViewModelFactory;
             _inspectorTool = inspectorTool;
 
             _x = _blockSymbol.PositionX;
@@ -45,43 +73,12 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
             _blockSymbol.PositionXChangeEventHandler += x => X = x;
             _blockSymbol.PositionYChangeEventHandler += y => Y = y;
 
-        
-            foreach (var inputConnector in blockSymbol.InputConnectors)
-            {
-                AddInputConnector(inputConnector);
-            }
-
-            if (blockSymbol.OutputConnector != null)
-            {
-                OutputConnector = new OutputConnectorViewModel(this, blockSymbol.OutputConnector, _connectionViewModelFactory, client);
-            }
-            
-            
         }
-        
-        public int Id { get; private set; }
 
-        public override InputConnectorViewModel SelectedInputConnector
-        {
-            get { return _selectedInputConnector; }
-            set
-            {
-                if (Equals(value, _selectedInputConnector)) return;
-                _selectedInputConnector = value;
 
-                _inspectorTool.SelectedObject = new InspectableObjectBuilder()
-                    .WithObjectProperties(_selectedInputConnector, x => true)
-                    //.WithEditor(_selectedInputConnector, x => x.Position, new TextBoxEditorViewModel<string>())
-                    //.WithEditor(_selectedInputConnector, viewModel => viewModel.Id, new TextBoxEditorViewModel<int>())
-                    //.WithEditor(_selectedInputConnector, viewModel => viewModel.Position, new TextBoxEditorViewModel<Point>())
-                    .ToInspectableObject();
-
-                NotifyOfPropertyChange(() => SelectedInputConnector);
-            }
-        }
 
         [Browsable(false)]
-        public override double X
+        public double X
         {
             get { return _x; }
             set
@@ -91,14 +88,14 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
                     return;
                 }
                 _x = value;
-                
+
                 NotifyOfPropertyChange(() => X);
                 NotifyOfPropertyChange(() => InspectableX);
             }
         }
 
         [Browsable(false)]
-        public override double Y
+        public double Y
         {
             get { return _y; }
             set
@@ -108,19 +105,19 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
                     return;
                 }
                 _y = value;
-                
+
                 NotifyOfPropertyChange(() => Y);
                 NotifyOfPropertyChange(() => InspectableY);
             }
         }
 
-       [DisplayName("X")]
+        [DisplayName("X")]
         public double InspectableX
         {
             get { return X; }
             set
             {
-                _blockSymbol.SetPosition(new AplayPoint(value,Y),_client );
+                _blockSymbol.SetPosition(new AplayPoint(value, Y), _client);
             }
         }
 
@@ -134,11 +131,18 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels.Elements
             }
         }
 
-       
+
+
+
+
+        public static double PreviewSize
+        {
+            get { return 100; }
+        }
+
         public void SetPosition(double positionX, double positionY)
         {
             _blockSymbol.SetPosition(new AplayPoint(positionX, positionY), _client);
-
         }
     }
 }

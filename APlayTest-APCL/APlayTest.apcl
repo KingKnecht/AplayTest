@@ -18,14 +18,11 @@ float32 Height;]]></code>
       <code><![CDATA[[ Server -> All ]
 
 int32 Id;
-List<Connector> InputConnectors;
+List<Connector> Connectors;
 
 [Client -> Server]
 
 void SetPosition(AplayPoint position, Client client);
-void AddInputConnector(Connector connector, Client client);
-void RemoveInputConnector(int32 connectorId, Client client);
-void SetOutputConnector(Connector connector, Client client);
 
 [All -> All]
 //Do only use those properties for undo/redo purposes.
@@ -33,7 +30,6 @@ void SetOutputConnector(Connector connector, Client client);
 float64 PositionX;
 float64 PositionY;
 AplaySize Size;
-Connector OutputConnector;
 
 [All -> Server]
 List<Connection> GetAttachedConnections();
@@ -92,13 +88,14 @@ int32 Id;
 [All -> All]
 //Do only use those properties for undo/redo purposes.
 //Use the setter functions to have Undo/Redo.
-ConnectorDirection Direction;
 List<Connection> Connections;
-AplayPoint Position;
+
+float64 PositionX;
+float64 PositionY;
+AplaySize Size;
 
 [Client -> Server]
-void AddConnection(Connection connection, Client client);
-
+void SetPosition(AplayPoint position, Client client);
 ]]></code>
       <__designerPresentation>null</__designerPresentation>
     </class>
@@ -163,18 +160,18 @@ void SetName(WString name, Client client);
 
 //Blocks handling  
 BlockSymbol CreateBlockSymbol();
-void Add(BlockSymbol blockSymbol, Client client);
-void Remove(BlockSymbol blockSymbol, Client client);
+void AddBlock(BlockSymbol blockSymbol, Client client);
+void RemoveBlock(BlockSymbol blockSymbol, Client client);
 
 //Connections handling
 Connection CreateConnection();
 void AddConnection(Connection connection, Client client);
 void RemoveConnection(Connection connection, Client client);
 
-//Connecor handling
-//Connector CreateConnector();
-//void AddConnector(Connector connector, Client client);
-//void RemoveConnector(Connector connector, Client client);
+//Connectors handling
+Connector CreateConnector();
+void AddConnector(Connector connection, Client client);
+void RemoveConnector(Connector connection, Client client);
 
 
 [Server  -> All]
@@ -182,7 +179,7 @@ WString Name;
 List<BlockSymbol> BlockSymbols;
 List<Connection> Connections;
 List<Connector> Connectors;
-int32 Id;
+int32 Id;
 
 ]]></code>
       <__designerPresentation>null</__designerPresentation>

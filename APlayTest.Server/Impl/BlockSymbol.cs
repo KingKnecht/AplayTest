@@ -54,8 +54,8 @@ namespace APlayTest.Server
         {
             foreach (var change in e.ChangeSet.Where(c => c.OwnerId == Id))
             {
-                var storedObject = (BlockSymbolUndoable) change.Undoable;
-                  
+                var storedObject = (BlockSymbolUndoable)change.Undoable;
+
                 switch (change.ChangeReason)
                 {
                     case ChangeReason.InsertAt:
@@ -89,51 +89,19 @@ namespace APlayTest.Server
             PositionX = position__.X;
             PositionY = position__.Y;
 
-            UpdateConnectorPositions();
-
             _undoService.AddUpdate(oldState, new BlockSymbolUndoable(this), "Position of block changed", client__.Id);
 
         }
 
-        private void UpdateConnectorPositions()
-        {
 
-            foreach (var inputConnector in InputConnectors)
-            {
-                inputConnector.Position = new AplayPoint(PositionX, PositionY);
-            }
 
-            if (OutputConnector != null)
-            {
-                OutputConnector.Position = new AplayPoint(PositionX, PositionY);
-            }
-        }
 
-        public override void onAddInputConnector(Connector connector__, Client client__)
-        {
-
-        }
-
-        public override void onRemoveInputConnector(int connectorId__, Client client__)
-        {
-
-        }
-
-        public override void onSetOutputConnector(Connector connector__, Client client__)
-        {
-
-        }
 
         public override ConnectionList onGetAttachedConnections()
         {
             var connections = new ConnectionList();
 
-            if (OutputConnector != null)
-            {
-                connections.AddRange(OutputConnector.Connections);
-            }
-
-            connections.AddRange(InputConnectors.SelectMany(ic => ic.Connections));
+            connections.AddRange(Connectors.SelectMany(ic => ic.Connections));
 
             return connections;
         }
@@ -142,7 +110,7 @@ namespace APlayTest.Server
         {
             //Unsubscribe from all events.
             _undoService.ActiveStateChanged -= UndoServiceOnActiveStateChanged;
-            
+
             _onPrepareRemoveCallBack(this);
         }
 
@@ -154,14 +122,9 @@ namespace APlayTest.Server
         public string Dump()
         {
             var dump = "BlockSymbol: Id: " + Id;
-            foreach (var inputConnector in InputConnectors)
+            foreach (var connector in Connectors)
             {
-                dump += "\n\t" + inputConnector.Dump();
-            }
-
-            if (OutputConnector != null)
-            {
-                dump += "\n\t" + OutputConnector.Dump();
+                dump += "\n\t" + connector.Dump();
             }
 
             return dump;
@@ -177,23 +140,14 @@ namespace APlayTest.Server
 
             SheetId = blockSymbol.Sheet.Id;
 
-            //InputConnectorIds = blockSymbol.InputConnectors.Select(ic => ic.Id).ToList();
-            InputConnectors = blockSymbol.InputConnectors.Select(ic => ic.CreateUndoable()).ToList();
-
-
-            if (blockSymbol.OutputConnector != null)
-            {
-                //OutputConnectorId = blockSymbol.OutputConnector.Id;
-                OutputConnector = blockSymbol.OutputConnector.CreateUndoable();
-            }
-
+            Connectors = blockSymbol.Connectors.Select(ic => ic.CreateUndoable()).ToList();
         }
 
         public ConnectorUndoable OutputConnector { get; set; }
 
-        public IEnumerable<ConnectorUndoable> InputConnectors { get; set; }
+        public IEnumerable<ConnectorUndoable> Connectors { get; set; }
 
-      
+
         public BlockSymbolUndoable(int id, double positionX, double positionY)
         {
             Id = id;

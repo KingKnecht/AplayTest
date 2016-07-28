@@ -66,9 +66,7 @@ namespace APlayTest.Server.Factories
                 if (change.ChangeReason == ChangeReason.Update)
                 {
                     var undoable = (ConnectorUndoable)change.Undoable;
-                    connector.Direction = undoable.Direction;
-                    connector.Position = undoable.Position;
-
+                  
                     foreach (var connection in undoable.Connections)
                     {
                         connector.Connections.Add(_connectionFactory.Create(connection, changeSet));
@@ -94,8 +92,9 @@ namespace APlayTest.Server.Factories
                 var x = 10;
             }
             var connector = Create(undoable.Id, SheetFactory.Create(undoable.SheetId));
-            connector.Direction = undoable.Direction;
-            connector.Position = undoable.Position;
+            
+            connector.PositionX = undoable.Position.X;
+            connector.PositionY = undoable.Position.Y;
             
             return connector;
         }

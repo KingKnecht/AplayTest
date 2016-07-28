@@ -29,23 +29,11 @@
     <communicationObject name="BlockSymbol" persistable="false">
       <permissionGroup baseType="ServerToAll">
         <data type="int32" name="Id" persistable="false"/>
-        <list type="Connector" name="InputConnectors" persistable="false"/>
+        <list type="Connector" name="Connectors" persistable="false"/>
       </permissionGroup>
       <permissionGroup baseType="ClientToServer">
         <event name="SetPosition">
           <data type="AplayPoint" name="position" persistable="false"/>
-          <data type="Client" name="client" persistable="false"/>
-        </event>
-        <event name="AddInputConnector">
-          <data type="Connector" name="connector" persistable="false"/>
-          <data type="Client" name="client" persistable="false"/>
-        </event>
-        <event name="RemoveInputConnector">
-          <data type="int32" name="connectorId" persistable="false"/>
-          <data type="Client" name="client" persistable="false"/>
-        </event>
-        <event name="SetOutputConnector">
-          <data type="Connector" name="connector" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
         </event>
       </permissionGroup>
@@ -53,7 +41,6 @@
         <data type="float64" name="PositionX" persistable="false"/>
         <data type="float64" name="PositionY" persistable="false"/>
         <data type="AplaySize" name="Size" persistable="false"/>
-        <data type="Connector" name="OutputConnector" persistable="false"/>
       </permissionGroup>
       <permissionGroup baseType="AllToServer">
         <event name="GetAttachedConnections" returnType="List&lt;Connection>"/>
@@ -117,13 +104,14 @@
         <data type="int32" name="Id" persistable="false"/>
       </permissionGroup>
       <permissionGroup baseType="AllToAll">
-        <data type="ConnectorDirection" name="Direction" persistable="false"/>
         <list type="Connection" name="Connections" persistable="false"/>
-        <data type="AplayPoint" name="Position" persistable="false"/>
+        <data type="float64" name="PositionX" persistable="false"/>
+        <data type="float64" name="PositionY" persistable="false"/>
+        <data type="AplaySize" name="Size" persistable="false"/>
       </permissionGroup>
       <permissionGroup baseType="ClientToServer">
-        <event name="AddConnection">
-          <data type="Connection" name="connection" persistable="false"/>
+        <event name="SetPosition">
+          <data type="AplayPoint" name="position" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
         </event>
       </permissionGroup>
@@ -202,6 +190,15 @@
         </event>
         <event name="RemoveConnection">
           <data type="Connection" name="connection" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="CreateConnector" returnType="Connector"/>
+        <event name="AddConnector">
+          <data type="Connector" name="connection" persistable="false"/>
+          <data type="Client" name="client" persistable="false"/>
+        </event>
+        <event name="RemoveConnector">
+          <data type="Connector" name="connection" persistable="false"/>
           <data type="Client" name="client" persistable="false"/>
         </event>
       </permissionGroup>

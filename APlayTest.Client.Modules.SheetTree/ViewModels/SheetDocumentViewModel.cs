@@ -34,18 +34,17 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         private readonly IAPlayAwareShell _shell;
         private readonly Action<SheetDocumentViewModel> _onOpenedChanged;
         private readonly Client _client;
-        private readonly IConnectionViewModelFactory _connectionViewModelFactory;
         private bool _isOpen;
-        private readonly BindableCollection<ElementViewModel> _elements;
+        private readonly BindableCollection<SymbolBaseViewModel> _symbolVms;
         private bool _isConnectionDrawMode;
+        private SymbolBaseViewModel _ghost;
 
         [ImportingConstructor]
         public SheetDocumentViewModel(Sheet sheet,
             IInspectorTool inspectorTool,
             IAPlayAwareShell shell,
             Action<SheetDocumentViewModel> onOpenedChanged,
-            Client client,
-            IConnectionViewModelFactory connectionViewModelFactory)
+            Client client)
         {
             _sheet = sheet;
             _inspectorTool = inspectorTool;
@@ -53,25 +52,29 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
             _onOpenedChanged = onOpenedChanged;
             _client = client;
-            _connectionViewModelFactory = connectionViewModelFactory;
-         
+
             _name = _sheet.Name;
 
 
             SheetId = _sheet.Id;
             DisplayName = _name;
 
-            _elements = new BindableCollection<ElementViewModel>();
+            _symbolVms = new BindableCollection<SymbolBaseViewModel>();
             _connections = new BindableCollection<ConnectionViewModel>();
 
             foreach (var blockSymbol in _sheet.BlockSymbols)
             {
-                var block = AddBlock(blockSymbol);
+                _symbolVms.Add(new BlockViewModel(blockSymbol, _client, _inspectorTool));
+            }
+
+            foreach (var connector in _sheet.Connectors)
+            {
+                _symbolVms.Add(new ConnectorViewModel(connector, client, _inspectorTool));
             }
 
             foreach (var connection in _sheet.Connections)
             {
-                _connections.Add(_connectionViewModelFactory.Create(connection));
+                _connections.Add(new ConnectionViewModel(connection, _client, _inspectorTool));
             }
 
 
@@ -79,28 +82,54 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
             _sheet.BlockSymbolsAddEventHandler += OnBlockSymbolsAddEventHandler;
             _sheet.BlockSymbolsInsertAtEventHandler += OnBlockSymbolsInsertAtEventHandler;
-            _sheet.BlockSymbolsRemoveAtEventHandler += SheetOnBlockSymbolsRemoveAtEventHandler;
+            _sheet.BlockSymbolsRemoveAtEventHandler += OnBlockSymbolsRemoveAtEventHandler;
+
+            _sheet.ConnectorsAddEventHandler += OnConnectorAddEventHandler;
+            _sheet.ConnectorsInsertAtEventHandler += OnConnectorInsertAtEventHandler;
+            _sheet.ConnectorsRemoveAtEventHandler += OnConnectorRemoveAtEventHandler;
 
             _sheet.ConnectionsAddEventHandler += OnConnectionsAddEventHandler;
             _sheet.ConnectionsRemoveEventHandler += OnConnectionsRemoveEventHandler;
-            _sheet.ConnectionsRemoveAtEventHandler += SheetOnConnectionsRemoveAtEventHandler;
-            _sheet.ConnectionsInsertAtEventHandler += SheetOnConnectionsInsertAtEventHandler;
+            _sheet.ConnectionsRemoveAtEventHandler += OnConnectionsRemoveAtEventHandler;
+            _sheet.ConnectionsInsertAtEventHandler += OnConnectionsInsertAtEventHandler;
         }
 
-        private void SheetOnConnectionsInsertAtEventHandler(int indexAt, Connection connection)
+        private void OnConnectorAddEventHandler(Connector connector)
+        {
+            SymbolVms.Add(new ConnectorViewModel(connector, _client, _inspectorTool));
+        }
+
+        private void OnConnectorRemoveAtEventHandler(int pos, Connector connector)
+        {
+            var toBeRemoved = _symbolVms.FirstOrDefault(b => b.Id == connector.Id);
+            if (toBeRemoved != null)
+            {
+                //Connectors.Remove(toBeRemoved);
+                SymbolVms.Remove(toBeRemoved);
+            }
+        }
+
+        private void OnConnectorInsertAtEventHandler(int pos, Connector connector)
+        {
+            var connectorVm = new ConnectorViewModel(connector, _client, _inspectorTool);
+
+            _symbolVms.Insert(pos, connectorVm);
+        }
+
+
+        private void OnConnectionsInsertAtEventHandler(int indexAt, Connection connection)
         {
             if (_connections.All(c => c.Id != connection.Id))
             {
-                _connections.Add(_connectionViewModelFactory.Create(connection));
+                _connections.Insert(indexAt, new ConnectionViewModel(connection, _client, _inspectorTool));
             }
 
             NotifyOfPropertyChange(() => ConnectionCount);
         }
 
-        private void SheetOnConnectionsRemoveAtEventHandler(int indexAt, Connection connection)
+        private void OnConnectionsRemoveAtEventHandler(int indexAt, Connection connection)
         {
             Connections.RemoveAt(indexAt);
-            _connectionViewModelFactory.Remove(connection.Id);
         }
 
         private void OnConnectionsRemoveEventHandler(Connection connection)
@@ -109,67 +138,76 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             if (toBeRemoved != null)
             {
                 Connections.Remove(toBeRemoved);
-                _connectionViewModelFactory.Remove(toBeRemoved.Id);
             }
         }
 
         private void OnConnectionsAddEventHandler(Connection connection)
         {
-            if (_connections.All(c => c.Id != connection.Id))
-            {
-                _connections.Add(_connectionViewModelFactory.Create(connection));
-            }
+            Connections.Add(new ConnectionViewModel(connection, _client, _inspectorTool));
 
             NotifyOfPropertyChange(() => ConnectionCount);
         }
 
         private void OnBlockSymbolsAddEventHandler(BlockSymbol blockSymbol)
         {
-            Elements.Add(new BlockVm(blockSymbol, _client, _connectionViewModelFactory, _inspectorTool));
+            SymbolVms.Add(new BlockViewModel(blockSymbol, _client, _inspectorTool));
         }
 
         private void OnBlockSymbolsInsertAtEventHandler(int insertAt, BlockSymbol newBlockSymbol)
         {
-            AddBlock(newBlockSymbol);
+            var block = new BlockViewModel(newBlockSymbol, _client, _inspectorTool);
+
+            SymbolVms.Insert(insertAt, block);
         }
 
-        private void SheetOnBlockSymbolsRemoveAtEventHandler(int indexAt, BlockSymbol blockSymbol)
+        private void OnBlockSymbolsRemoveAtEventHandler(int indexAt, BlockSymbol blockSymbol)
         {
-            var toBeRemoved = _elements.OfType<BlockVm>().FirstOrDefault(b => b.Id == blockSymbol.Id);
+            var toBeRemoved = _symbolVms.OfType<BlockViewModel>().FirstOrDefault(b => b.Id == blockSymbol.Id);
             if (toBeRemoved != null)
             {
-                Elements.Remove(toBeRemoved);
+                SymbolVms.Remove(toBeRemoved);
             }
         }
 
-        public void DropElement(ElementViewModel blockVm)
+        public void DropElement(SymbolBaseViewModel symbolBaseViewModel)
         {
-            var blockSymbol = _sheet.CreateBlockSymbol();
-            blockSymbol.PositionX = blockVm.X;
-            blockSymbol.PositionY = blockVm.Y;
+            if (symbolBaseViewModel is BlockViewModel)
+            {
+                var blockViewModel = (BlockViewModel) symbolBaseViewModel;
+                var blockSymbol = _sheet.CreateBlockSymbol();
+                blockSymbol.PositionX = blockViewModel.X;
+                blockSymbol.PositionY = blockViewModel.Y;
 
-            _sheet.Add(blockSymbol, _client);
+                SymbolVms.Remove(_ghost);
+                _ghost = null;
+
+                _sheet.Add(blockSymbol, _client);
+
+            }
+            else if (symbolBaseViewModel is ConnectorViewModel)
+            {
+                var connectorViewModel = (ConnectorViewModel) symbolBaseViewModel;
+                var connector = _sheet.CreateConnector();
+                connector.PositionX = connectorViewModel.X;
+                connector.PositionY = connectorViewModel.Y;
+
+                SymbolVms.Remove(_ghost);
+                _ghost = null;
+                
+                _sheet.AddConnector(connector, _client);
+            }
+
         }
-
-
-        private ElementViewModel AddBlock(BlockSymbol blockSymbol)
-        {
-            var block = new BlockVm(blockSymbol, _client, _connectionViewModelFactory, _inspectorTool);
-
-            _elements.Add(block);
-
-            return block;
-        }
-
+        
         void _sheet_NameChangeEventHandler(string NewName__)
         {
             Name = NewName__;
             DisplayName = NewName__;
         }
 
-        public IObservableCollection<ElementViewModel> Elements
+        public IObservableCollection<SymbolBaseViewModel> SymbolVms
         {
-            get { return _elements; }
+            get { return _symbolVms; }
         }
 
 
@@ -178,9 +216,14 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             get { return _connections; }
         }
 
-        public IEnumerable<ElementViewModel> SelectedElements
+        //public IObservableCollection<ConnectorViewModel> Connectors
+        //{
+        //    get { return _connectors; }
+        //}
+
+        public IEnumerable<SymbolBaseViewModel> SelectedElements
         {
-            get { return _elements.Where(x => x.IsSelected); }
+            get { return _symbolVms.Where(x => x.IsSelected); }
         }
 
         public override bool IsOpen
@@ -207,82 +250,77 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
             }
         }
 
-        public ConnectionViewModel OnConnectionDragStarted(ConnectorViewModel sourceConnector, Point currentDragPoint)
+        public ConnectionViewModel OnConnectionDragStarted(Point currentDragPoint)
         {
-            if (!(sourceConnector is OutputConnectorViewModel))
-                return null;
+
 
             _client.UndoManager.StartTransaction("New connection drag started");
-            
+
             var connection = _sheet.CreateConnection();
 
-            connection.FromPosition = new AplayPoint(sourceConnector.Position.X, sourceConnector.Position.Y);
+            connection.FromPosition = new AplayPoint(currentDragPoint.X, currentDragPoint.Y);
             connection.ToPosition = new AplayPoint(currentDragPoint.X, currentDragPoint.Y);
 
             _sheet.AddConnection(connection, _client);
 
-            var connectionViewModel = _connectionViewModelFactory.Create(connection);
-            connectionViewModel.From = (OutputConnectorViewModel)sourceConnector;
-            connectionViewModel.ToPosition = currentDragPoint;
+            var connectionViewModel = new ConnectionViewModel(connection, _client, _inspectorTool)
+            {
+                ToPosition = currentDragPoint
+            };
 
             return connectionViewModel;
         }
 
         public void OnConnectionDragging(Point currentDragPoint, ConnectionViewModel connectionViewModel)
         {
-            // If current drag point is close to an input connector, show its snapped position.
-            var nearbyConnector = FindNearbyInputConnector(currentDragPoint);
-            connectionViewModel.ToPosition = (nearbyConnector != null)
-                ? nearbyConnector.Position
-                : currentDragPoint;
+            // If current drag point is close to an input connection, show its snapped position.
+            //var nearbyConnector = FindNearbyInputConnector(currentDragPoint);
+            //connectionViewModel.ToPosition = (nearbyConnector != null)
+            //    ? nearbyConnector.Position
+            //    : currentDragPoint;
+
+            connectionViewModel.ToPosition = currentDragPoint;
         }
 
-        public void OnConnectionDragCompleted(Point currentDragPoint, ConnectionViewModel newConnection, ConnectorViewModel sourceConnector)
+        public void OnConnectionDragCompleted(Point currentDragPoint, ConnectionViewModel newConnection)
         {
-            var nearbyConnector = FindNearbyInputConnector(currentDragPoint);
+            //var nearbyConnector = FindNearbyInputConnector(currentDragPoint);
 
-            if (nearbyConnector == null)
-            {
-                _client.UndoManager.CancelTransaction();
-                return;
-            }
-            
+            //if (nearbyConnector == null)
+            //{
+            //    _client.UndoManager.CancelTransaction();
+            //    return;
+            //}
+
             //newConnection.AddToConnector(nearbyConnector, _client);
-            nearbyConnector.AddConnection(newConnection, _client);
-            
+
+            newConnection.ToPosition = currentDragPoint;
+
             _client.UndoManager.EndTransaction();
         }
 
-        private InputConnectorViewModel FindNearbyInputConnector(Point mousePosition)
-        {
-            return Elements.SelectMany(x => x.InputConnectors)
-                .FirstOrDefault(x => AreClose(x.Position, mousePosition, 10));
-        }
+
 
         private static bool AreClose(Point point1, Point point2, double distance)
         {
             return (point1 - point2).Length < distance;
         }
 
-        public void DeleteElement(ElementViewModel element)
+        public void DeleteElement(SymbolBaseViewModel block)
         {
-            //Connections.RemoveRange(connectionViewModel.AttachedConnections);
-
-            var block = element as BlockVm;
             if (block != null)
             {
                 var toBeDeleted = _sheet.BlockSymbols.FirstOrDefault(b => b.Id == block.Id);
 
                 _sheet.Remove(toBeDeleted, _client);
 
-                return;
             }
 
         }
 
         public void DeleteSelectedElements()
         {
-            Elements.Where(x => x.IsSelected)
+            SymbolVms.Where(x => x.IsSelected)
                 .ToList()
                 .ForEach(DeleteElement);
             Connections.Where(x => x.IsSelected)
@@ -324,48 +362,56 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
 
         public int SheetId { get; private set; }
 
-        public void OnElementItemDragStarted(ElementViewModel itemViewModel, Point currentDragPoint)
+        public void OnElementItemDragStarted(SymbolBaseViewModel symbolBaseViewModel, Point currentDragPoint)
         {
-            var block = itemViewModel as BlockVm;
-            if (block != null)
+
+
+            if (symbolBaseViewModel is BlockViewModel)
             {
-                //Console.WriteLine("OnElementItemDragStarted()");
+                var block = symbolBaseViewModel as BlockViewModel;
                 _shell.UndoManager.StartTransaction("Moving Block: " + block.Name);
-                return;
+
+            }
+            else if (symbolBaseViewModel is ConnectorViewModel)
+            {
+                var connectorVm = symbolBaseViewModel as ConnectorViewModel;
+                _shell.UndoManager.StartTransaction("Moving Connector: " + connectorVm.Name);
             }
         }
 
-        public void OnElementItemDragging(ElementViewModel itemViewModel, double horizontalChange, double verticalChange, double positionX, double positionY)
+        public void OnElementItemDragging(SymbolBaseViewModel symbolBaseViewModel, double horizontalChange, double verticalChange, double positionX, double positionY)
         {
-            var block = itemViewModel as BlockVm;
-            if (block != null)
+            if (symbolBaseViewModel is BlockViewModel)
             {
-                //Console.WriteLine("OnElementItemDragging()");
+                var block = symbolBaseViewModel as BlockViewModel;
                 block.SetPosition(positionX, positionY);
-                return;
+
             }
-        }
-        public void OnElementItemDragCompleted(ElementViewModel itemViewModel, Point currentDragPoint)
-        {
-            var block = itemViewModel as BlockVm;
-            if (block != null)
+            else if (symbolBaseViewModel is ConnectorViewModel)
             {
-                _shell.UndoManager.EndTransaction();
-                return;
+                var connectorVm = symbolBaseViewModel as ConnectorViewModel;
+                connectorVm.SetPosition(positionX, positionY);
             }
+
+
+        }
+        public void OnElementItemDragCompleted(SymbolBaseViewModel symbolBaseViewModel, Point currentDragPoint)
+        {
+            _shell.UndoManager.EndTransaction();
+
         }
 
         public void Update(Command command)
         {
             if (command.CommandDefinition is DeleteCommandDefinition)
             {
-                command.Enabled = SelectedElements.Any() || Connections.Any(x => x.IsSelected);    
+                command.Enabled = SelectedElements.Any() || Connections.Any(x => x.IsSelected);
             }
             else if (command.CommandDefinition is DrawConnectLineCommandDefinition)
             {
                 command.Enabled = true;
             }
-            
+
         }
 
         public Task Run(Command command)
@@ -399,5 +445,24 @@ namespace APlayTest.Client.Modules.SheetTree.ViewModels
         }
 
 
+        public BlockViewModel CreateBlockViewModel()
+        {
+            return new BlockViewModel();
+        }
+
+        public void AddGhost(SymbolBaseViewModel element)
+        {
+            if (_ghost == null)
+            {
+                _ghost = element;
+                SymbolVms.Add(_ghost);
+            }
+
+        }
+
+        public SymbolBaseViewModel GetGhost()
+        {
+            return _ghost;
+        }
     }
 }

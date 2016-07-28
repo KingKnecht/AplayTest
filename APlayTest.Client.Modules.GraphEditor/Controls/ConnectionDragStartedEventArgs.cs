@@ -7,8 +7,8 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
         public object Connection { get; set; }
 
         public ConnectionDragStartedEventArgs(RoutedEvent routedEvent, object source,
-            ElementItem elementItem, ConnectorItem connectorItem)
-            : base(routedEvent, source, elementItem, connectorItem)
+            ElementItem elementItem)
+            : base(routedEvent,source, elementItem)
         {
         }
     }

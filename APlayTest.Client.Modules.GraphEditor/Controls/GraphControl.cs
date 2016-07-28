@@ -216,10 +216,8 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
         {
             e.Handled = true;
 
-            _draggingSourceConnector = (ConnectorItem)e.OriginalSource;
-
             var eventArgs = new ConnectionDragStartedEventArgs(ConnectionDragStartedEvent, this,
-                _draggingSourceConnector.ParentElementItem, _draggingSourceConnector);
+                _draggingSourceConnector.ParentElementItem);
             RaiseEvent(eventArgs);
 
             _draggingConnectionDataContext = eventArgs.Connection;
@@ -234,8 +232,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
 
             var connectionDraggingEventArgs =
                 new ConnectionDraggingEventArgs(ConnectionDraggingEvent, this,
-                    _draggingSourceConnector.ParentElementItem, _draggingConnectionDataContext,
-                    _draggingSourceConnector);
+                    _draggingSourceConnector.ParentElementItem, _draggingConnectionDataContext);
             RaiseEvent(connectionDraggingEventArgs);
         }
 
@@ -244,8 +241,7 @@ namespace APlayTest.Client.Modules.GraphEditor.Controls
             e.Handled = true;
 
             RaiseEvent(new ConnectionDragCompletedEventArgs(ConnectionDragCompletedEvent, this,
-                _draggingSourceConnector.ParentElementItem, _draggingConnectionDataContext,
-                _draggingSourceConnector));
+                _draggingSourceConnector.ParentElementItem, _draggingConnectionDataContext));
 
             _draggingSourceConnector = null;
             _draggingConnectionDataContext = null;

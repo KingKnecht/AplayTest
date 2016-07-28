@@ -63,45 +63,23 @@ namespace APlayTest.Server
             //Todo: Undo-Transaction?
             Connections.Remove(connection);
         }
-
-
-        public override void onPositionChange(AplayPoint position)
-        {
-            //APlay.Common.Logging.Logger.LogDesigned(2,
-            //                   "Connector: Position changed: " + position,
-            //                   "Undo.Server.Connector");
-
-            UpdateConnectionPositions(position);
-        }
-
-        public override void onAddConnection(Connection connection, Client client)
-        {
-
-            APlay.Common.Logging.Logger.LogDesigned(2,
-                               "Connector: onAddConnection(): ConnectionId: " + connection.Id,
-                               "Undo.Server.Connector");
-
-            Connections.Insert(Connections.Count, connection);
-
-            _undoService.AddInsert(Id, new ConnectionUndoable(connection), Connections.Count,
-                "Adding connection (" + connection.Id + ") to connector: " + Id, client.Id);
-        }
         
-        private void UpdateConnectionPositions(AplayPoint position)
+        public override void onSetPosition(AplayPoint position__, Client client__)
         {
-            foreach (var connection in Connections)
+            if (Math.Abs(PositionX - position__.X) < double.Epsilon && Math.Abs(PositionY - position__.Y) < double.Epsilon)
             {
-                if (connection.From != null && connection.From.Id == this.Id)
-                {
-                    connection.FromPosition = position;
-                }
-
-                if (connection.To != null && connection.To.Id == this.Id)
-                {
-                    connection.ToPosition = position;
-                }
+                return;
             }
+
+            var oldState = new ConnectorUndoable(this);
+
+            PositionX = position__.X;
+            PositionY = position__.Y;
+
+            _undoService.AddUpdate(oldState, new ConnectorUndoable(this), "Position of connector changed", client__.Id);
         }
+
+        
 
         public void PrepareForRemove(int clientId)
         {
@@ -118,8 +96,7 @@ namespace APlayTest.Server
         public string Dump()
         {
             var dump = "Connector: Id: " + Id;
-            dump += "\n\tDirection: " + Direction;
-
+           
             foreach (var connection in Connections)
             {
                 dump += "\n\t" + connection.Dump();
@@ -136,18 +113,14 @@ namespace APlayTest.Server
         public ConnectorUndoable(Connector connector)
         {
             Id = connector.Id;
-            Position = connector.Position;
-            Direction = connector.Direction;
-
+            Position = new AplayPoint(connector.PositionX, connector.PositionY);
+         
             Connections = connector.Connections.Select(c => new ConnectionUndoable(c)).ToList();
 
             SheetId = connector.Sheet.Id;
         }
 
         public IEnumerable<ConnectionUndoable> Connections { get; set; }
-
-
-        public ConnectorDirection Direction { get; set; }
 
         public AplayPoint Position { get; set; }
 
@@ -156,7 +129,7 @@ namespace APlayTest.Server
 
         public string Dump()
         {
-            var str = "Connector Id: " + Id + ", Pos: " + Position + ", Direction: " + Direction + ", Conn.Ids: ";
+            var str = "Connector Id: " + Id + ", Pos: " + Position + ", Conn.Ids: ";
             str += string.Join(", ", Connections.Select(c => c.Id));
             return str;
         }

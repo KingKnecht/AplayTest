@@ -21,20 +21,22 @@ namespace APlayTest.Server.Factories
         private readonly IUndoService _undoService;
         private readonly IConnectionFactory _connectionFactory;
         private readonly IBlockSymbolFactory _blockSymbolFactory;
+        private readonly IConnectorFactory _connectorFactory;
 
 
-        public SheetFactory(IUndoService undoService, IConnectionFactory connectionFactory, IBlockSymbolFactory blockSymbolFactory)
+        public SheetFactory(IUndoService undoService, IConnectionFactory connectionFactory, IBlockSymbolFactory blockSymbolFactory, IConnectorFactory connectorFactory)
         {
             _undoService = undoService;
             _connectionFactory = connectionFactory;
             _blockSymbolFactory = blockSymbolFactory;
+            _connectorFactory = connectorFactory;
         }
 
         public Sheet Create()
         {
 
             var id = IdGenerator.GetNextId();
-            var sheet = new Sheet(id, _undoService,_blockSymbolFactory, _connectionFactory);
+            var sheet = new Sheet(id, _undoService,_blockSymbolFactory, _connectionFactory, _connectorFactory);
 
             _cache[id] = sheet;
 
@@ -49,7 +51,7 @@ namespace APlayTest.Server.Factories
                return sheet;
             }
 
-            sheet = new Sheet(id, _undoService, _blockSymbolFactory, _connectionFactory);
+            sheet = new Sheet(id, _undoService, _blockSymbolFactory, _connectionFactory, _connectorFactory);
             _cache[id] = sheet;
 
             return sheet;

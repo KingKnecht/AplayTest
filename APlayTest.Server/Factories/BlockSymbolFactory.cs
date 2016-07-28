@@ -69,31 +69,13 @@ namespace APlayTest.Server.Factories
             blockSymbol.PositionY = undoable.Position.Y;
             //Todo:blockSymbol.Size = undoable.Size;
 
-            blockSymbol.InputConnectors.Clear();
-            blockSymbol.OutputConnector = null;
+            blockSymbol.Connectors.Clear();
             
-            foreach (var connectorUndoable in undoable.InputConnectors)
+            foreach (var connectorUndoable in undoable.Connectors)
             {
-                blockSymbol.InputConnectors.Add(_connectorFactory.Create(connectorUndoable, changeSet));
+                blockSymbol.Connectors.Add(_connectorFactory.Create(connectorUndoable, changeSet));
             }
-
-            //foreach (var inputConnectorId in undoable.InputConnectorIds)
-            //{
-            //    blockSymbol.InputConnectors.Add(_connectorFactory.Create(inputConnectorId, changeSet,
-            //        SheetFactory.Create(undoable.SheetId)));
-            //}
-
-            if (undoable.OutputConnector != null)
-            {
-                blockSymbol.OutputConnector = _connectorFactory.Create(undoable.OutputConnector, changeSet);
-            }
-
-            //if (undoable.OutputConnectorId.HasValue)
-            //{
-            //    blockSymbol.OutputConnector = _connectorFactory.Create(undoable.OutputConnectorId.Value, changeSet,
-            //        SheetFactory.Create(undoable.SheetId));
-            //}
-
+            
             return blockSymbol;
         }
 

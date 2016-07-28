@@ -24,6 +24,7 @@ namespace APlayTest.Server
         private readonly IUndoService _undoService;
         private readonly Factories.IBlockSymbolFactory _blockSymbolFactory;
         private readonly Factories.IConnectionFactory _connectionFactory;
+        private readonly Factories.IConnectorFactory _connectorFactory;
 
         /// <summary>
         /// Use this constructor to create instances in your code.
@@ -35,12 +36,15 @@ namespace APlayTest.Server
 
         }
 
-        public Sheet(int id, IUndoService undoService, Factories.IBlockSymbolFactory blockSymbolFactory, Factories.IConnectionFactory connectionFactory)
+        public Sheet(int id, IUndoService undoService, Factories.IBlockSymbolFactory blockSymbolFactory,
+            Factories.IConnectionFactory connectionFactory,
+            Factories.IConnectorFactory connectorFactory)
         {
             Id = id;
             _undoService = undoService;
             _blockSymbolFactory = blockSymbolFactory;
             _connectionFactory = connectionFactory;
+            _connectorFactory = connectorFactory;
 
             _undoService.ActiveStateChanged += UndoServiceOnActiveStateChanged;
 
@@ -103,20 +107,15 @@ namespace APlayTest.Server
         {
             var dump = "Sheet:" + Name + ", Conns. #: " + Connections.Count + ", BlockSymbol #: " + BlockSymbols.Count +
                        ", Connectors #: " +
-                       BlockSymbols.SelectMany(b => b.InputConnectors)
-                           .Concat(BlockSymbols.Select(b => b.OutputConnector));
+                       BlockSymbols.Count;
+                           
 
             foreach (var blockSymbol in BlockSymbols)
             {
                 dump += "\n" + blockSymbol.Dump();
             }
 
-            foreach (var connector in BlockSymbols.SelectMany(b => b.InputConnectors))
-            {
-                dump += "\n" + connector.Dump();
-            }
-
-            foreach (var connector in BlockSymbols.Where(b => b.OutputConnector != null).Select(b => b.OutputConnector))
+            foreach (var connector in BlockSymbols.SelectMany(b => b.Connectors))
             {
                 dump += "\n" + connector.Dump();
             }
@@ -225,33 +224,58 @@ namespace APlayTest.Server
             APlay.Common.Logging.Logger.LogDesigned(2, "Sheet.onRemoveConnection called", "AplayTest.Server.Sheet");
 
             _undoService.StartTransaction(client.Id, "Remove connection [" + connection.Id + "]");
-
-
-            var from = connection.From;
-            var fromUndoable = new ConnectorUndoable(from);
-
-            var to = connection.To;
-            var toUndoable = new ConnectorUndoable(to);
-
-            from.Disconnect(connection);
-            to.Disconnect(connection);
-
-            _undoService.AddUpdate(fromUndoable, new ConnectorUndoable(from), "", client.Id);
-            _undoService.AddUpdate(toUndoable, new ConnectorUndoable(to), "", client.Id);
-
+            
             var undoableConnection = new ConnectionUndoable(connection);
 
             connection.PrepareForRemove(client.Id);
 
             var index = Connections.IndexOf(connection);
-            _undoService.AddRemove(Id, undoableConnection, index, "Removing connection [" + undoableConnection.Id + "]", client.Id);
 
             Connections.RemoveAt(index);
+
+            _undoService.AddRemove(Id, undoableConnection, index, "Removing connection [" + undoableConnection.Id + "]", client.Id);
 
             _undoService.EndTransaction(client.Id);
         }
 
+        public override Connector onCreateConnector()
+        {
+            return _connectorFactory.Create(this);
+        }
 
+        public override void onAddConnector(Connector connector, Client client)
+        {
+            APlay.Common.Logging.Logger.LogDesigned(2, "Sheet.onAddConnector called", "AplayTest.Server.Sheet");
+            connector.Sheet = this;
+
+            _undoService.StartTransaction(client.Id, "Add connector [" + connector.Id + "]");
+
+            var connectorUndoable = new ConnectorUndoable(connector);
+            _undoService.AddInsert(Id, connectorUndoable, Connections.Count, "Adding connector [" + connectorUndoable.Id + "]", client.Id);
+
+            Connectors.Add(connector);
+
+            _undoService.EndTransaction(client.Id);
+        }
+
+        public override void onRemoveConnector(Connector connector, Client client)
+        {
+            APlay.Common.Logging.Logger.LogDesigned(2, "Sheet.onRemoveConnector called", "AplayTest.Server.Sheet");
+
+            _undoService.StartTransaction(client.Id, "Remove connector [" + connector.Id + "]");
+
+            var connectorUndoable = new ConnectorUndoable(connector);
+
+            connector.PrepareForRemove(client.Id);
+
+            var index = Connectors.IndexOf(connector);
+
+            Connectors.RemoveAt(index);
+
+            _undoService.AddRemove(Id, connectorUndoable, index, "Removing connector [" + connectorUndoable.Id + "]", client.Id);
+
+            _undoService.EndTransaction(client.Id);
+        }
 
 
         public override void onSetName(string name, Client client)
